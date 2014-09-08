@@ -1,0 +1,44 @@
+{% extends "laybase.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+
+{% block subhead %}
+
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>{{sr.head}}</h1>
+
+  </div>
+</header>
+
+
+{% endblock subhead %}
+
+
+
+{% block body %}
+
+<div>
+  <div>
+    {{sr.total}}
+    {{key}}
+    <table>
+      {% for item in sr.list %}
+      <tr>
+	<td>{{item[1].split(':')[0]}}</td>
+	<td>{{item[1].split(':')[1].split('-')[0]}}</td>
+	<td>{{item[0][1]}}</td><td>{{key[0]}}{{item[0][0]}}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  </div>
+</div>
+
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.searchtext', query=key) }}
+</div>
+
+
+
+{% endblock %}

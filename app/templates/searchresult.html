@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block subhead %}
+
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>{{sr.head}}</h1>
+
+  </div>
+</header>
+
+
+{% endblock subhead %}
+
+{% extends "base.html" %}
+
+
+{% block body %}
+render
+<div class="row">
+  <div id="txtcont" class="span9">
+    {{sr.link}}
+    <table>
+      {% for item in sr.list %}
+      <tr>
+	<td><a href="{{url_for('main.showtext', id=item[0])}}?query={{key}}&amp;edition=CK-KZ&amp;page={{"_".join(item[1])}}#{{item[1][-1]}}">{{item[0]}}</a></td>
+	<td>{{item[2]}}</td>
+	<td>{{key}}</td>
+	<td>{{item[3]}}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  </div>
+</div>
+<script>
+$("#tabs").tabs({event :  "mouseover"}),tabs("url", 0, "index.html").tabs("load", 0)
+</script>
+
+{% endblock %}

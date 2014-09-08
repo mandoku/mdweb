@@ -1,0 +1,34 @@
+# Japanese translations for PROJECT.
+# Copyright (C) 2014 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2014-09-05 18:00+0900\n"
+"PO-Revision-Date: 2014-09-05 18:03+0900\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: ja <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+
+#: app/templates/laybase.html:25
+msgid "Kanseki Repository"
+msgstr "漢籍リポジトリ"
+
+
+#: app/templates/laybase.html:28
+msgid "Collections"
+msgstr "コレクション"
+
+#: app/templates/laybase.html:35
+msgid "Test Version"
+msgstr "テスト　バーション"
+
+#: app/templates/laybase.html:64
+msgid "News"
+msgstr "ニュース"
+

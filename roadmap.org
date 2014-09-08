@@ -1,0 +1,99 @@
+#+TITLE: Kanripo Web Interface
+
+
+* Search
+
+** fulltext search with kwic
+
+   upon search, the following should happen:
+
+   - a list of the first n items is returned, with links to the texts
+     (or the default for n+x is: return all)
+   - this list can be browsed and paged to the next
+   - at the same time a breakdown of the most frequent 部類 and texts
+     is returned to other parts of the page, this can be used to further filter etc.
+     - in the future, additional aspects for the texts should also be available, like dynasty, author etc.
+   - this is realized by putting the whole result into redis:
+     - when doing a search, first check if it is in redis
+       - redis results will have an expiry, but will all be deleted upon a new index
+     - if not, do the search and put the resutls in redis, including the analysis
+     - if yes, just get the stuff
+
+# this is an example of how to produce these analysises.
+# this prints the history::
+# import readline; print '\n'.join([str(readline.get_history_item(i)) for i in range(readline.get_current_history_length())])
+#+BEGIN_SRC 
+import app.main.views
+key=u"原文"
+ox = app.main.views.doftsearch(key)
+ux = ox.decode('utf8')
+s=ux.split('\n')
+#this gives a list of the text number of all matches:
+b = [a.split('\t')[1].split(':')[0] for a in s if "\t" in a]
+
+from collections import Counter
+#this counts b and gives the most frequent first
+c=Counter(b)
+#this gets just the sections
+b1 = [a.split('\t')[1][0:4] for a in s if "\t" in a]
+for t, k in c.most_common(10):
+  print t, k
+for t, k in c1.most_common(10):
+  print t, k
+
+#+END_SRC
+
+*** redis implementation
+    - the results are stored using the search-key as key (e.g. u"原文"), in a list
+      - this makes it possible to access them by indes
+      - Q: what to do for different sort criteria?
+	- > store this in another key with the search criteria appended, e.g. u"原文-prev" etc.
+	  - need a typololgy of possible search keys
+      - also store u"原文-texts" and u"原文-sections" for a hash of results for these parts:
+	- u"原文-texts" will have the result of b from above
+	- u"原文-sections" will have the results of b1 from above
+    - all keys will have a convenient expire attached.
+
+#+BEGIN_SRC python
+import app.main.views
+r=app.main.views.redis_store
+key=u"原文"
+ox = app.main.views.doftsearch(key)
+ux = ox.decode('utf8')
+s=ux.split('\n')
+# we want to sort the results, since they come in unsorted!
+s.sort()
+subset = s[0:10]
+r.rpush(key, subset)
+r.lrange(key, 0, 20)
+
+#+END_SRC
+
+# found the problem: Redis-server is too old (2.2.8).  
+=> Upgraded to 2.8.2, also needed to update conf.
+
+** metadata
+   wrote a script to import the ~/$mandoku/meta/ catalog files into redis:
+=/Users/chris/krp/mandoku/python/mandoku/mdcatalog2redis.py=
+** gitlab api
+   I am using now the gitlab api with a private token to pull things
+   in and send them to the user.  This ensures that I have the latest
+   version.
+
+   TODO:
+   - make a proper flask extension with configuration
+   - expose different branches, users forks etc.
+
+** templates
+   - Got the template structure etc. ported over from krp_『道藏輯要』 
+     for this, needed
+     - flask-Babel extension and initialization code,
+     - pybabel translation catalogs etc
+       - TODO: the ja message catalog is still fuzzy for some reason:
+         investigate and correct.
+     - for the moment using the bootstrap files etc. from the old
+       version, not the flask extension, might need to update this
+       later.
+       [2014-09-05T20:30:39+0900]
+     - now ready to put it together!
+
