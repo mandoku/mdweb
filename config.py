@@ -33,7 +33,11 @@ class Config:
     MDWEB_FOLLOWERS_PER_PAGE = 50
     MDWEB_COMMENTS_PER_PAGE = 30
     MDWEB_SLOW_DB_QUERY_TIME=0.5
+    GITLAB_HOST  = "http://gl.kanripo.org"
+    GITLAB_TOKEN = "HrNL4a42ZDnyjaHpXty2"
 
+
+    
     @staticmethod
     def init_app(app):
         pass
