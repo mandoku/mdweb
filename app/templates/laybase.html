@@ -25,10 +25,9 @@
       <a class="brand" href="{{url_for('main.index')}}">{{_('Kanseki Repository')}}</a>
       <div class="nav-collapse collapse">
         <ul class="nav">
-<!--          <li class="active"><a href="/texts/dzjy">{{_('Collections')}}</a></li> -->
-          <li class="active"><a href="{{url_for('main.index', id='dzjy')}}" title="Daozang jiyao">道藏輯要</a></li>
-          <li><a href="{{url_for('main.index', id='dzjy')}}">About</a></li>
-          <li><a href="{{url_for('main.index')}}">Contact</a></li>
+	  <!--          <li class="active"><a href="/texts/dzjy">{{_('Collections')}}</a></li> -->
+	  {% block navlinks %}
+	  {% endblock navlinks%}
         </ul>
       </div>
         <ul class="nav pull-right">
@@ -80,5 +79,7 @@
     <script  src="{{ url_for('static', filename='jquery/jquery.ui.widget.js')}}"></script>
     <script  src="{{ url_for('static', filename='jquery/jquery.ui.tabs.js')}}"></script>
     <script  src="{{ url_for('static', filename='js/highlight.js')}}"></script>
+    {% block closingscript %}
+    {% endblock %}
   </body>
 </html>

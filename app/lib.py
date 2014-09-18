@@ -188,8 +188,8 @@ def prevnext(page):
 
 def doftsearch(key):
     try:
-    #subprocess.call(['bzgrep -H ^龍二  /Users/Shared/md/index/79/795e*.idx*'], stdout=of, shell=True )
-    #ox = subprocess.check_output(['bzgrep -H ^%s  /Users/Shared/md/index/%s/%s*.idx*' % (key[1:], ("%4.4x" % (ord(key[0])))[0:2], "%4.4x" % (ord(key[0])))], shell=True )
+#subprocess.call(['bzgrep -H ^龍二  /Users/Shared/md/index/79/795e*.idx*'], stdout=of, shell=True )
+#ox = subprocess.check_output(['bzgrep -H ^%s  /Users/Shared/md/index/%s/%s*.idx*' % (key[1:], ("%4.4x" % (ord(key[0])))[0:2], "%4.4x" % (ord(key[0])))], shell=True )
         ox = subprocess.check_output(['bzgrep -H ^%s  %s/%s/%s*.idx* | cut -d : -f 2-' % (key[1:],
               current_app.config['IDXDIR'],  ("%4.4x" % (ord(key[0])))[0:2], "%4.4x" % (ord(key[0])))], shell=True )
     except subprocess.CalledProcessError:
@@ -200,6 +200,17 @@ def doftsearch(key):
     redis_store.rpush(key, *s)
     return True
 
+def applyfilter(key, fs):
+    """key is the query being searched, fs is a list of filters to apply. """
+    ox = []
+    total = redis_store.llen(key)
+    for f in fs:
+        # apply the filters:
+        if len(f) > 1:
+            ox.extend([k for k in redis_store.lrange(key, 1, redis_store.llen(key)) if k.split()[1].split(':')[0][0:len(f)] == f])
+    ox=list(set(ox))
+    ox.sort()
+    return ox
 
 ## helper object for view, this could at some point be moved into a flask extension
 class Pagination(object):

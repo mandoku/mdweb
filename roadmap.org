@@ -97,3 +97,80 @@ r.lrange(key, 0, 20)
        [2014-09-05T20:30:39+0900]
      - now ready to put it together!
 
+* catalog 
+# #[2014-09-15T15:58:25+0900]
+
+** count ids etc:
+#+BEGIN_SRC python
+from app import redis_store as r
+c = r.keys('zb:meta*')
+a = [r.hgetall(b).keys() for b in c]
+counter = Counter(itertools.chain(*a))
+#+END_SRC
+
+RESULT:
+
+LINKS 9271
+TITLE 9271
+RESP 7330
+DYNASTY 7362
+page 1528 040314a
+WITLIST 9271
+
+DZ 1528 DZ0226
+HFL 1528 'HFL\xe7\x8f\xa0\xe4\xb8\x8a022' = HFL珠上022
+CBETA_ID 4275 T50n2046
+XWDZ 1528 XWDZ06p0828
+ZHDZ 1527 ZHDZ19p0143
+ID 9271 ZB5a0227
+
+
+
+*** dynasties:
+#+BEGIN_SRC 
+a = [[r.hgetall(b)[k] for k in r.hgetall(b).keys() if k == 'DYNASTY'] for b in c]
+c2 = Counter(itertools.chain(*a))
+for c in c2.most_common(40).keys():
+   print c, cn
+#+END_SRC
+
+宋 1958
+明 1064
+唐 1052
+清 1016
+元 446
+隋 153
+西晉 141
+失譯 137
+民國 101
+後漢 79
+劉宋 78
+漢 75
+吳 63
+東晉 52
+梁 52
+姚秦 43
+元魏 43
+日本 42
+晉 33
+新羅 31
+□ 25
+後秦 20
+陳 20
+金 20
+後魏 16
+天親菩薩造 15
+龍樹菩薩造 14
+高麗 12
+方廣錩整理 12
+北涼 12
+魏 11
+世親菩薩造 11
+北周 10
+南唐 9
+無著菩薩造 9
+達照整理 8
+張總整理 8
+闕譯 7
+遼 7
+方廣錩 6

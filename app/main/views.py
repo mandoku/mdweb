@@ -1,6 +1,6 @@
 #    -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from flask import Response, render_template, redirect, url_for, abort, flash, request,\
+from flask import Response, render_template, redirect, url_for, abort, flash, Markup, request,\
     current_app, make_response
 from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import get_debug_queries
@@ -12,36 +12,43 @@ from .. import redis_store
 from .. import lib
 from ..models import Permission, Role, User, Post, Comment
 from ..decorators import admin_required, permission_required
+from collections import Counter
 
 from datetime import datetime
 import subprocess
 
 
 import codecs, re
-from . import mandoku_view
+from .. import mandoku_view
 
 import gitlab, requests
 
-
+zbmeta = "zb:meta:"
     
 @main.route('/search', methods=['GET', 'POST',])
 def searchtext(count=20, page=1):
     key = request.values.get('query', '')
-#    rep = "\n%s:" % (request.values.get('rep', 'ZB'))
     count=int(request.values.get('count', count))
     page=int(request.values.get('page', page))
-    #/Users/Shared/md/index"
+    filters = request.values.get('filter', '')
     if len(key) > 0:
         if not redis_store.exists(key):
             lib.doftsearch(key)
     else:
         return "400 please submit searchkey as parameter 'query'."
-    total = redis_store.llen(key)
+    fs = filters.split(';')
+    fs = [a for a in fs if len(a) > 1]
     start = (page - 1) * count  + 1
-    ox = [  (k.split()[0].split(','), k.split()[1]) for k in redis_store.lrange(key, start, start+count)]
+    if len(fs) < 1:
+        total = redis_store.llen(key)
+        ox = [  (k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count)]
+    else:
+        ox1 = lib.applyfilter(key, fs)
+        total = len(ox1)
+        ox = [(k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start - 1:start+count]]
     p = lib.Pagination(key, page, count, total, ox)
-    return render_template('result.html', sr={'list' : p.items, 'total': total, 'head' : '', 'link' : '' }, key=key, pagination=p)
-    return ox
+    return render_template('result.html', sr={'list' : p.items, 'total': total }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs))
+
 
 
 @main.route('/text/<coll>', methods=['GET',] )
@@ -49,10 +56,11 @@ def showcoll(coll, edition=None, fac=False):
     return coll
 
 #@main.route('/text/<coll>/<int:seq>/<int:juan>', methods=['GET',] )
-
 @main.route('/text/<coll>/<seq>/<juan>', methods=['GET',] )
 @main.route('/text/<id>/<juan>', methods=['GET',])
 def showtext(juan, id=0, coll=None, seq=0):
+    doc = {}
+    key = request.values.get('query', '')
     juan = "%3.3d" % (int(juan))
     if coll:
         if coll.startswith('ZB'):
@@ -61,24 +69,47 @@ def showtext(juan, id=0, coll=None, seq=0):
             #TODO need to find the canonical id for this, go to redis, pull it out
             id="Not Implemented"
     #the filename is of the form ZB1a/ZB1a0001/ZB1a0001_002.txt
-    url =  "%s/%s/%s/raw/master/%s_%s.txt?private_token=%s" % (current_app.config['GITLAB_HOST'], id[0:4], id,  id, juan, current_app.config['GITLAB_TOKEN'])
-#    print url
-    r = requests.get(url)
-    if b"<!DOCTYPE html>" in r.content:
-        print "Not retrieved from Gitlab!", id
-        filename = "%s/%s/%s_%s.txt" % (id[0:4], id, id, juan)
+    # url =  "%s/%s/%s/raw/master/%s_%s.txt?private_token=%s" % (current_app.config['GITLAB_HOST'], id[0:4], id,  id, juan, current_app.config['GITLAB_TOKEN'])
+    # r = requests.get(url)
+    # if b"<!DOCTYPE html>" in r.content:
+    #     print "Not retrieved from Gitlab!", id
+    filename = "%s/%s/%s_%s.txt" % (id[0:4], id[0:8], id, juan)
+    datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
+    try:
         datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-        try:
-            datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-            fn = codecs.open(datei)
-        except:
-            return "File Not found: %s" % (filename)
-        md = mandoku_view.mdDocument(fn.read(-1))
-    else:
-        md = mandoku_view.mdDocument(r.content.decode('utf-8'))
-#    print "\n".join(["%d,%s" % (m) for m in md.toc])
-    return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
+        fn = codecs.open(datei)
+    except:
+        return "File Not found: %s" % (filename)
+    md = mandoku_view.mdDocument(fn.read(-1))
+    try:
+        res = redis_store.hgetall("%s%s" % ( zbmeta, id[0:8]))
+    except:
+        res = {}
+    res['ID'] = id
+    try:
+        title = res['TITLE']
+    except:
+        title = ""
+    # else:
+    #     md = mandoku_view.mdDocument(r.content.decode('utf-8'))
+    return render_template('showtext.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'] )
+#return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
 
+def showtextredis(juan, id=0, coll=None, seq=0):
+    juan = "%3.3d" % (int(juan))
+    if coll:
+        if coll.startswith('ZB'):
+            id = "%s%4.4d" % (coll, int(seq))
+        else:
+            #TODO need to find the canonical id for this, go to redis, pull it out
+            id="Not Implemented"
+    #the filename is of the form ZB1a/ZB1a0001/ZB1a0001_002.txt
+    filename = "%s/%s/%s_%s.txt" % (id[0:4], id, id, juan)
+    datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
+    mr = mandoku_redis.RedisMandoku(redis_store, None, 100000, datei)
+    
+    return render_template('', ct={'mtext': md.md, 'doc' : doc} )
+    
 
 ## image
 
@@ -92,7 +123,7 @@ def getimage():
         return "Not found"
     return Response ("\n%s" % (fn.read(-1)),  content_type="text/plain;charset=UTF-8")
 
-## dic
+## dic  these two also in api
 
 @main.route('/dicpage/<dic>/<page>', methods=['GET',])
 def dicpage(dic=None,page=None):
@@ -113,7 +144,60 @@ def searchdic():
     return lib.dicentry(key, current_app.config['DICURL'])
 
 
+## catalog
+@main.route('/catalog', methods=['GET',])
+def catalog():
+    coll = request.values.get('coll', '')
+    subcoll = request.values.get('subcoll', '')
+    if len(coll) < 1 and len(subcoll) < 1:
+        cats = redis_store.hgetall(zbmeta+'catalogs')
 
+
+
+## filter
+@main.route('/getfacets', methods=['GET', ])
+def getfacets():
+    key = request.values.get('query', '')
+    tpe = request.values.get('type', 'ID')
+    # length of the ID
+    ln = int(request.values.get('len', '3'))
+    # number of top_most entries, 0 = all
+    cnt = int(request.values.get('cnt', '3'))
+    if cnt == 0:
+        cnt = None
+    if tpe == 'ID':
+        f = [a.split('\t')[1][0:ln] for a in redis_store.lrange(key, 1, redis_store.llen(key))]
+    c = Counter(f)
+    fs = [(a[0], redis_store.hgetall("%s%s" %(zbmeta, a[0])), a[1]) for a in c.most_common(cnt)]
+    return render_template('facets.html', fs=fs, key=key)
+#    return Response("%s" % (c.most_common(cnt)))
+
+@main.route('/addfilter', methods=['GET',])
+def addfilter(count=20, page=1):
+    key = request.values.get('query', '')
+    add = request.values.get('newfilter', '')
+    filters = request.values.get('filter', '')
+    count=int(request.values.get('count', count))
+    page=int(request.values.get('page', page))
+    fs = filters.split(';')
+    fs.append(add)
+    start = (page - 1) * count  + 1
+    ox = lib.applyfilter(key, fs)
+    total = len(ox)
+    print total, fs
+    ox = ox[start:start+count]
+    oy = [  (k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox]
+    p = lib.Pagination(key, page, count, total, oy)
+    return render_template('result.html', sr={'list' : p.items, 'total': total, 'head' : '', 'link' : '' }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' })
+    
+
+@main.route('/remfilter', methods=['GET',])
+def remfilter():
+    query = request.values.get('query', '')
+    rem = request.values.get('remove', '')
+    filters = request.values.get('filter', '')
+    print filters
+    
 ## unrelated:
 
 @main.after_app_request
@@ -375,6 +459,8 @@ def moderate_disable(id):
     db.session.add(comment)
     return redirect(url_for('.moderate',
                             page=request.args.get('page', 1, type=int)))
+
+
 
 @main.route('/about/<id>')
 def about(id):

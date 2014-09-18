@@ -6,8 +6,6 @@ from app.exceptions import ValidationError
 from . import api
 from .. import redis_store
 from .. import lib
-from datetime import datetime
-import subprocess
 
 
 import codecs, re
@@ -39,25 +37,22 @@ def procline():
     except:
         return "Not Found: %s " % (l)
 
-
+# for the moment, we are just dumping out all matches
 @api.route('/search', methods=['GET', 'POST',])
 def searchtext(count=20, start=None, n=20):
     key = request.values.get('query', '')
-#    rep = "\n%s:" % (request.values.get('rep', 'ZB'))
+    force = request.values.get('force', None)
     count=int(request.values.get('count', count))
     start=int(request.values.get('start', 0))
-    #/Users/Shared/md/index"
-    #subprocess.call(['bzgrep -H ^龍二  /Users/Shared/md/index/79/795e*.idx*'], stdout=of, shell=True )
-    #ox = subprocess.check_output(['bzgrep -H ^%s  /Users/Shared/md/index/%s/%s*.idx*' % (key[1:], ("%4.4x" % (ord(key[0])))[0:2], "%4.4x" % (ord(key[0])))], shell=True )
     if len(key) > 0:
-        if not redis_store.exists(key):
+        if (not redis_store.exists(key)) or force:
             lib.doftsearch(key)
     else:
         return "400 please submit searchkey as parameter 'query'."
     total = redis_store.llen(key)
     ox = redis_store.lrange(key, 1, total)
     return Response ("\n%s" % ("\n".join(ox).decode('utf-8')),  content_type="text/plain;charset=UTF-8")
-#    return "\n".join(ox)
+
     
 ## file
 
@@ -78,3 +73,20 @@ def getfile():
         return "Not found"
     return Response ("\n%s" % (fn.read(-1)),  content_type="text/plain;charset=UTF-8")
 
+@api.route('/dic', methods=['GET',])
+def searchdic():
+    key = request.values.get('query', '')
+    return lib.dicentry(key, current_app.config['DICURL'])
+
+@api.route('/dicpage/<dic>/<page>', methods=['GET',])
+def dicpage(dic=None,page=None):
+#    pn = "a", "b"
+    pn = lib.prevnext(page)
+    us = url_for('static', filename='dic')
+    return """<html>
+<body>
+<img src="%s/%s/%s.png" style="width:100%%;"/>
+<a href="/dicpage/%s" type="button" id="btnPrev" >%s</a>
+<a href="/dicpage/%s" type="button" id="btnNext">%s</a>
+</body>
+</html>""" % (us, dic, page, "%s/%s" % (dic, pn[0]), pn[0], "%s/%s" % (dic, pn[1]), pn[1])

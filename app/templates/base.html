@@ -64,9 +64,31 @@
         <button type="button" class="close" data-dismiss="alert">&times;</button>
         {{ message }}
     </div>
+
     {% endfor %}
 
-    {% block page_content %}{% endblock %}
+
+
+<div class="container">
+  <div class="row">
+    <div class="span2">
+    {% block sidebar %}
+    <h2>{{_('News')}}</h2>
+    <ul>
+    <li><span class="label-info">[2013-03-10]</span><br />
+      First test release of the <a href="{{url_for('showcoll', id='dzjy')}}" title="Daozang jiyao"><i>Daozang jiyao</i> Electronic Edition</a>.
+      </li>
+    </ul>
+    {% endblock sidebar %}
+    </div>
+
+    <div class="span9 textbody">
+      {% block body %}{% endblock %}
+    </div>
+  </div> <!-- closes row -->
+</div>
+
+
 </div>
 {% endblock %}
 
