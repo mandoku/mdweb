@@ -1,0 +1,75 @@
+{% extends "laybase.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block navlinks %}
+          <li class="active"><a href="{{url_for('main.texttop', id=txtid)}}" title="{{txtid}}">{{title}}</a></li>
+          <li><a href="http://gl.kanripo.org/{{txtid[0:4]}}/{{txtid}}">Git repository</a></li>
+          <li><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
+{% endblock navlinks%}
+
+
+{% block subhead %}
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1><a href="{{url_for('main.showcoll', coll=ct.doc.id)}}">{{ct.doc.id}}</a> {{doc['TITLE']}} </h1>
+  </div>
+</header>
+{% endblock subhead %}
+
+<div class="container">
+  <div class="row">
+    <div class="span2">
+
+{% block sidebar %}
+<div class="sidebar" >
+
+<h2>{{_('Versions')}}</h2>
+  <ul>
+    {% for v in ct.doc.versions %} 
+    <li>{{v}}</li>
+    <ul>
+    {% for s, f in ct.doc.sections %}
+    <li><a href="{{s}}?edition={{v}}&amp;pos=1&amp;fac=True">{{s}}</a></li>
+    {% endfor %}
+    </ul>
+    {% endfor %}
+  </ul>
+
+<h2>{{_('Facsimile')}}</h2>
+    <ul>
+    {% for s, f in ct.doc.sections %}
+    <li><a href="{{s}}">{{s}}</a></li>
+    {% endfor %}
+    </ul>
+<h2>{{_('Contents')}}</h2>
+  <ul>
+    {%- for item in ct.doc.toc recursive %}
+    {%- if item[0] is number %}
+    <li class="l{{item[0]}}"><a href="{{item[2]}}#p{{item[3]}}">{{item[1]}}</a></li>
+    {% else %}
+    {%- if loop.index <  20 %}
+    <ul>{{loop(item)}}</ul>
+    {%- endif %}
+    {%- endif %}
+    {%- endfor %}
+  </ul>
+
+
+</div>
+{% endblock sidebar %}
+
+
+{% block body %}
+
+<div class="row">
+  <div id="txtcont" class="span9">
+    {{ct.mtext}}
+  </div>
+</div>
+<script>
+$("#tabs").tabs({event :  "mouseover"}),tabs("url", 0, "index.html").tabs("load", 0)
+</script>
+</div>
+{% endblock %}
+
