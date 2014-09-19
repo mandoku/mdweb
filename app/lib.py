@@ -10,6 +10,8 @@ import subprocess
 
 ## dictionary stuff.  really should wrap this in an object?!
 md_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯\n¶]+|\t[^\n]+\n|\$[^;]+;")
+gaiji = re.compile(r"(&[^;]+;)")
+
 
 dictab = {'hydcd1' : u'漢語大詞典',
           'hydcd' : u'漢語大詞典',
@@ -195,10 +197,28 @@ def doftsearch(key):
     except subprocess.CalledProcessError:
         return False
     ux = ox.decode('utf8')
+    ux = gaiji.sub(u"⬤", ux)
     s=ux.split('\n')
+    s=[a for a in s if len(a) > 1]
     s.sort()
     redis_store.rpush(key, *s)
     return True
+
+## title search
+def dotitlesearch(titpref, key):
+    try:
+        ox = subprocess.check_output(['bzgrep -H %s  %s/*titles.txt | cut -d : -f 2-' % (key,
+              current_app.config['MDBASE']+'/system')], shell=True )
+    except subprocess.CalledProcessError:
+        return False
+    ux = ox.decode('utf8')
+    s=ux.split('\n')
+    # sort on the title
+    s.sort(key=lambda t : t.split('\t')[-1])
+    s=[a for a in s if len(a) > 1]
+    redis_store.rpush(titpref+key, *s)
+    return True
+    
 
 def applyfilter(key, fs):
     """key is the query being searched, fs is a list of filters to apply. """
@@ -211,6 +231,8 @@ def applyfilter(key, fs):
     ox=list(set(ox))
     ox.sort()
     return ox
+
+
 
 ## helper object for view, this could at some point be moved into a flask extension
 class Pagination(object):

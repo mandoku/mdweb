@@ -24,7 +24,10 @@ from .. import mandoku_view
 import gitlab, requests
 
 zbmeta = "zb:meta:"
-    
+titpref = "zb:title:"
+link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
+hd = re.compile(r"^(\*+) (.*)$")
+
 @main.route('/search', methods=['GET', 'POST',])
 def searchtext(count=20, page=1):
     key = request.values.get('query', '')
@@ -38,14 +41,14 @@ def searchtext(count=20, page=1):
         return "400 please submit searchkey as parameter 'query'."
     fs = filters.split(';')
     fs = [a for a in fs if len(a) > 1]
-    start = (page - 1) * count  + 1
+    start = (page - 1) * count 
     if len(fs) < 1:
         total = redis_store.llen(key)
-        ox = [  (k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count)]
+        ox = [  (k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
     else:
         ox1 = lib.applyfilter(key, fs)
         total = len(ox1)
-        ox = [(k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start - 1:start+count]]
+        ox = [(k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
     p = lib.Pagination(key, page, count, total, ox)
     return render_template('result.html', sr={'list' : p.items, 'total': total }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs))
 
@@ -55,13 +58,40 @@ def searchtext(count=20, page=1):
 def showcoll(coll, edition=None, fac=False):
     return coll
 
+@main.route('/text/<id>/', methods=['GET',])
+def texttop(id=0, coll=None, seq=0):
+    ct = {'toc' : [], 'id' : id}
+    filename = "%s/%s/%s.org" % (id[0:4], id[0:8], id)
+    datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
+    try:
+        datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
+        fn = codecs.open(datei, 'r', 'utf-8')
+    except:
+        return "File Not found: %s" % (filename)
+    for line in fn:
+        if line.startswith('#+TITLE:'):
+            ct['title'] = line[:-1].split(' ', 1)[-1]
+        if hd.search(line):
+            tmp = hd.findall(line)[0][0]
+            lev = len(tmp[0])
+        else:
+            tmp = ""
+        if link_re.search(line):
+            l = [tmp]
+            l.extend(re.findall(r'\[\[([^\]]+)\]\[([^\]]+)', line))
+            ct['toc'].append(l)
+    return  render_template('texttop.html', ct=ct)
+
 #@main.route('/text/<coll>/<int:seq>/<int:juan>', methods=['GET',] )
 @main.route('/text/<coll>/<seq>/<juan>', methods=['GET',] )
 @main.route('/text/<id>/<juan>', methods=['GET',])
 def showtext(juan, id=0, coll=None, seq=0):
     doc = {}
     key = request.values.get('query', '')
-    juan = "%3.3d" % (int(juan))
+    try:
+        juan = "%3.3d" % (int(juan))
+    except:
+        pass
     if coll:
         if coll.startswith('ZB'):
             id = "%s%4.4d" % (coll, int(seq))
@@ -147,18 +177,43 @@ def searchdic():
 ## catalog
 @main.route('/catalog', methods=['GET',])
 def catalog():
+    r=redis_store
     coll = request.values.get('coll', '')
     subcoll = request.values.get('subcoll', '')
     if len(coll) < 1 and len(subcoll) < 1:
-        cats = redis_store.hgetall(zbmeta+'catalogs')
+        cat = [r.hgetall(a) for a in r.keys("zb:catalog*")]
+        cat.sort(key=lambda t : t['ID'])
+    else:
+        cat = [redis_store.hgetall("%s%s" %( zbmeta, k.split(':')[-1][0:8])) for k in r.keys(zbmeta+coll+"*")]
+#        cat = [c for c in cat if coll in  c['ID']]
+        cat.sort(key=lambda t : t['ID'])
+    return render_template('catalog.html', cat = cat, sr={'total': 0, 'coll': coll})
 
-
+@main.route('/titlesearch', methods=['GET',])
+def titlesearch(count=20, page=1):
+    key = request.values.get('query', '')
+    count=int(request.values.get('count', count))
+    page=int(request.values.get('page', page))
+    filters = request.values.get('filter', '')
+    fs = filters.split(';')
+    fs = [a for a in fs if len(a) > 1]
+    if len(key) > 0:
+        if not redis_store.exists(titpref+key):
+            lib.dotitlesearch(titpref, key)
+    else:
+        return "400 please submit searchkey as parameter 'query'."
+    start = (page - 1) * count
+    total = redis_store.llen(titpref+key)
+    tits = redis_store.lrange(titpref+key, start, start+count)
+    p = lib.Pagination(key, page, count, total, tits)
+    return render_template('titles.html', sr={'list' : p.items, 'total': total }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), prefix=titpref)
 
 ## filter
 @main.route('/getfacets', methods=['GET', ])
 def getfacets():
     key = request.values.get('query', '')
     tpe = request.values.get('type', 'ID')
+    prefix = request.values.get('prefix', '')
     # length of the ID
     ln = int(request.values.get('len', '3'))
     # number of top_most entries, 0 = all
@@ -166,7 +221,7 @@ def getfacets():
     if cnt == 0:
         cnt = None
     if tpe == 'ID':
-        f = [a.split('\t')[1][0:ln] for a in redis_store.lrange(key, 1, redis_store.llen(key))]
+        f = [a.split('\t')[1][0:ln] for a in redis_store.lrange(prefix+key, 1, redis_store.llen(prefix+key))]
     c = Counter(f)
     fs = [(a[0], redis_store.hgetall("%s%s" %(zbmeta, a[0])), a[1]) for a in c.most_common(cnt)]
     return render_template('facets.html', fs=fs, key=key)

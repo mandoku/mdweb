@@ -1,0 +1,41 @@
+{% extends "laybase.html" %}
+
+{% block subhead %}
+
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>{{ct.id}} {{ct.title}} </h1>
+  </div>
+</header>
+
+
+{% endblock subhead %}
+
+
+
+{% block sidebar %}
+
+
+{% endblock sidebar %}
+
+{% block body %}
+<div class="span7">
+  <h1 id="title">
+    {{ct.title}}
+  </h1>
+  {% if ct.toc %}
+  <h2>Contents</h2>
+  <ul>
+    {%- for item in ct.toc %}
+    {% set it_juan = item[1][0].split(':')[1].split('_')[1][:3]  %}
+    {% set it_txtid = item[1][0].split(':')[1].split('_')[0]  %}
+    {% set it_page = item[1][0].split(':')[-1].split('-')[-1][:5]  %}
+    <li><a href="{{url_for('main.showtext', id=it_txtid, juan=it_juan, _anchor=it_page)}}">{{item[0]}} {{item[1][1]}}</a></li>
+    {%- endfor %}
+  </ul>
+  {% endif %}
+  <script>
+    $("#tabs").tabs({event :  "mouseover"}),tabs("url", 0, "index.html").tabs("load", 0)
+  </script>
+</div>
+{% endblock %}

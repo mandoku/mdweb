@@ -8,7 +8,13 @@
 <header class="jumbotron subhead" id="overview">
   <div class="container">
     <h1>{{sr.head}}</h1>
-
+    <p>
+    {{_('Searched for')}}
+    {{key}}.
+    {{_('Found')}} 
+    {{sr.total}},
+    {{_('showing %d to %d.' % (start+1, n))}}
+    </p>
   </div>
 </header>
 
@@ -21,9 +27,6 @@
 
 <div>
   <div>
-    {{sr.total}}
-    {{key}}
-    {{_('Showing %d to %d.' % (start, n))}}
     <table>
       {% for item in sr.list %}
       {% set it_txtid = item[1].split(':')[0] %}
@@ -50,11 +53,11 @@
 {% endblock %}
 
 {% block sidebar %}
-<div id="bu"></div>
+<div id="bu"><h4>部</h4></div>
 <hr/>
-<div id="lei"></div>
+<div id="lei"><h4>類</h4></div>
 <hr/>
-<div id="texts"></div>
+<div id="texts"><h4>文獻</h4></div>
 {% endblock sidebar %}
 
 {% block closingscript %}

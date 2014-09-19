@@ -1,0 +1,62 @@
+{% extends "laybase.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+
+{% block subhead %}
+
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <p>
+    {{_('Searched for')}}
+    {{key}}
+    {{_('in text titles.  Found')}} 
+    {{sr.total}},
+    {{_('showing %d to %d.' % (start+1, n))}}
+    </p>
+  </div>
+</header>
+
+
+{% endblock subhead %}
+
+
+
+{% block body %}
+
+<div>
+  <div>
+    <table>
+      {% for item in sr.list %}
+      {% set it_txtid = item.split()[0] %}
+      {% set it_title = item.split()[1] %}
+      <tr>
+	<!-- http://localhost:5000/text/ZB6q0003/003#0221a -->
+	<!-- ZB1a0068:007-352:2:6 -->
+	<td class="text-left"><a href="{{url_for('main.texttop', id=it_txtid)}}" title="{{it_txtid}}">{{it_txtid}}</a></td>
+	<td  class="text-left">{{it_title}}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  </div>
+</div>
+{% if sr.total > 20 %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.titlesearch', query=key, filter=filter, count=count) }}
+</div>
+{% endif %}
+
+
+{% endblock %}
+
+{% block sidebar %}
+<div id="bu"></div>
+<hr/>
+<div id="lei"></div>
+<hr/>
+<div id="texts"></div>
+{% endblock sidebar %}
+
+{% block closingscript %}
+
+{% endblock %}

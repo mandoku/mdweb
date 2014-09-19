@@ -1,0 +1,53 @@
+{% extends "laybase.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+
+{% block subhead %}
+
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>{{_('Kanseki Repository Catalog')}}</h1>
+  </div>
+</header>
+
+
+{% endblock subhead %}
+
+
+
+{% block body %}
+
+<div>
+  <div>
+    <table>
+      {% for item in cat %}
+      {% set it_txtid = item['ID'] %}
+      {% set it_title = item['TITLE'] %}
+      {% set it_type =  item['TYPE'] %}
+      <tr>
+<!-- http://localhost:5000/text/ZB6q0003/003#0221a -->
+<!-- ZB1a0068:007-352:2:6 -->
+         {% if sr.coll %}
+	<td class="text-left"><a href="{{url_for('main.texttop', id=it_txtid)}}" title="{{it_txtid}}">{{it_txtid}}</a></td>
+	{% else %}
+	<td class="text-left"><a href="{{url_for('main.catalog', coll=it_txtid)}}" title="{{it_txtid}}">{{it_txtid}}</a></td>
+	{% endif %}
+	<td  class="text-left">{{it_title}}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  </div>
+</div>
+{% if sr.total > 20 %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.searchtext', query=key, filter=filter, count=count) }}
+</div>
+{% endif %}
+
+
+{% endblock %}
+
+{% block sidebar %}
+{% endblock sidebar %}
+
