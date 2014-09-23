@@ -36,9 +36,10 @@ def searchtext(count=20, page=1):
     filters = request.values.get('filter', '')
     if len(key) > 0:
         if not redis_store.exists(key):
-            lib.doftsearch(key)
+            if not lib.doftsearch(key):
+                return render_template("error_page.html", description = "Text search for %s: Nothing found!" % (key), key=key)
     else:
-        return "400 please submit searchkey as parameter 'query'."
+        return render_template("error_page.html", code="400", name = "Search Error", description = "No search term. Please submit the search term as parameter 'query'.")
     fs = filters.split(';')
     fs = [a for a in fs if len(a) > 1]
     start = (page - 1) * count 
@@ -199,9 +200,10 @@ def titlesearch(count=20, page=1):
     fs = [a for a in fs if len(a) > 1]
     if len(key) > 0:
         if not redis_store.exists(titpref+key):
-            lib.dotitlesearch(titpref, key)
+            if not(lib.dotitlesearch(titpref, key)):
+                return render_template("error_page.html", description = "Title search for %s: Nothing found" % (key), key=key)
     else:
-        return "400 please submit searchkey as parameter 'query'."
+        return render_template("error_page.html", code="400", name = "Search Error", description = "No search term. Please submit the search term as parameter 'query'.")
     start = (page - 1) * count
     total = redis_store.llen(titpref+key)
     tits = redis_store.lrange(titpref+key, start, start+count)

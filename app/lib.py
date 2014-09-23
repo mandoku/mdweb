@@ -201,8 +201,11 @@ def doftsearch(key):
     s=ux.split('\n')
     s=[a for a in s if len(a) > 1]
     s.sort()
-    redis_store.rpush(key, *s)
-    return True
+    if len(s) > 0:
+        redis_store.rpush(key, *s)
+        return True
+    else:
+        return False
 
 ## title search
 def dotitlesearch(titpref, key):
@@ -216,9 +219,11 @@ def dotitlesearch(titpref, key):
     # sort on the title
     s.sort(key=lambda t : t.split('\t')[-1])
     s=[a for a in s if len(a) > 1]
-    redis_store.rpush(titpref+key, *s)
-    return True
-    
+    if len(s) > 0:
+        redis_store.rpush(titpref+key, *s)
+        return True
+    else:
+        return False
 
 def applyfilter(key, fs):
     """key is the query being searched, fs is a list of filters to apply. """
