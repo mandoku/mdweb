@@ -1,7 +1,7 @@
 #    -*- coding: utf-8 -*-
 from flask import jsonify
 from flask import Response, render_template, redirect, url_for, abort, flash, request,\
-    current_app, make_response
+    current_app, make_response, send_file
 from app.exceptions import ValidationError
 from . import api
 from .. import redis_store
@@ -95,9 +95,11 @@ def dicpage(dic=None,page=None):
 @api.route('/getimage', methods=['GET',])
 def getimage():
     filename = request.values.get('filename', '')
+    datei = "%s/%s" % (current_app.config['IMGDIR'], filename)
+    mtype = filename[-3:]
     try:
-        datei = "%s/%s" % (current_app.config['IMGDIR'], filename)
-        fn = codecs.open(datei)
+        return send_file(datei, mimetype='image/%s' % (mtype), attachment_filename=filename)
     except:
         return "404 Not found"
-    return Response ("\n%s" % (fn.read(-1)),  content_type="text/plain;charset=UTF-8")
+
+    return Response ("\n%s" % (fn.read(-1)),  content_type="image/%s" % (mtype))
