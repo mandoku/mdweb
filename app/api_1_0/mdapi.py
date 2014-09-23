@@ -90,3 +90,14 @@ def dicpage(dic=None,page=None):
 <a href="/dicpage/%s" type="button" id="btnNext">%s</a>
 </body>
 </html>""" % (us, dic, page, "%s/%s" % (dic, pn[0]), pn[0], "%s/%s" % (dic, pn[1]), pn[1])
+
+## images
+@api.route('/getimage', methods=['GET',])
+def getimage():
+    filename = request.values.get('filename', '')
+    try:
+        datei = "%s/%s" % (current_app.config['IMGDIR'], filename)
+        fn = codecs.open(datei)
+    except:
+        return "404 Not found"
+    return Response ("\n%s" % (fn.read(-1)),  content_type="text/plain;charset=UTF-8")
