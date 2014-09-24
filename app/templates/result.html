@@ -11,6 +11,10 @@
     <p>
     {{_('Searched for')}}
     {{key}}.
+    {% if filter %}
+    {{_('Filtered by: ')}}
+    {{filter}}
+    {% endif %}
     {{_('Found')}} 
     {{sr.total}},
     {{_('showing %d to %d.' % (start+1, n))}}
@@ -45,7 +49,7 @@
 </div>
 {% if sr.total > 20 %}
 <div class="pagination">
-    {{ macros.pagination_widget(pagination, '.searchtext', query=key, filter=filter, count=count) }}
+    {{ macros.pagination_widget(pagination, '.searchtext', query=key, filter=filter, type=tpe, count=count) }}
 </div>
 {% endif %}
 
@@ -53,6 +57,8 @@
 {% endblock %}
 
 {% block sidebar %}
+<div id="dyn"><h4>朝代</h4></div>
+<hr/>
 <div id="bu"><h4>部</h4></div>
 <hr/>
 <div id="lei"><h4>類</h4></div>
@@ -64,6 +70,17 @@
 <script>
 (function($) {
     $(document).ready(function() {
+            $.ajax({
+                type: 'GET',
+                url: '/getfacets?query={{key}}&type=DYNASTY&cnt=4',
+                dataType: 'html',
+                success: function(html, textStatus) {
+                    $('#dyn').append(html);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
+                }
+        });
             $.ajax({
                 type: 'GET',
                 url: '/getfacets?query={{key}}&len=3&cnt=6',

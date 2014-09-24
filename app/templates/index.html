@@ -1,35 +1,28 @@
-{% extends "base.html" %}
+{% extends "laybase.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
-{% import "_macros.html" as macros %}
 
 {% block title %}Kanripo{% endblock %}
 
-{% block page_content %}
-<div class="page-header">
-    <h1>Hello, {% if current_user.is_authenticated() %}{{ current_user.username }}{% else %}Stranger{% endif %}!</h1>
+
+{% block navlinks %}
+          <li><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
+{% endblock navlinks%}
+
+
+
+{% block body %}
+
+<div class="row">
+  <div id="txtcont" class="span9">
+    <h3>About Kanseki Repository</h3>
+    <p>bla bla</p>
+    <h3>Catalog</h3>
+    <p><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></p>
+  </div>
 </div>
-<div>
-    {% if current_user.can(Permission.WRITE_ARTICLES) %}
-    {{ wtf.quick_form(form) }}
-    {% endif %}
+<script>
+$("#tabs").tabs({event :  "mouseover"}),tabs("url", 0, "index.html").tabs("load", 0)
+</script>
 </div>
-<div class="post-tabs">
-    <ul class="nav nav-tabs">
-        <li{% if not show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_all') }}">All</a></li>
-        {% if current_user.is_authenticated() %}
-        <li{% if show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_followed') }}">Followers</a></li>
-        {% endif %}
-    </ul>
-    {% include '_posts.html' %}
-</div>
-{% if pagination %}
-<div class="pagination">
-    {{ macros.pagination_widget(pagination, '.index') }}
-</div>
-{% endif %}
 {% endblock %}
 
-{% block scripts %}
-{{ super() }}
-{{ pagedown.include_pagedown() }}
-{% endblock %}

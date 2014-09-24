@@ -34,6 +34,7 @@ def searchtext(count=20, page=1):
     count=int(request.values.get('count', count))
     page=int(request.values.get('page', page))
     filters = request.values.get('filter', '')
+    tpe = request.values.get('type', '')
     if len(key) > 0:
         if not redis_store.exists(key):
             if not lib.doftsearch(key):
@@ -41,17 +42,17 @@ def searchtext(count=20, page=1):
     else:
         return render_template("error_page.html", code="400", name = "Search Error", description = "No search term. Please submit the search term as parameter 'query'.")
     fs = filters.split(';')
-    fs = [a for a in fs if len(a) > 1]
+    fs = [a for a in fs if len(a) > 0]
     start = (page - 1) * count 
     if len(fs) < 1:
         total = redis_store.llen(key)
         ox = [  (k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
     else:
-        ox1 = lib.applyfilter(key, fs)
+        ox1 = lib.applyfilter(key, fs, tpe)
         total = len(ox1)
         ox = [(k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
     p = lib.Pagination(key, page, count, total, ox)
-    return render_template('result.html', sr={'list' : p.items, 'total': total }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs))
+    return render_template('result.html', sr={'list' : p.items, 'total': total }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), tpe=tpe)
 
 
 
@@ -224,8 +225,14 @@ def getfacets():
         cnt = None
     if tpe == 'ID':
         f = [a.split('\t')[1][0:ln] for a in redis_store.lrange(prefix+key, 1, redis_store.llen(prefix+key))]
+    elif tpe == 'DYNASTY':
+        f = [redis_store.hgetall("%s%s" % (zbmeta, a.split('\t')[1].split(':')[0])) for a in redis_store.lrange(prefix+key, 1, redis_store.llen(prefix+key))]
+        f = [a['DYNASTY'] for a in f if a.has_key('DYNASTY')]
     c = Counter(f)
-    fs = [(a[0], redis_store.hgetall("%s%s" %(zbmeta, a[0])), a[1]) for a in c.most_common(cnt)]
+    if tpe == 'ID':
+        fs = [(a[0], redis_store.hgetall("%s%s" %(zbmeta, a[0])), a[1], tpe) for a in c.most_common(cnt)]
+    elif tpe == 'DYNASTY':
+        fs = [(a[0], {'TITLE': a[0]}, a[1], tpe) for a in c.most_common(cnt)]
     return render_template('facets.html', fs=fs, key=key)
 #    return Response("%s" % (c.most_common(cnt)))
 
@@ -278,32 +285,12 @@ def server_shutdown():
     shutdown()
     return 'Shutting down...'
 
-## below is the SNS stuff
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    form = PostForm()
-    if current_user.can(Permission.WRITE_ARTICLES) and \
-            form.validate_on_submit():
-        post = Post(body=form.body.data,
-                    author=current_user._get_current_object())
-        db.session.add(post)
-        return redirect(url_for('.index'))
-    page = request.args.get('page', 1, type=int)
-    show_followed = False
-    if current_user.is_authenticated():
-        show_followed = bool(request.cookies.get('show_followed', ''))
-    if show_followed:
-        query = current_user.followed_posts
-    else:
-        query = Post.query
-    pagination = query.order_by(Post.timestamp.desc()).paginate(
-        page, per_page=current_app.config['MDWEB_POSTS_PER_PAGE'],
-        error_out=False)
-    posts = pagination.items
-    return render_template('index.html', form=form, posts=posts,
-                           show_followed=show_followed, pagination=pagination)
+    return render_template('index.html')
 
+## below is the SNS stuff
 
 @main.route('/user/<username>')
 def user(username):

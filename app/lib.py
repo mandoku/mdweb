@@ -7,6 +7,7 @@ import re
 from . import redis_store
 import subprocess
 
+zbmeta = "zb:meta:"
 
 ## dictionary stuff.  really should wrap this in an object?!
 md_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯\n¶]+|\t[^\n]+\n|\$[^;]+;")
@@ -225,16 +226,23 @@ def dotitlesearch(titpref, key):
     else:
         return False
 
-def applyfilter(key, fs):
-    """key is the query being searched, fs is a list of filters to apply. """
+def applyfilter(key, fs, tpe):
+    """key is the query being searched, fs is a list of filters to apply, tpe is the type of the filter. """
     ox = []
     total = redis_store.llen(key)
     for f in fs:
         # apply the filters:
-        if len(f) > 1:
-            ox.extend([k for k in redis_store.lrange(key, 1, redis_store.llen(key)) if k.split()[1].split(':')[0][0:len(f)] == f])
-    ox=list(set(ox))
-    ox.sort()
+        if len(f) > 0:
+            if tpe == 'DYNASTY':
+                fx = [redis_store.hgetall("%s%s" % (zbmeta, a.split('\t')[1].split(':')[0])) for a in redis_store.lrange(key, 1, redis_store.llen(key))]
+                fx = ([a['ID'] for a in fx if a.has_key('DYNASTY') and a['DYNASTY'] == f])
+                ox.extend([k for k in redis_store.lrange(key, 1, redis_store.llen(key)) if k.split()[1].split(':')[0] in fx])
+            else:
+                ox.extend([k for k in redis_store.lrange(key, 1, redis_store.llen(key)) if k.split()[1].split(':')[0][0:len(f)] == f])
+    if len(ox) > 0:
+        ox=list(set(ox))
+        ox.sort()
+    print ox
     return ox
 
 
