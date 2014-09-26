@@ -1,7 +1,7 @@
 #    -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from flask import Response, render_template, redirect, url_for, abort, flash, Markup, request,\
-    current_app, make_response
+    current_app, make_response, send_from_directory
 from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import get_debug_queries
 from . import main
@@ -27,6 +27,12 @@ zbmeta = "zb:meta:"
 titpref = "zb:title:"
 link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
 hd = re.compile(r"^(\*+) (.*)$")
+
+@main.route('/robots.txt')
+@main.route('/googled78ca805afaa95df.html')
+# @main.route('/sitemap.xml')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
 
 @main.route('/search', methods=['GET', 'POST',])
 def searchtext(count=20, page=1):
