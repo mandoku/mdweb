@@ -32,7 +32,7 @@ hd = re.compile(r"^(\*+) (.*)$")
 @main.route('/googled78ca805afaa95df.html')
 # @main.route('/sitemap.xml')
 def static_from_root():
-    return send_from_directory(app.static_folder, request.path[1:])
+    return send_from_directory(current_app.static_folder, request.path[1:])
 
 @main.route('/search', methods=['GET', 'POST',])
 def searchtext(count=20, page=1):
