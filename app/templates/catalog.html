@@ -28,7 +28,7 @@
       <tr>
 <!-- http://localhost:5000/text/ZB6q0003/003#0221a -->
 <!-- ZB1a0068:007-352:2:6 -->
-         {% if sr.coll %}
+         {% if it_txtid|length > 4 %}
 	<td class="text-left"><a href="{{url_for('main.texttop', id=it_txtid)}}" title="{{it_txtid}}">{{it_txtid}}</a></td>
 	{% else %}
 	<td class="text-left"><a href="{{url_for('main.catalog', coll=it_txtid)}}" title="{{it_txtid}}">{{it_txtid}}</a></td>
