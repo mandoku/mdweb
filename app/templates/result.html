@@ -33,9 +33,8 @@
   <div>
     <table>
       {% for item in sr.list %}
-      {% set it_txtid = item[1].split(':')[0] %}
-      {% set it_juan = item[1].split(':')[1].split('-')[0] %}
-      {% set it_page = item[1].split(':')[1].split('-')[1][:-1] + pl[item[1].split(':')[1].split('-')[1][-1]] %}
+      {% set it_txtid, it_juan = item[1].split(':')[0].split('_') %}
+      {% set it_page = item[1].split(':')[1] %}
       {% set it_line = item[1].split(':')[2] %}
       <tr>
 <!-- http://localhost:5000/text/ZB6q0003/003#0221a -->

@@ -7,6 +7,7 @@ class Config:
     MDBASE="/Users/Shared/md-remote"
     TXTDIR="/Users/Shared/md-remote/text"
     IDXDIR="/Users/Shared/md-remote/index"
+    IDXDIR="/tmp/index"
     IMGDIR="/Users/Shared/md-remote/images"
     LANGUAGES = {
         'ja': '日本語',
