@@ -4,7 +4,7 @@
 
 {% block navlinks %}
           <li class="active"><a href="{{url_for('main.texttop', id=txtid)}}" title="{{txtid}}">{{title}}</a></li>
-          <li><a href="http://gl.kanripo.org/{{txtid[0:4]}}/{{txtid}}">Git repository</a></li>
+          <li><a href="http://github.com/kanripo/{{txtid}}">GitHub repository</a></li>
           <li><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
 {% endblock navlinks%}
 
