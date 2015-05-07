@@ -195,6 +195,8 @@ def doftsearch(key):
 #ox = subprocess.check_output(['bzgrep -H ^%s  /Users/Shared/md/index/%s/%s*.idx*' % (key[1:], ("%4.4x" % (ord(key[0])))[0:2], "%4.4x" % (ord(key[0])))], shell=True )
         ox = subprocess.check_output(['bzgrep -H ^%s  %s/%s/%s/%s*.idx* | cut -d : -f 2-' % (key[1:],
               current_app.config['IDXDIR'],  ("%4.4x" % (ord(key[0])))[0:2], "%4.4x" % (ord(key[0])), "%4.4x" % (ord(key[0])))], shell=True )
+#        ox = subprocess.check_output(['bzgrep -H ^%s  %s/%s/%s*.idx* | cut -d : -f 2-' % (key[1:],
+#              current_app.config['IDXDIR'],  ("%4.4x" % (ord(key[0])))[0:2], "%4.4x" % (ord(key[0])))], shell=True )
     except subprocess.CalledProcessError:
         return False
     ux = ox.decode('utf8')

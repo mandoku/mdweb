@@ -64,6 +64,7 @@ def getfile():
     # or even
     # http://gl.kanripo.org/ZB1a/ZB1a0118/raw/WYG/ZB1a0118_001.txt
     # ==> for this we need to use the API and a TOKEN, except for public projects
+    # https://raw.githubusercontent.com/kanripo/KR5a0328/master/KR5a0328_002.txt
     filename = request.values.get('filename', '')
     try:
         datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
