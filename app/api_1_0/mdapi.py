@@ -68,10 +68,13 @@ def getfile():
     filename = request.values.get('filename', '')
     try:
         datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-        print datei
         fn = codecs.open(datei)
     except:
-        return "Not found"
+        try:
+            datei="%s/%s/Readme.org" % (current_app.config['TXTDIR'],"/".join(filename.split("/")[:-1]))
+            fn = codecs.open(datei)
+        except:
+            return "Not found"
     return Response ("\n%s" % (fn.read(-1)),  content_type="text/plain;charset=UTF-8")
 
 @api.route('/dic', methods=['GET',])

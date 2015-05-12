@@ -22,6 +22,9 @@ import codecs, re
 from .. import mandoku_view
 
 import gitlab, requests
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 zbmeta = "zb:meta:"
 titpref = "zb:title:"
@@ -52,11 +55,11 @@ def searchtext(count=20, page=1):
     start = (page - 1) * count 
     if len(fs) < 1:
         total = redis_store.llen(key)
-        ox = [  (k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
+        ox = [  (k.split()[0].split(','), k.split()[1], redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
     else:
         ox1 = lib.applyfilter(key, fs, tpe)
         total = len(ox1)
-        ox = [(k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
+        ox = [(k.split()[0].split(','), k.split()[1], redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
     p = lib.Pagination(key, page, count, total, ox)
     return render_template('result.html', sr={'list' : p.items, 'total': total }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), tpe=tpe)
 
@@ -101,7 +104,7 @@ def showtext(juan, id=0, coll=None, seq=0):
     except:
         pass
     if coll:
-        if coll.startswith('ZB'):
+        if coll.startswith('KR'):
             id = "%s%4.4d" % (coll, int(seq))
         else:
             #TODO need to find the canonical id for this, go to redis, pull it out
@@ -136,7 +139,7 @@ def showtext(juan, id=0, coll=None, seq=0):
 def showtextredis(juan, id=0, coll=None, seq=0):
     juan = "%3.3d" % (int(juan))
     if coll:
-        if coll.startswith('ZB'):
+        if coll.startswith('KR'):
             id = "%s%4.4d" % (coll, int(seq))
         else:
             #TODO need to find the canonical id for this, go to redis, pull it out

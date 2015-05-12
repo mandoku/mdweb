@@ -4,11 +4,10 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    MDBASE="/Users/Shared/md-remote"
-    TXTDIR="/Users/Shared/md-remote/text"
-    IDXDIR="/Users/Shared/md-remote/index"
-    IDXDIR="/tmp/index"
-    IMGDIR="/Users/Shared/md-remote/images"
+    MDBASE="/Users/Shared/krp"
+    TXTDIR="/Users/Shared/krp/text"
+    IDXDIR="/Users/Shared/krp/index"
+    IMGDIR="/Volumes/data/images/daoist"
     LANGUAGES = {
         'ja': '日本語',
         'en': 'English',
