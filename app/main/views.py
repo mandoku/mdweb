@@ -72,7 +72,7 @@ def showcoll(coll, edition=None, fac=False):
 @main.route('/text/<id>/', methods=['GET',])
 def texttop(id=0, coll=None, seq=0):
     ct = {'toc' : [], 'id' : id}
-    filename = "%s/%s/%s.org" % (id[0:4], id[0:8], id)
+    filename = "%s/%s/Readme.org" % (id[0:4], id[0:8])
     datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
     try:
         datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
