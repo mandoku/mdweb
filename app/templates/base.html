@@ -71,7 +71,7 @@
 
 <div class="container">
   <div class="row">
-    <div class="span2">
+    <div id="sidebardiv" class="span2">
     {% block sidebar %}
     <h2>{{_('News')}}</h2>
     <ul>
@@ -82,7 +82,7 @@
     {% endblock sidebar %}
     </div>
 
-    <div class="span9 textbody">
+    <div id="maintextdiv" class="span9 textbody">
       {% block body %}{% endblock %}
     </div>
   </div> <!-- closes row -->
