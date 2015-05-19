@@ -22,7 +22,7 @@
     <div class="span2">
 
 {% block sidebar %}
-<div class="sidebar" >
+<div class="sidebar"  style="display:None">
 
 <h2>{{_('Versions')}}</h2>
   <ul>
@@ -68,7 +68,7 @@
   </div>
 </div>
 <script>
-$("#tabs").tabs({event :  "mouseover"}),tabs("url", 0, "index.html").tabs("load", 0)
+$(".pb").tabs({event :  "mouseover"}),tabs("url", 0, "index.html").tabs("load", 0)
 </script>
 </div>
 {% endblock %}
