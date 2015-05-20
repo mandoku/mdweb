@@ -22,7 +22,7 @@
     <div class="span2">
 
 {% block sidebar %}
-<div class="sidebar"  style="display:None">
+<div class="sidebar">
 
 <h2>{{_('Versions')}}</h2>
   <ul>
@@ -67,9 +67,18 @@
     {{ct.mtext}}
   </div>
 </div>
-<script>
-$(".pb").tabs({event :  "mouseover"}),tabs("url", 0, "index.html").tabs("load", 0)
-</script>
-</div>
+
 {% endblock %}
 
+    {% block closingscript %}
+<script>
+  function displayPageImage(txtid, edition, juan, page){
+  $( "#sidebardiv" ).detach();
+  $( "#maintextdiv" ).removeClass('span9').addClass('span5');
+  $( "#imagediv" ).removeClass('span1').addClass('span7');
+  var w = $( "#imagediv").width();
+  var h = $( window ).height() 
+  $( "#imagediv" ).append( "<img class='krp-fixed' src='http://kr.kanripo.org/api/v1.0/getimage?filename=zb6q0003/dcs/p0030b.png' style='position: fixed; top : 30px; width: " + 942 + "; height: " + 700 + "; max-width: 90%; max-height: 90%;' />" );
+};
+</script>
+{% endblock %}

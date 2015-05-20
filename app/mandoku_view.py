@@ -68,7 +68,7 @@ class mdDocument(object):
             cnt += 1
             l = l.replace('¶', '')
             if pb.search(l):
-                l = pb.sub(r'''<a onclick="alert('clicked');" name="\4" class="pb">[\3-\4]</a>''', l)
+                l = pb.sub(r'''<a onclick="displayPageImage('\1', '\2', '\3', '\4' );" name="\4" class="pb">[\3-\4]</a>''', l)
             if vs.search(l):
                 tmp = vs.findall(l)[0]
                 if tmp.upper() == "BEGIN":
