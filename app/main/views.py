@@ -235,7 +235,7 @@ def getfacets():
     if tpe == 'ID':
         f = [a.split('\t')[1][0:ln] for a in redis_store.lrange(prefix+key, 1, redis_store.llen(prefix+key))]
     elif tpe == 'DYNASTY':
-        f = [redis_store.hgetall("%s%s" % (zbmeta, a.split('\t')[1].split(':')[0])) for a in redis_store.lrange(prefix+key, 1, redis_store.llen(prefix+key))]
+        f = [redis_store.hgetall("%s%s" % (zbmeta, a.split('\t')[1].split('_')[0])) for a in redis_store.lrange(prefix+key, 1, redis_store.llen(prefix+key))]
         f = [a['DYNASTY'] for a in f if a.has_key('DYNASTY')]
     c = Counter(f)
     if tpe == 'ID':
@@ -257,7 +257,6 @@ def addfilter(count=20, page=1):
     start = (page - 1) * count  + 1
     ox = lib.applyfilter(key, fs)
     total = len(ox)
-    print total, fs
     ox = ox[start:start+count]
     oy = [  (k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox]
     p = lib.Pagination(key, page, count, total, oy)
