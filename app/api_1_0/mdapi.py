@@ -107,3 +107,31 @@ def getimage():
         return "404 Not found"
 
     return Response ("\n%s" % (fn.read(-1)),  content_type="image/%s" % (mtype))
+@api.route('/getimgdata', methods=['GET',])
+def getimgdata():
+    filename = request.values.get('filename', '')
+    type = request.values.get('type', 'imglist')
+    ghlink = "https://raw.githubusercontent.com/kanripo/"
+    mtype = filename[-3:]
+    url="%s%s" % (ghlink, filename)
+    print url
+    r = requests.get(url)
+    if r.status_code == 200:
+        return Response ("%s" % (r.content),  content_type="text/%s" % (mtype))
+    else:
+        return Response ("%s" % ("No facsimile available"),  content_type="text/%s" % (mtype))
+        
+
+## github api: get branches
+## GET /repos/:owner/:repo/branches
+# [
+#   {
+#     "name": "master",
+#     "commit": {
+#       "sha": "6dcb09b5b57875f334f61aebed695e2e4193db5e",
+#       "url": "https://api.github.com/repos/octocat/Hello-World/commits/c5b97d5ae6c19d5c5df71a34c7fbeeda2479ccbc"
+#     }
+#   }
+# ]
+# this is for【大→原】
+# https://raw.githubusercontent.com/kanripo/KR6q0003/%E3%80%90%E5%A4%A7%E2%86%92%E5%8E%9F%E3%80%91/KR6q0003_005.txt

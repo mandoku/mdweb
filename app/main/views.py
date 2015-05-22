@@ -20,7 +20,7 @@ import subprocess
 
 import codecs, re
 from .. import mandoku_view
-
+import git
 import gitlab, requests
 import sys
 reload(sys)
@@ -116,6 +116,13 @@ def showtext(juan, id=0, coll=None, seq=0):
     #     print "Not retrieved from Gitlab!", id
     filename = "%s/%s/%s_%s.txt" % (id[0:4], id[0:8], id, juan)
     datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
+    rpath = "%s/%s/%s" % (current_app.config['TXTDIR'], id[0:4], id[0:8])
+    #get brances
+    try:
+        repo=git.Repo(rpath)
+        branches=[a.name.decode('utf-8') for a in repo.branches if not a.name in ['_data', 'master']]
+    except:
+        branches=[]
     try:
         datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
         fn = codecs.open(datei)
@@ -133,7 +140,7 @@ def showtext(juan, id=0, coll=None, seq=0):
         title = ""
     # else:
     #     md = mandoku_view.mdDocument(r.content.decode('utf-8'))
-    return render_template('showtext.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'] )
+    return render_template('showtext.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches )
 #return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
 
 def showtextredis(juan, id=0, coll=None, seq=0):

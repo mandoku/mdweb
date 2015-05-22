@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery/jquery.ui.theme.css')}}">
     <link href="{{url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/docs.css')}}" rel="stylesheet"> 
+    <link href="{{url_for('static', filename='css/mdweb.css')}}" rel="stylesheet"> 
 
     {% block head %}{% endblock head %}
   </head>
@@ -79,7 +80,21 @@
     <div id="maintextdiv" class="span9 textbody">
       {% block body %}{% endblock %}
     </div>
-    <div id="imagediv" class="span1" style="margin-left:0px;"></div>
+    <div id="imagediv" class="span1" style="margin-left:20px;">
+      <div id="imageinner">
+<div class="buttons">
+    <button class="zoom-in">Zoom In</button>
+    <button class="zoom-out">Zoom Out</button>
+    <input type="range" class="zoom-range">
+    <button class="reset">Reset</button>
+</div>
+      <div id="imgcont">
+<div class="panzoom">
+
+</div>
+      </div>
+      </div>
+      </div>
   </div> <!-- closes row -->
 </div>
     <script  src="{{ url_for('static', filename='jquery/jquery.js')}}"></script>
@@ -87,6 +102,7 @@
     <script  src="{{ url_for('static', filename='jquery/jquery.ui.widget.js')}}"></script>
     <script  src="{{ url_for('static', filename='jquery/jquery.ui.tabs.js')}}"></script>
     <script  src="{{ url_for('static', filename='js/highlight.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.panzoom.js')}}"></script>
     {% block closingscript %}
     {% endblock %}
   </body>

@@ -1,0 +1,8 @@
+/* Additional stylesheet for mdweb */
+
+/* this is for the panzoom thingy */
+.buttons { margin: 40px 0 0; }
+
+.krp-fixed {
+    position: fixed; top : 30px;  
+}

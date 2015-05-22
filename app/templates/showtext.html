@@ -26,7 +26,7 @@
 
 <h2>{{_('Versions')}}</h2>
   <ul>
-    {% for v in ct.doc.versions %} 
+    {% for v in branches %} 
     <li>{{v}}</li>
     <ul>
     {% for s, f in ct.doc.sections %}
@@ -72,13 +72,48 @@
 
     {% block closingscript %}
 <script>
+  var imglist={};
   function displayPageImage(txtid, edition, juan, page){
   $( "#sidebardiv" ).detach();
+  $( "#md-fac" ).detach()
   $( "#maintextdiv" ).removeClass('span9').addClass('span5');
   $( "#imagediv" ).removeClass('span1').addClass('span7');
-  var w = $( "#imagediv").width();
+  $( "#imageinner" ).addClass('krp-fixed');
+  var w = $( "#imgcont").width();
   var h = $( window ).height() 
-  $( "#imagediv" ).append( "<img class='krp-fixed' src='http://kr.kanripo.org/api/v1.0/getimage?filename=zb6q0003/dcs/p0030b.png' style='position: fixed; top : 30px; width: " + 942 + "; height: " + 700 + "; max-width: 90%; max-height: 90%;' />" );
-};
+  $( ".panzoom" ).append( "<img id='md-fac' src='http://kr.kanripo.org/api/v1.0/getimage?filename=" + imglist[edition+" "+juan+ "-" + page] + "' style='max-width: 90%; max-height: 90%;'/>" );
+  
+  $( ".panzoom" ).panzoom({
+            $zoomIn: $(".zoom-in"),
+            $zoomOut: $(".zoom-out"),
+            $zoomRange: $(".zoom-range"),
+            $reset: $(".reset")
+          });
+  };
+  
+  (function($) {
+  $(document).ready(function() {
+  $.ajax({
+  type: 'GET',
+  url: '/api/v1.0/getimgdata?filename={{txtid}}/_data/imglist/{{txtid}}_{{juan}}.txt',
+  dataType: 'text',
+  success: function(data, textStatus) {
+  //Console.log(data.length);
+  $('#imagediv').append(data.length);
+  var lines = data.split('\n');
+  for (var j=0; j < lines.length; j++) {
+		    f = lines[j].split('\t')
+		    imglist[f[1]]=f[2]
+		    };
+  $('#imagediv').append(imglist);
+  },
+  error: function(xhr, textStatus, errorThrown) {
+  alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
+  }
+  });
+  });
+  })
+(jQuery);
+  
 </script>
 {% endblock %}
