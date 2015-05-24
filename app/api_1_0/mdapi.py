@@ -115,11 +115,14 @@ def getimgdata():
     mtype = filename[-3:]
     url="%s%s" % (ghlink, filename)
     print url
-    r = requests.get(url)
+    try:
+        r = requests.get(url)
+    except:
+        return Response ("%s" % ("\tres\tNo facsimile available"),  content_type="text/%s" % (mtype))
     if r.status_code == 200:
         return Response ("%s" % (r.content),  content_type="text/%s" % (mtype))
     else:
-        return Response ("%s" % ("No facsimile available"),  content_type="text/%s" % (mtype))
+        return Response ("%s" % ("\tres\tNo facsimile available"),  content_type="text/%s" % (mtype))
         
 
 ## github api: get branches

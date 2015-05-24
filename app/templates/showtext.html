@@ -74,6 +74,9 @@
 <script>
   var imglist={};
   function displayPageImage(txtid, edition, juan, page){
+  if (imglist.res)
+  alert (imglist.res)
+  else {
   $( "#sidebardiv" ).detach();
   $( "#md-fac" ).detach()
   $( "#maintextdiv" ).removeClass('span9').addClass('span5');
@@ -89,7 +92,8 @@
             $zoomOut: $(".zoom-out"),
             $zoomRange: $(".zoom-range"),
             $reset: $(".reset")
-          });
+  });
+  }
   };
   
   (function($) {
@@ -100,13 +104,13 @@
   dataType: 'text',
   success: function(data, textStatus) {
   //Console.log(data.length);
-  $('#imagediv').append(data.length);
+  //$('#imagediv').append(data);
   var lines = data.split('\n');
   for (var j=0; j < lines.length; j++) {
 		    f = lines[j].split('\t')
 		    imglist[f[1]]=f[2]
 		    };
-  $('#imagediv').append(imglist);
+  $('#imagediv').append("|" + imglist + "|");
   },
   error: function(xhr, textStatus, errorThrown) {
   alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));

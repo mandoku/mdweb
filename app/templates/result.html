@@ -36,11 +36,13 @@
       {% set it_txtid, it_juan = item[1].split(':')[0].split('_') %}
       {% set it_page = item[1].split(':')[1] %}
       {% set it_line = item[1].split(':')[2] %}
+      {% set it_rest = item[1].split(':')[2] %}
       <tr>
 <!-- http://localhost:5000/text/ZB6q0003/003#0221a -->
 <!-- ZB1a0068:007-352:2:6 -->
 	<td class="text-left"><a href="{{url_for('main.showtext', id=it_txtid, juan=it_juan, query=key, _anchor=it_page)}}" title="{{it_txtid}}">{{item[2]['TITLE']}}, {{it_juan.lstrip('0')}}, {{it_page.lstrip('0')}}</a></td>
-	<td>{{item[0][1]}}</td><td class="text-left">{{key[0]}}{{item[0][0]}}</td>
+<td>{{item[0]}}</td> <!--<td class="text-left">{{key[0]}}{{item[0][0]}}</td>-->
+<td>//  {{item[3]}}</td>
       </tr>
     {% endfor %}
     </table>

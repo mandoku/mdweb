@@ -17,6 +17,7 @@ from collections import Counter
 from datetime import datetime
 import subprocess
 
+from collections import defaultdict
 
 import codecs, re
 from .. import mandoku_view
@@ -39,29 +40,68 @@ def static_from_root():
 
 @main.route('/search', methods=['GET', 'POST',])
 def searchtext(count=20, page=1):
-    key = request.values.get('query', '')
+    q = request.values.get('query', '')
+    keys = q.split()
     count=int(request.values.get('count', count))
     page=int(request.values.get('page', page))
     filters = request.values.get('filter', '')
     tpe = request.values.get('type', '')
-    if len(key) > 0:
-        if not redis_store.exists(key):
-            if not lib.doftsearch(key):
-                return render_template("error_page.html", description = "Text search for %s: Nothing found!" % (key), key=key)
+    if len(keys) > 0:
+        for key in keys:
+            if not redis_store.exists(key): 
+                lib.doftsearch(key)
     else:
         return render_template("error_page.html", code="400", name = "Search Error", description = "No search term. Please submit the search term as parameter 'query'.")
+    start = (page - 1) * count 
     fs = filters.split(';')
     fs = [a for a in fs if len(a) > 0]
-    start = (page - 1) * count 
-    if len(fs) < 1:
+    # do we allow filters for AND search?  not for the moment...
+    if len(keys) > 1:
+        d1=defaultdict(list)
+        d2=defaultdict(list)
+        klen = ""
+        sm=0
+        ## find the key with fewest matches
+        for key in keys:
+            kl = redis_store.llen(key)
+            if sm == 0 or sm > kl:
+                sm = kl
+                klen = key
+        #get the results for the key with fewest matches
+        total = redis_store.llen(klen)
+        ox1 = [(a.split('\t')[1].split(':')[0]+'_'+a.split('\t')[1].split(':')[-1],
+                ([a.split()[0].split(',')[1],klen[0], a.split()[0].split(',')[0]], a.split()[1]))
+               for a in redis_store.lrange(klen, 0, total-1) if len(a) > 0]
+        for b,a in ox1:
+            d1[b].extend(a)
+        #now see what the other keys yield
+        print "d1:", len(d1)
+        for key in keys:
+            if key == klen:
+                continue
+            total = redis_store.llen(key)
+            print "key: ", key
+            ox2 = [(a.split('\t')[1].split(':')[0]+'_'+a.split('\t')[1].split(':')[-1],
+                    ([a.split()[0].split(',')[1],klen[0], a.split()[0].split(',')[0]], a.split()[1]))
+                   #(a.split()[0].split(','),key[0], a.split()[1]))
+                   for a in redis_store.lrange(key, 0, total-1) if len(a) > 0]
+            for b,a in ox2:
+                if d1.has_key(b):
+                    if not d2.has_key(b):
+                        d2[b].append(d1[b])
+                    d2[b].append(a)
+        total = len(d2)
+        print "d2:", total, d2[d2.keys()[0]]
+        ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), " /".join(["".join([b[0], b[1], ]) for b in d2[a][1:][0]])) for a in d2.keys()]
+    elif len(fs) < 1:
         total = redis_store.llen(key)
-        ox = [  (k.split()[0].split(','), k.split()[1], redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
+        ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), k.split()[1], redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
     else:
         ox1 = lib.applyfilter(key, fs, tpe)
         total = len(ox1)
-        ox = [(k.split()[0].split(','), k.split()[1], redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
+        ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), k.split()[1], redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
     p = lib.Pagination(key, page, count, total, ox)
-    return render_template('result.html', sr={'list' : p.items, 'total': total }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), tpe=tpe)
+    return render_template('result.html', sr={'list' : p.items, 'total': total }, key=q, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), tpe=tpe)
 
 
 

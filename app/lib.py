@@ -189,12 +189,14 @@ def prevnext(page):
 
 ## search
 
-def doftsearch(key):
+def doftsearch(key, idxdir=None):
+    if not idxdir:
+        idxdir = current_app.config['IDXDIR']
     try:
 #subprocess.call(['bzgrep -H ^龍二  /Users/Shared/md/index/79/795e*.idx*'], stdout=of, shell=True )
 #ox = subprocess.check_output(['bzgrep -H ^%s  /Users/Shared/md/index/%s/%s*.idx*' % (key[1:], ("%4.4x" % (ord(key[0])))[0:2], "%4.4x" % (ord(key[0])))], shell=True )
         ox = subprocess.check_output(['bzgrep -H ^%s  %s/%s/%s/%s*.idx* | cut -d : -f 2-' % (key[1:],
-              current_app.config['IDXDIR'],  ("%4.4x" % (ord(key[0])))[0:2], "%4.4x" % (ord(key[0])), "%4.4x" % (ord(key[0])))], shell=True )
+              idxdir,  ("%4.4x" % (ord(key[0])))[0:2], "%4.4x" % (ord(key[0])), "%4.4x" % (ord(key[0])))], shell=True )
 #        ox = subprocess.check_output(['bzgrep -H ^%s  %s/%s/%s*.idx* | cut -d : -f 2-' % (key[1:],
 #              current_app.config['IDXDIR'],  ("%4.4x" % (ord(key[0])))[0:2], "%4.4x" % (ord(key[0])))], shell=True )
     except subprocess.CalledProcessError:
@@ -244,7 +246,7 @@ def applyfilter(key, fs, tpe):
     if len(ox) > 0:
         ox=list(set(ox))
         ox.sort()
-    print ox
+    #print ox
     return ox
 
 
