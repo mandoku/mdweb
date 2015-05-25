@@ -82,7 +82,7 @@ def searchtext(count=20, page=1):
             total = redis_store.llen(key)
             #print "key: ", key
             ox2 = [(a.split('\t')[1].split(':')[0]+'_'+a.split('\t')[1].split(':')[-1],
-                    ([a.split()[0].split(',')[1],key[0], a.split()[0].split(',')[0]], a.split()[1]))
+                    ([a.split()[0].split(',')[1],key[0], a.split()[0].split(',')[0]], "\t".join(a.split()[1:])))
                    #(a.split()[0].split(','),key[0], a.split()[1]))
                    for a in redis_store.lrange(key, 0, total-1) if len(a) > 0]
             for b,a in ox2:
@@ -96,11 +96,11 @@ def searchtext(count=20, page=1):
         ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), "　・　"+"/".join(["".join(b[0]) for b in d2[a][1:2]])) for a in d2.keys()]
     elif len(fs) < 1:
         total = redis_store.llen(key)
-        ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), k.split()[1], redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
+        ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split()[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
     else:
         ox1 = lib.applyfilter(key, fs, tpe)
         total = len(ox1)
-        ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), k.split()[1], redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
+        ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split()[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
     p = lib.Pagination(key, page, count, total, ox)
     return render_template('result.html', sr={'list' : p.items, 'total': total }, key=q, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), tpe=tpe)
 
