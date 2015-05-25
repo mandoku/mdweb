@@ -75,12 +75,12 @@ def searchtext(count=20, page=1):
         for b,a in ox1:
             d1[b].extend(a)
         #now see what the other keys yield
-        print "d1:", len(d1)
+        #print "d1:", len(d1)
         for key in keys:
             if key == klen:
                 continue
             total = redis_store.llen(key)
-            print "key: ", key
+            #print "key: ", key
             ox2 = [(a.split('\t')[1].split(':')[0]+'_'+a.split('\t')[1].split(':')[-1],
                     ([a.split()[0].split(',')[1],key[0], a.split()[0].split(',')[0]], a.split()[1]))
                    #(a.split()[0].split(','),key[0], a.split()[1]))
@@ -91,7 +91,7 @@ def searchtext(count=20, page=1):
                         d2[b].append(d1[b])
                     d2[b].append(a)
         total = len(d2)
-        print "d2:", total, d2[d2.keys()[0]]
+        #print "d2:", total, d2[d2.keys()[0]]
         #        ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), " /".join(["".join([b[0][0] ]) for b in d2[a][1:][0]])) for a in d2.keys()]
         ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), "　・　"+"/".join(["".join(b[0]) for b in d2[a][1:2]])) for a in d2.keys()]
     elif len(fs) < 1:
