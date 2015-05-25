@@ -82,7 +82,7 @@ def searchtext(count=20, page=1):
             total = redis_store.llen(key)
             print "key: ", key
             ox2 = [(a.split('\t')[1].split(':')[0]+'_'+a.split('\t')[1].split(':')[-1],
-                    ([a.split()[0].split(',')[1],klen[0], a.split()[0].split(',')[0]], a.split()[1]))
+                    ([a.split()[0].split(',')[1],key[0], a.split()[0].split(',')[0]], a.split()[1]))
                    #(a.split()[0].split(','),key[0], a.split()[1]))
                    for a in redis_store.lrange(key, 0, total-1) if len(a) > 0]
             for b,a in ox2:
@@ -92,7 +92,8 @@ def searchtext(count=20, page=1):
                     d2[b].append(a)
         total = len(d2)
         print "d2:", total, d2[d2.keys()[0]]
-        ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), " /".join(["".join([b[0], b[1], ]) for b in d2[a][1:][0]])) for a in d2.keys()]
+        #        ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), " /".join(["".join([b[0][0] ]) for b in d2[a][1:][0]])) for a in d2.keys()]
+        ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), "　・　"+"/".join(["".join(b[0]) for b in d2[a][1:2]])) for a in d2.keys()]
     elif len(fs) < 1:
         total = redis_store.llen(key)
         ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), k.split()[1], redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
