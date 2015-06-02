@@ -6,3 +6,8 @@
 .krp-fixed {
     position: fixed; top : 30px;  
 }
+
+
+.ui-draggable-dragging {
+    z-index: 10000!important
+}

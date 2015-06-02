@@ -1,6 +1,6 @@
 #    -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import re, git
+import re, git, codecs, os
 from jinja2 import Markup
 # re.M is multiline
 
@@ -9,12 +9,17 @@ hd = re.compile(r"^(\*+) (.*)$")
 vs = re.compile(r"^#\+([^_]+)_V")
 gaiji = re.compile(r"(&[^;]+;)")
 pb = re.compile(r"<pb:([^_]+)_([^_]+)_([^-]+)-([^>]+)>")
+pby = re.compile(r"<pb:YP-C_([^_]+)_([^-]+)-([^>]+)>")
+pbx = re.compile(r"<pb:([^_]+)_([^_]+)_([^p]+)p([^>]+)>")
 
 
 class mdDocument(object):
-    def __init__(self, content, rep=None):
-        self.raw = content
+    def __init__(self, datei, rep=None):
+        fn = codecs.open(datei)
+        self.raw = fn.read(-1)
         # the repository to which this file belongs
+        self.txtid = os.path.split(datei)[-1].split('_')[0]
+        self.juan = os.path.split(datei)[-1].split('_')[1].split('.')[0]
         self.rep = rep
         if rep:
             repo = git.Repo(self.rep)
@@ -32,6 +37,8 @@ class mdDocument(object):
                     self._config[m1[0]] = m1[1]
                 else:
                     self._config[m.group(1)] = m.group(2)
+        if not self._config.has_key('ID'):
+            self._config['ID'] = self.txtid
         return self._config
 
     @property
@@ -67,8 +74,12 @@ class mdDocument(object):
         for l in lines:
             cnt += 1
             l = l.replace('¶', '')
-            if pb.search(l):
+            if pby.search(l):
+                l = pby.sub(r'''<a onclick="displayPageImage('%s', 'JY-C', '%s', '\2-\3' );" name="\2-\3" class="pb">[\2-\3]</a>''' % (self.txtid, self.juan), l)
+            elif pb.search(l):
                 l = pb.sub(r'''<a onclick="displayPageImage('\1', '\2', '\3', '\4' );" name="\4" class="pb">[\3-\4]</a>''', l)
+            elif pbx.search(l):
+                l = pbx.sub(r'''<a onclick="displayPageImage('%s', '\1', '%s', '\3p\4' );" name="\4" class="pb">[\3-\4]</a>''' % (self.txtid, self.juan), l)
             if vs.search(l):
                 tmp = vs.findall(l)[0]
                 if tmp.upper() == "BEGIN":

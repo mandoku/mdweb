@@ -82,20 +82,30 @@
     </div>
     <div id="imagediv" class="span1 hidden" style="margin-left:20px;">
       <div id="imageinner">
-<div class="buttons">
-    <button class="zoom-in">Zoom In</button>
-    <button class="zoom-out">Zoom Out</button>
-    <input type="range" class="zoom-range">
-    <button class="reset">Reset</button>
-</div>
-      <div id="imgcont">
-<div class="panzoom">
-
-</div>
+	<div class="buttons">
+	  <div class="dropdown">
+	    <!-- Link or button to toggle dropdown -->
+	    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+	      <li><a tabindex="-1" href="#">Action</a></li>
+	      <li><a tabindex="-1" href="#">Another action</a></li>
+	      <li><a tabindex="-1" href="#">Something else here</a></li>
+	      <li class="divider"></li>
+	      <li><a tabindex="-1" href="#">Separated link</a></li>
+	    </ul>
+	  </div>    
+	  <button class="pz-close">Close</button>
+	  <button class="zoom-in">Zoom In</button>
+	  <button class="zoom-out">Zoom Out</button>
+	  <input type="range" class="zoom-range">
+	  <button class="reset">Reset</button>
+	</div>
+	<div id="imgcont">
+	  <div class="panzoom">
+	  </div>
+	</div>
       </div>
-      </div>
-      </div>
-  </div> <!-- closes row -->
+    </div>
+</div> <!-- closes row -->
 </div>
     <script  src="{{ url_for('static', filename='jquery/jquery.js')}}"></script>
     <script  src="{{ url_for('static', filename='jquery/jquery.ui.core.js')}}"></script>

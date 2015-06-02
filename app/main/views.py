@@ -38,6 +38,7 @@ hd = re.compile(r"^(\*+) (.*)$")
 def static_from_root():
     return send_from_directory(current_app.static_folder, request.path[1:])
 
+@main.route('/<coll>/search', methods=['GET', 'POST',])
 @main.route('/search', methods=['GET', 'POST',])
 def searchtext(count=20, page=1):
     q = request.values.get('query', '')
@@ -70,7 +71,7 @@ def searchtext(count=20, page=1):
         #get the results for the key with fewest matches
         total = redis_store.llen(klen)
         ox1 = [(a.split('\t')[1].split(':')[0]+'_'+a.split('\t')[1].split(':')[-1],
-                ([a.split()[0].split(',')[1],klen[0], a.split()[0].split(',')[0]], a.split()[1]))
+                ([a.split()[0].split(',')[1],klen[0], a.split()[0].split(',')[0]], a.split("\t")[1]))
                for a in redis_store.lrange(klen, 0, total-1) if len(a) > 0]
         for b,a in ox1:
             d1[b].extend(a)
@@ -82,7 +83,7 @@ def searchtext(count=20, page=1):
             total = redis_store.llen(key)
             #print "key: ", key
             ox2 = [(a.split('\t')[1].split(':')[0]+'_'+a.split('\t')[1].split(':')[-1],
-                    ([a.split()[0].split(',')[1],key[0], a.split()[0].split(',')[0]], "\t".join(a.split()[1:])))
+                    ([a.split()[0].split(',')[1],key[0], a.split()[0].split(',')[0]], "\t".join(a.split("\t")[1:])))
                    #(a.split()[0].split(','),key[0], a.split()[1]))
                    for a in redis_store.lrange(key, 0, total-1) if len(a) > 0]
             for b,a in ox2:
@@ -96,11 +97,11 @@ def searchtext(count=20, page=1):
         ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), "　・　"+"/".join(["".join(b[0]) for b in d2[a][1:2]])) for a in d2.keys()]
     elif len(fs) < 1:
         total = redis_store.llen(key)
-        ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split()[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
+        ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
     else:
         ox1 = lib.applyfilter(key, fs, tpe)
         total = len(ox1)
-        ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split()[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
+        ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
     p = lib.Pagination(key, page, count, total, ox)
     return render_template('result.html', sr={'list' : p.items, 'total': total }, key=q, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), tpe=tpe)
 
@@ -137,7 +138,8 @@ def texttop(id=0, coll=None, seq=0):
 #@main.route('/text/<coll>/<int:seq>/<int:juan>', methods=['GET',] )
 @main.route('/text/<coll>/<seq>/<juan>', methods=['GET',] )
 @main.route('/text/<id>/<juan>', methods=['GET',])
-def showtext(juan, id=0, coll=None, seq=0):
+@main.route('/edition/<branch>/<id>/<juan>', methods=['GET',])
+def showtext(juan, id=0, coll=None, seq=0, branch=None):
     doc = {}
     key = request.values.get('query', '')
     try:
@@ -145,6 +147,7 @@ def showtext(juan, id=0, coll=None, seq=0):
     except:
         pass
     if coll:
+        #TODO: allow for different repositories, make this configurable
         if coll.startswith('KR'):
             id = "%s%4.4d" % (coll, int(seq))
         else:
@@ -155,7 +158,10 @@ def showtext(juan, id=0, coll=None, seq=0):
     # r = requests.get(url)
     # if b"<!DOCTYPE html>" in r.content:
     #     print "Not retrieved from Gitlab!", id
-    filename = "%s/%s/%s_%s.txt" % (id[0:4], id[0:8], id, juan)
+    if branch:
+        filename = "%s/%s/_branches/%s/%s_%s.txt" % (id[0:4], id[0:8], branch, id, juan)
+    else:
+        filename = "%s/%s/%s_%s.txt" % (id[0:4], id[0:8], id, juan)
     datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
     rpath = "%s/%s/%s" % (current_app.config['TXTDIR'], id[0:4], id[0:8])
     #get brances
@@ -169,7 +175,8 @@ def showtext(juan, id=0, coll=None, seq=0):
         fn = codecs.open(datei)
     except:
         return "File Not found: %s" % (filename)
-    md = mandoku_view.mdDocument(fn.read(-1))
+    fn.close()
+    md = mandoku_view.mdDocument(datei)
     try:
         res = redis_store.hgetall("%s%s" % ( zbmeta, id[0:8]))
     except:
@@ -181,7 +188,7 @@ def showtext(juan, id=0, coll=None, seq=0):
         title = ""
     # else:
     #     md = mandoku_view.mdDocument(r.content.decode('utf-8'))
-    return render_template('showtext.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches )
+    return render_template('showtext.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch)
 #return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
 
 def showtextredis(juan, id=0, coll=None, seq=0):
@@ -567,7 +574,8 @@ def about(id):
     if id=='dzjy':
         return render_template('about_dzjy.html')
     else:
-        return 'The about page'
+        return render_template('about.html')
+
 @main.route('/contact')
 def contact():
     return render_template('contact.html')

@@ -12,7 +12,7 @@
 {% block subhead %}
 <header class="jumbotron subhead" id="overview">
   <div class="container">
-    <h1><a href="{{url_for('main.showcoll', coll=ct.doc.id)}}">{{ct.doc.id}}</a> {{doc['TITLE']}} </h1>
+    <h1><a href="{{url_for('main.showcoll', coll=ct.doc.id)}}">{{ct.doc.id}}</a> {{doc['TITLE']}} ({{edition}}) </h1>
   </div>
 </header>
 {% endblock subhead %}
@@ -27,7 +27,7 @@
 <h2>{{_('Versions')}}</h2>
   <ul>
     {% for v in branches %} 
-    <li>{{v}}</li>
+    <li><a href="/edition/{{v}}/{{txtid}}/{{juan}}">{{v}}</a></li>
     <ul>
     {% for s, f in ct.doc.sections %}
     <li><a href="{{s}}?edition={{v}}&amp;pos=1&amp;fac=True">{{s}}</a></li>
@@ -77,7 +77,7 @@
   if (imglist.res)
   alert (imglist.res)
   else {
-  $( "#sidebardiv" ).detach();
+  $( "#sidebardiv" ).addClass('hidden');
   $( "#md-fac" ).detach()
   $( "#maintextdiv" ).removeClass('span9').addClass('span5');
   $( "#imagediv" ).removeClass('span1').addClass('span7');
@@ -93,7 +93,13 @@
             $zoomRange: $(".zoom-range"),
             $reset: $(".reset")
   });
+  $( ".pz-close" ).hidePageImage();
   }
+  };
+
+  function hidePageImage(){
+  $( "#sidebardiv" ).removeClass('hidden')
+  $( "#imagediv" ).addClass('hidden');
   };
   
   (function($) {
@@ -107,10 +113,22 @@
   //$('#imagediv').append(data);
   var lines = data.split('\n');
   for (var j=0; j < lines.length; j++) {
-		    f = lines[j].split('\t')
-		    imglist[f[1]]=f[2]
-		    };
-  $('#imagediv').append("|" + imglist + "|");
+		    f = lines[j].split('\t');
+		    if (f[1]) {
+		    r = f[1].split(' ')
+		    if (r[1]) {
+		    if (r[1].indexOf('-') < 0){
+					    imglist[r[0] + ' {{juan}}-' + r[1]] = f[2];
+					    } 
+					    else if (f[1].indexOf('JY') > -1){
+		    imglist[r[0] + ' {{juan}}-' + r[1]] = f[2];
+		    }
+		    else
+		    
+					    imglist[f[1]]=f[2];
+					    };
+					    };
+					    };
   },
   error: function(xhr, textStatus, errorThrown) {
   alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
