@@ -8,7 +8,7 @@ from .. import redis_store
 from .. import lib
 
 
-import codecs, re
+import codecs, re, os
 #from . import mandoku_view
 
 import gitlab, requests
@@ -112,17 +112,22 @@ def getimgdata():
     filename = request.values.get('filename', '')
     type = request.values.get('type', 'imglist')
     ghlink = "https://raw.githubusercontent.com/kanripo/"
+    local = "%s/%s/%s" % (current_app.config['TXTDIR'], filename[0:4], filename)
     mtype = filename[-3:]
-    url="%s%s" % (ghlink, filename)
-    print url
-    try:
-        r = requests.get(url)
-    except:
-        return Response ("%s" % ("\tres\tNo facsimile available"),  content_type="text/%s" % (mtype))
-    if r.status_code == 200:
-        return Response ("%s" % (r.content),  content_type="text/%s" % (mtype))
+    if os.path.isfile(local):
+        fd=codecs.open(local, 'r', 'utf-8')
+        return Response ("%s" % (fd.read(-1)),  content_type="text/%s" % (mtype))
     else:
-        return Response ("%s" % ("\tres\tNo facsimile available"),  content_type="text/%s" % (mtype))
+        url="%s%s" % (ghlink, filename)
+        print url
+        try:
+            r = requests.get(url)
+        except:
+            return Response ("%s" % ("\tres\tNo facsimile available"),  content_type="text/%s" % (mtype))
+        if r.status_code == 200:
+            return Response ("%s" % (r.content),  content_type="text/%s" % (mtype))
+        else:
+            return Response ("%s" % ("\tres\tNo facsimile available"),  content_type="text/%s" % (mtype))
         
 
 ## github api: get branches

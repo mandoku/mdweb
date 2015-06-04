@@ -74,6 +74,7 @@ class mdDocument(object):
         for l in lines:
             cnt += 1
             l = l.replace('¶', '')
+            l = re.sub(r'@[a-z]+', '', l)
             if pby.search(l):
                 l = pby.sub(r'''<a onclick="displayPageImage('%s', 'JY-C', '%s', '\2-\3' );" name="\2-\3" class="pb">[\2-\3]</a>''' % (self.txtid, self.juan), l)
             elif pb.search(l):
