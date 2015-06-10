@@ -105,8 +105,7 @@ def getimage():
         return send_file(datei, mimetype='image/%s' % (mtype), attachment_filename=filename)
     except:
         return "404 Not found"
-
-    return Response ("\n%s" % (fn.read(-1)),  content_type="image/%s" % (mtype))
+#    return Response ("\n%s" % (fn.read(-1)),  content_type="image/%s" % (mtype))
 @api.route('/getimgdata', methods=['GET',])
 def getimgdata():
     filename = request.values.get('filename', '')
