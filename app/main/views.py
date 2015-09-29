@@ -27,8 +27,8 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-zbmeta = "zb:meta:"
-titpref = "zb:title:"
+zbmeta = "kr:meta:"
+titpref = "kr:title:"
 link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
 hd = re.compile(r"^(\*+) (.*)$")
 
