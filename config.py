@@ -5,9 +5,9 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     MDBASE="/Users/Shared/krp"
-    TXTDIR="/Users/Shared/krp/text"
+    TXTDIR="/Users/Shared/krpdev/src"
     IDXDIR="/Users/Shared/krp/index"
-    IMGDIR="/Volumes/data/images/daoist"
+    IMGDIR="/Users/Shared/images/general/skqs/wyg"
     LANGUAGES = {
         'ja': '日本語',
         'en': 'English',
@@ -33,8 +33,10 @@ class Config:
     MDWEB_FOLLOWERS_PER_PAGE = 50
     MDWEB_COMMENTS_PER_PAGE = 30
     MDWEB_SLOW_DB_QUERY_TIME=0.5
-    GITLAB_HOST  = "http://gl.kanripo.org"
-    GITLAB_TOKEN = "HrNL4a42ZDnyjaHpXty2"
+    GITHUB_OAUTH_CLIENT_SECRET="96353df0ca6d6a4db5f5520e1b0b898ad4bab004"
+    GITHUB_OAUTH_CLIENT_ID="32e5b9df1b848ffaa194"
+    OAUTHLIB_INSECURE_TRANSPORT=True
+    
 
 
     

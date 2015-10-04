@@ -4,12 +4,12 @@ from flask.ext.bootstrap import Bootstrap
 from flask.ext.mail import Mail
 from flask.ext.moment import Moment
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.login import LoginManager
+#from flask.ext.login import LoginManager
 from flask.ext.pagedown import PageDown
 from flask.ext.redis import Redis
 from flask.ext.babel import Babel
 from config import config
-
+from flask_dance.contrib.github import make_github_blueprint
 bootstrap = Bootstrap()
 mail = Mail()
 moment = Moment()
@@ -17,9 +17,11 @@ db = SQLAlchemy()
 pagedown = PageDown()
 redis_store = Redis()
 mybabel = Babel()
-login_manager = LoginManager()
-login_manager.session_protection = 'strong'
-login_manager.login_view = 'auth.login'
+#login_manager = LoginManager()
+#login_manager.session_protection = 'strong'
+#login_manager.login_view = 'auth.login'
+github_bp = make_github_blueprint(scope=["repo"])
+
 
 
 def create_app(config_name):
@@ -31,7 +33,7 @@ def create_app(config_name):
     mail.init_app(app)
     moment.init_app(app)
     db.init_app(app)
-    login_manager.init_app(app)
+    #login_manager.init_app(app)
     pagedown.init_app(app)
     
     redis_store.init_app(app)
@@ -44,10 +46,13 @@ def create_app(config_name):
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
-    from .auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint, url_prefix='/auth')
+    # from .auth import auth as auth_blueprint
+    # app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
     from .api_1_0 import api as api_1_0_blueprint
     app.register_blueprint(api_1_0_blueprint, url_prefix='/api/v1.0')
+
+    
+    app.register_blueprint(github_bp, url_prefix="/login")
 
     return app
