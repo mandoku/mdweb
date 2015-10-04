@@ -142,8 +142,9 @@ def texttop(id=0, coll=None, seq=0):
 @main.route('/text/<coll>/<seq>/<juan>', methods=['GET',] )
 @main.route('/text/<id>/<juan>', methods=['GET',])
 @main.route('/edition/<branch>/<id>/<juan>', methods=['GET',])
-def showtext(juan, id=0, coll=None, seq=0, branch=None):
+def showtext(juan, id=0, coll=None, seq=0, branch="master"):
     doc = {}
+    fn = ""
     key = request.values.get('query', '')
     try:
         juan = "%3.3d" % (int(juan))
@@ -157,29 +158,37 @@ def showtext(juan, id=0, coll=None, seq=0, branch=None):
             #TODO need to find the canonical id for this, go to redis, pull it out
             id="Not Implemented"
     #the filename is of the form ZB1a/ZB1a0001/ZB1a0001_002.txt
-    # url =  "%s/%s/%s/raw/master/%s_%s.txt?private_token=%s" % (current_app.config['GITLAB_HOST'], id[0:4], id,  id, juan, current_app.config['GITLAB_TOKEN'])
-    # r = requests.get(url)
-    # if b"<!DOCTYPE html>" in r.content:
-    #     print "Not retrieved from Gitlab!", id
-    if branch:
-        filename = "%s/%s/_branches/%s/%s_%s.txt" % (id[0:4], id[0:8], branch, id, juan)
+    url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
+        current_app.config['GITHUB_OAUTH_CLIENT_ID'],
+        current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
+    print url
+    r = requests.get(url)
+    if b"<!DOCTYPE html>" in r.content:
+         print "Not retrieved from Gitlab!", id
     else:
+         fn = r.content
+    if branch == "master":
+        #url =  "%s/%s/%s/raw/%s/%s_%s.txt?private_token=%s" % (current_app.config['GITLAB_HOST'], id[0:4], id,  id, juan, current_app.config['GITLAB_TOKEN'])
+
         filename = "%s/%s/%s_%s.txt" % (id[0:4], id[0:8], id, juan)
+    else:
+        filename = "%s/%s/_branches/%s/%s_%s.txt" % (id[0:4], id[0:8], branch, id, juan)
     datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
     rpath = "%s/%s/%s" % (current_app.config['TXTDIR'], id[0:4], id[0:8])
-    #get brances
+    #get branches  -- we could get this from github, but it counts against the limit...
     try:
         repo=git.Repo(rpath)
-        branches=[a.name.decode('utf-8') for a in repo.branches if not a.name in ['_data', 'master']]
+        branches=[(a.name.decode('utf-8'), lib.brtab[a.name.decode('utf-8')]) for a in repo.branches if not a.name in ['_data', 'master']]
     except:
         branches=[]
-    try:
-        datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-        fn = codecs.open(datei)
-    except:
-        return "File Not found: %s" % (filename)
-    fn.close()
-    md = mandoku_view.mdDocument(datei)
+    if len(fn) == 0:
+        try:
+            datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
+            fn = codecs.open(datei).read(-1)
+            fn.close()
+        except:
+            return "File Not found: %s" % (filename)
+    md = mandoku_view.mdDocument(fn, id, juan)
     try:
         res = redis_store.hgetall("%s%s" % ( zbmeta, id[0:8]))
     except:

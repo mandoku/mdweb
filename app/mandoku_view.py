@@ -11,15 +11,14 @@ gaiji = re.compile(r"(&[^;]+;)")
 pb = re.compile(r"<pb:([^_]+)_([^_]+)_([^-]+)-([^>]+)>")
 pby = re.compile(r"<pb:YP-C_([^_]+)_([^-]+)-([^>]+)>")
 pbx = re.compile(r"<pb:([^_]+)_([^_]+)_([^p]+)p([^>]+)>")
-
+# <pb:KR5a0174_CK-KZ_02p002a>
 
 class mdDocument(object):
-    def __init__(self, datei, rep=None):
-        fn = codecs.open(datei)
-        self.raw = fn.read(-1)
+    def __init__(self, fn, txtid, juan, rep=None):
+        self.raw = fn
         # the repository to which this file belongs
-        self.txtid = os.path.split(datei)[-1].split('_')[0]
-        self.juan = os.path.split(datei)[-1].split('_')[1].split('.')[0]
+        self.txtid = txtid
+        self.juan = juan
         self.rep = rep
         if rep:
             repo = git.Repo(self.rep)
@@ -80,7 +79,7 @@ class mdDocument(object):
             elif pb.search(l):
                 l = pb.sub(r'''<a onclick="displayPageImage('\1', '\2', '\3', '\4' );" name="\4" class="pb">[\3-\4]</a>''', l)
             elif pbx.search(l):
-                l = pbx.sub(r'''<a onclick="displayPageImage('%s', '\1', '%s', '\3p\4' );" name="\4" class="pb">[\3-\4]</a>''' % (self.txtid, self.juan), l)
+                l = pbx.sub(r'''<a onclick="displayPageImage('%s', '\2', '%s', '\3p\4' );" name="\4" class="pb">[\3-\4]</a>''' % (self.txtid, self.juan), l)
             if vs.search(l):
                 tmp = vs.findall(l)[0]
                 if tmp.upper() == "BEGIN":

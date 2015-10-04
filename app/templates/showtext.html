@@ -27,7 +27,7 @@
 <h2>{{_('Versions')}}</h2>
   <ul>
     {% for v in branches %} 
-    <li><a href="/edition/{{v}}/{{txtid}}/{{juan}}">{{v}}</a></li>
+    <li><a href="/edition/{{v[0]}}/{{txtid}}/{{juan}}">{{v[1]}}</a></li>
     <ul>
     {% for s, f in ct.doc.sections %}
     <li><a href="{{s}}?edition={{v}}&amp;pos=1&amp;fac=True">{{s}}</a></li>
@@ -74,6 +74,9 @@
 <script>
   var imglist={};
   var urlist={};
+
+
+  
 function displayPageImage(txtid, edition, juan, page){
     if (imglist.res)
 	alert (imglist.res)
@@ -94,16 +97,16 @@ function displayPageImage(txtid, edition, juan, page){
             $zoomRange: $(".zoom-range"),
             $reset: $(".reset")
 	});
-	$( ".pz-close" ).hidePageImage();
+	$( ".pz-close" ).click(function(){
+	    $( "#sidebardiv" ).removeClass('hidden')
+	    $( "#imagediv" ).addClass('hidden');
+	});
     }
 };
 
-function hidePageImage(){
-    $( "#sidebardiv" ).removeClass('hidden')
-    $( "#imagediv" ).addClass('hidden');
-};
 
 (function($) {
+
     $(document).ready(function() {
 	$.ajax({
 	    type: 'GET',
