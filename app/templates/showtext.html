@@ -4,7 +4,7 @@
 
 {% block navlinks %}
           <li class="active"><a href="{{url_for('main.texttop', id=txtid)}}" title="{{txtid}}">{{title}}</a></li>
-          <li><a href="http://github.com/kanripo/{{txtid}}">GitHub repository</a></li>
+          <li><a href="http://github.com/kanripo/{{txtid}}">GitHub</a></li>
           <li><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
 {% endblock navlinks%}
 
@@ -70,73 +70,73 @@
 
 {% endblock %}
 
-    {% block closingscript %}
+{% block closingscript %}
 <script>
-  var imglist={};
-  function displayPageImage(txtid, edition, juan, page){
-  if (imglist.res)
-  alert (imglist.res)
-  else {
-  $( "#sidebardiv" ).addClass('hidden');
-  $( "#md-fac" ).detach()
-  $( "#maintextdiv" ).removeClass('span9').addClass('span5');
-  $( "#imagediv" ).removeClass('span1').addClass('span7');
-  $( "#imagediv" ).removeClass('hidden')
-  $( "#imageinner" ).addClass('krp-fixed');
-  var w = $( "#imgcont").width();
-  var h = $( window ).height() 
-  $( ".panzoom" ).append( "<img id='md-fac' src='/api/v1.0/getimage?filename=" + imglist[edition+" "+juan+ "-" + page] + "' style='max-width: 90%; max-height: 90%;'/>" );
+var imglist={};
+function displayPageImage(txtid, edition, juan, page){
+    if (imglist.res)
+	alert (imglist.res)
+    else {
+	$( "#sidebardiv" ).addClass('hidden');
+	$( "#md-fac" ).detach()
+	$( "#maintextdiv" ).removeClass('span9').addClass('span5');
+	$( "#imagediv" ).removeClass('span1').addClass('span7');
+	$( "#imagediv" ).removeClass('hidden')
+	$( "#imageinner" ).addClass('krp-fixed');
+	var w = $( "#imgcont").width();
+	var h = $( window ).height() 
+	$( ".panzoom" ).append( "<img id='md-fac' src='/api/v1.0/getimage?filename=" + imglist[edition+" "+juan+ "-" + page] + "' style='max-width: 90%; max-height: 90%;'/>" );
   
-  $( ".panzoom" ).panzoom({
+	$( ".panzoom" ).panzoom({
             $zoomIn: $(".zoom-in"),
             $zoomOut: $(".zoom-out"),
             $zoomRange: $(".zoom-range"),
             $reset: $(".reset")
-  });
-  $( ".pz-close" ).hidePageImage();
-  }
-  };
+	});
+	$( ".pz-close" ).hidePageImage();
+    }
+};
 
-  function hidePageImage(){
-  $( "#sidebardiv" ).removeClass('hidden')
-  $( "#imagediv" ).addClass('hidden');
-  };
-  
-  (function($) {
-  $(document).ready(function() {
-  $.ajax({
-  type: 'GET',
-  url: '/api/v1.0/getimgdata?filename={{txtid}}/_data/imglist/{{txtid}}_{{juan}}.txt',
-  dataType: 'text',
-  success: function(data, textStatus) {
-  //Console.log(data.length);
-  //$('#imagediv').append(data);
-  var lines = data.split('\n');
-  for (var j=0; j < lines.length; j++) {
+function hidePageImage(){
+    $( "#sidebardiv" ).removeClass('hidden')
+    $( "#imagediv" ).addClass('hidden');
+};
+
+(function($) {
+    $(document).ready(function() {
+	$.ajax({
+	    type: 'GET',
+	    url: 'https://raw.githubusercontent.com/kanripo/{{txtid}}/_data/imglist/{{txtid}}_{{juan}}.txt',
+	    dataType: 'text',
+	    success: function(data, textStatus) {
+		//Console.log(data.length);
+		//$('#imagediv').append(data);
+		var lines = data.split('\n');
+		for (var j=0; j < lines.length; j++) {
 		    f = lines[j].split('\t');
 		    if (f[1]) {
-		    r = f[1].split(' ')
-		    if (r[1]) {
-		    if (r[1].indexOf('-') < 0){
-					    imglist[r[0] + ' {{juan}}-' + r[1]] = f[2];
-					    } 
-					    else if (f[1].indexOf('JY') > -1){
-		    imglist[r[0] + ' {{juan}}-' + r[1]] = f[2];
-		    }
-		    else
-		    
-					    imglist[f[1]]=f[2];
-					    };
-					    };
-					    };
-  },
-  error: function(xhr, textStatus, errorThrown) {
-  alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
-  }
-  });
-  });
-  })
-(jQuery);
-  
-</script>
+			r = f[1].split(' ')
+			if (r[1]) {
+			    if (r[1].indexOf('-') < 0){
+				imglist[r[0] + ' {{juan}}-' + r[1]] = f[2];
+			    } 
+			    else if (f[1].indexOf('JY') > -1){
+				imglist[r[0] + ' {{juan}}-' + r[1]] = f[2];
+			    }
+			    else
+				
+				imglist[f[1]]=f[2];
+			};
+		    };
+		};
+	    },
+	    error: function(xhr, textStatus, errorThrown) {
+		alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
+	    }
+	});
+	
+    });
+})
+(jQuery);  
+</script>  
 {% endblock %}

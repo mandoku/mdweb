@@ -356,15 +356,17 @@ def server_shutdown():
 def index():
     return render_template('index.html')
 
-@main.route('/login')
+@main.route('/login',methods=['GET',])
 def github_login():
     if not github.authorized:
         #print url_for("github.login")
         return redirect(url_for("github.login"))
     resp = github.get("/user")
     assert resp.ok
-    return "You are @{login} on GitHub, token: {token}".format(login=resp.json()["login"], token=github.token["access_token"] )
+    return render_template('index.html')
+#    return "You are @{login} on GitHub, token: {token}".format(login=resp.json()["login"],token=github.token["access_token"] )
 #return "%s," % (github.token)
+#          <!-- <li><a href="{{url_for('main.login')}}">{{_('Login')}}</a></li> -->
     
 
 
