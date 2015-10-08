@@ -75,13 +75,13 @@
 <script>
   var imglist={};
   var urlist={};
-
+  var noimg = 0
 
   
 function displayPageImage(txtid, edition, juan, page){
-    if (imglist.res)
-	alert (imglist.res)
-    else {
+    if (noimg === 1) {
+       alert("No digital facsimile available for this text!")
+    } else {
 	$( "#sidebardiv" ).addClass('hidden');
 	$( "#md-fac" ).detach()
 	$( "#maintextdiv" ).removeClass('span9').addClass('span5');
@@ -125,9 +125,11 @@ function displayPageImage(txtid, edition, juan, page){
 			};
 		    };
 		};
+		
 	    },
 	    error: function(xhr, textStatus, errorThrown) {
-		alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
+	    	   noimg = 1
+	    	//alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
 	    }
 	});
 // ajax 2	
@@ -160,7 +162,8 @@ function displayPageImage(txtid, edition, juan, page){
 		};
 	    },
 	    error: function(xhr, textStatus, errorThrown) {
-		alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
+	    	   noimg = 1
+		//alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
 	    }
 	});
 

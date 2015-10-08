@@ -38,7 +38,7 @@ class Config:
     OAUTHLIB_INSECURE_TRANSPORT=True
     DEBUG = True
     GHRAWURL="https://raw.githubusercontent.com/"
-
+    GHKANRIPO="kanripo"
 
     
     @staticmethod

@@ -35,6 +35,7 @@ titpref = "kr:title:"
 link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
 hd = re.compile(r"^(\*+) (.*)$")
 
+
 @main.route('/robots.txt')
 @main.route('/googled78ca805afaa95df.html')
 # @main.route('/sitemap.xml')
@@ -142,7 +143,7 @@ def texttop(id=0, coll=None, seq=0):
 @main.route('/text/<coll>/<seq>/<juan>', methods=['GET',] )
 @main.route('/text/<id>/<juan>', methods=['GET',])
 @main.route('/edition/<branch>/<id>/<juan>', methods=['GET',])
-def showtext(juan, id=0, coll=None, seq=0, branch="master"):
+def showtext(juan, id=0, coll=None, seq=0, branch="master", user="kanripo"):
     doc = {}
     fn = ""
     key = request.values.get('query', '')
@@ -158,16 +159,25 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master"):
             #TODO need to find the canonical id for this, go to redis, pull it out
             id="Not Implemented"
     #the filename is of the form ZB1a/ZB1a0001/ZB1a0001_002.txt
-    url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt" % (id, branch,  id, juan,)
+    u = g.get("user", None)
+    if u :
+        user = u
+    url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
     # url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
     #     current_app.config['GITHUB_OAUTH_CLIENT_ID'],
     #     current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
-    print url
     r = requests.get(url)
-    if b"<!DOCTYPE html>" in r.content:
-         print "Not retrieved from Gitlab!", id
+    print url, r.status_code
+    if r.status_code == 200:
+        fn = r.content
     else:
-         fn = r.content
+        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (current_app.config['GHKANRIPO'], id, branch,  id, juan,)
+        r = requests.get(url)
+        if r.status_code == 200:
+            fn = r.content
+        else:
+            print "Not retrieved from Gitlab!", id
+    print "fn, " , len(fn)
     if branch == "master":
         #url =  "%s/%s/%s/raw/%s/%s_%s.txt?private_token=%s" % (current_app.config['GITLAB_HOST'], id[0:4], id,  id, juan, current_app.config['GITLAB_TOKEN'])
 
@@ -255,19 +265,23 @@ def searchdic():
 
 ## catalog
 @main.route('/catalog', methods=['GET',])
-def catalog(page=1):
+def catalog(page=1, count=20, coll=""):
     page=int(request.values.get('page', page))
+    count=int(request.values.get('count', count))
     r=redis_store
     coll = request.values.get('coll', '')
     subcoll = request.values.get('subcoll', '')
     if len(coll) < 1 and len(subcoll) < 1:
-        cat = [r.hgetall(a) for a in r.keys("kr:catalog*")]
+        cat = [r.hgetall(a) for a in r.keys("kr:meta*") if len(a.split(":")[-1]) < 8 and "KR" in a]
         cat.sort(key=lambda t : t['ID'])
     else:
         cat = [r.hgetall("%s%s" %( zbmeta, k.split(':')[-1][0:8])) for k in r.keys(zbmeta+coll+"*")]
 #        cat = [c for c in cat if coll in  c['ID']]
         cat.sort(key=lambda t : t['ID'])
-    return render_template('catalog.html', cat = cat, sr={'total': 0, 'coll': coll})
+    total = len(cat)
+    tits = cat[(page-1)*count:page*count]
+    p = lib.Pagination(coll, page, count, total, tits)
+    return render_template('catalog.html', cat = cat, sr={'total': 0, 'coll': coll}, pagination=p, count=count)
 
 @main.route('/titlesearch', methods=['GET',])
 def titlesearch(count=20, page=1):
