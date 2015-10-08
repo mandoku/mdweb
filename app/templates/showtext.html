@@ -125,14 +125,6 @@ function displayPageImage(txtid, edition, juan, page){
 			};
 		    };
 		};
-		
-	    },
-	    error: function(xhr, textStatus, errorThrown) {
-	    	   noimg = 1
-	    	//alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
-	    }
-	});
-// ajax 2	
 	$.ajax({
 	    type: 'GET',
 	    url: 'https://raw.githubusercontent.com/kanripo/{{txtid}}/_data/imglist/{{txtid}}_{{juan}}.txt',
@@ -166,6 +158,14 @@ function displayPageImage(txtid, edition, juan, page){
 		//alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
 	    }
 	});
+		
+	    },
+	    error: function(xhr, textStatus, errorThrown) {
+	    	   noimg = 1
+	    	//alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
+	    }
+	});
+// ajax 2	
 
 
 });
