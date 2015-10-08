@@ -2,6 +2,10 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "_macros.html" as macros %}
 
+{% block navlinks %}
+          <li><a href="{{url_for('main.login')}}">{{_('Login')}}</a></li>
+{% endblock navlinks%}
+
 
 {% block subhead %}
 

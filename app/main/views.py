@@ -1,7 +1,7 @@
 #    -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from flask import Response, render_template, redirect, url_for, abort, flash, Markup, request,\
-    current_app, make_response, send_from_directory
+    current_app, make_response, send_from_directory, g
 from flask.ext.login import login_required, current_user
 #from flask.ext.sqlalchemy import get_debug_queries
 ## github authentication [2015-10-03T17:08:15+0900]
@@ -158,9 +158,10 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master"):
             #TODO need to find the canonical id for this, go to redis, pull it out
             id="Not Implemented"
     #the filename is of the form ZB1a/ZB1a0001/ZB1a0001_002.txt
-    url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
-        current_app.config['GITHUB_OAUTH_CLIENT_ID'],
-        current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
+    url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt" % (id, branch,  id, juan,)
+    # url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
+    #     current_app.config['GITHUB_OAUTH_CLIENT_ID'],
+    #     current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
     print url
     r = requests.get(url)
     if b"<!DOCTYPE html>" in r.content:
@@ -254,15 +255,16 @@ def searchdic():
 
 ## catalog
 @main.route('/catalog', methods=['GET',])
-def catalog():
+def catalog(page=1):
+    page=int(request.values.get('page', page))
     r=redis_store
     coll = request.values.get('coll', '')
     subcoll = request.values.get('subcoll', '')
     if len(coll) < 1 and len(subcoll) < 1:
-        cat = [r.hgetall(a) for a in r.keys("zb:catalog*")]
+        cat = [r.hgetall(a) for a in r.keys("kr:catalog*")]
         cat.sort(key=lambda t : t['ID'])
     else:
-        cat = [redis_store.hgetall("%s%s" %( zbmeta, k.split(':')[-1][0:8])) for k in r.keys(zbmeta+coll+"*")]
+        cat = [r.hgetall("%s%s" %( zbmeta, k.split(':')[-1][0:8])) for k in r.keys(zbmeta+coll+"*")]
 #        cat = [c for c in cat if coll in  c['ID']]
         cat.sort(key=lambda t : t['ID'])
     return render_template('catalog.html', cat = cat, sr={'total': 0, 'coll': coll})
@@ -363,7 +365,21 @@ def server_shutdown():
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    if not github.authorized:
+        user = "Login"
+    else:
+        resp = github.get("/user")
+        assert resp.ok
+        user = resp.json()["login"]
+    return render_template('index.html', user=user)
+
+@main.route('/login/<user>', methods=['GET',])
+def usersettings(user=None):
+    print "user:", user
+    #implement some logic to
+    # - see if we have the KR-Workspace on the user account, getting it if not.
+    # - displaying some info and offering to change settings.
+    pass
 
 @main.route('/login',methods=['GET',])
 def login():
@@ -372,7 +388,10 @@ def login():
         return redirect(url_for("github.login"))
     resp = github.get("/user")
     assert resp.ok
-#    return render_template('index.html')
+    g.user = resp.json()["login"]
+    g.token = github.token["access_token"]
+    lib.ghuserdata(resp.json()["login"])
+    return render_template('index.html', user=resp.json()["login"])
     return "You are @{login} on GitHub, token: {token}".format(login=resp.json()["login"],token=github.token["access_token"] )
 #return "%s," % (github.token)
 #          <!-- <li><a href="{{url_for('main.login')}}">{{_('Login')}}</a></li> -->

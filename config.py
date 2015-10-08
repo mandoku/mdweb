@@ -37,7 +37,7 @@ class Config:
     GITHUB_OAUTH_CLIENT_ID="32e5b9df1b848ffaa194"
     OAUTHLIB_INSECURE_TRANSPORT=True
     DEBUG = True
-    
+    GHRAWURL="https://raw.githubusercontent.com/"
 
 
     
