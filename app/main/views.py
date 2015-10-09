@@ -151,6 +151,7 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master", user="kanripo"):
         juan = "%3.3d" % (int(juan))
     except:
         pass
+    print "Juan: ", juan
     if coll:
         #TODO: allow for different repositories, make this configurable
         if coll.startswith('KR'):
@@ -271,9 +272,10 @@ def searchdic():
 
 ## catalog
 @main.route('/catalog', methods=['GET',])
-def catalog(page=1, count=20, coll=""):
+def catalog(page=1, count=20, coll="", label=""):
     page=int(request.values.get('page', page))
     count=int(request.values.get('count', count))
+    label=request.values.get('label', label)
     r=redis_store
     coll = request.values.get('coll', '')
     subcoll = request.values.get('subcoll', '')
@@ -281,13 +283,19 @@ def catalog(page=1, count=20, coll=""):
         cat = [r.hgetall(a) for a in r.keys("kr:meta*") if len(a.split(":")[-1]) < 8 and "KR" in a]
         cat.sort(key=lambda t : t['ID'])
     else:
-        cat = [r.hgetall("%s%s" %( zbmeta, k.split(':')[-1][0:8])) for k in r.keys(zbmeta+coll+"*")]
+        cat = [r.hgetall("%s%s" %( zbmeta, k.split(':')[-1])) for k in r.keys(zbmeta+coll+"*")]
+        #cat = [r.hgetall("%s%s" %( zbmeta, k.split(':')[-1][0:8])) for k in r.keys(zbmeta+coll+"*")]
 #        cat = [c for c in cat if coll in  c['ID']]
-        cat.sort(key=lambda t : t['ID'])
+
+        if coll in ['DZ', 'JY', 'T', 'X', 'SB']:
+            cat.sort(key=lambda t : t['EXTRAID'])
+        else:
+            cat.sort(key=lambda t : t['ID'])
+            cat = [a for a in cat if a['STATUS'] == "READY"]
     total = len(cat)
     tits = cat[(page-1)*count:page*count]
     p = lib.Pagination(coll, page, count, total, tits)
-    return render_template('catalog.html', cat = cat, sr={'total': 0, 'coll': coll}, pagination=p, count=count)
+    return render_template('catalog.html', cat = cat, sr={'total': 0, 'coll': coll}, pagination=p, count=count, label=label, allc=len(cat))
 
 @main.route('/titlesearch', methods=['GET',])
 def titlesearch(count=20, page=1):

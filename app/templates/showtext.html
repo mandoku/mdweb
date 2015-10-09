@@ -79,7 +79,8 @@
 
   
 function displayPageImage(txtid, edition, juan, page){
-    if (noimg === 1) {
+    im=imglist[edition+" "+juan+ "-" + page]
+    if (typeof im === 'undefined') {
        alert("No digital facsimile available for this text!")
     } else {
 	$( "#sidebardiv" ).addClass('hidden');

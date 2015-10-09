@@ -11,7 +11,9 @@
 
 <header class="jumbotron subhead" id="overview">
   <div class="container">
-    <h1>{{_('Kanseki Repository Catalog')}}</h1>
+    <h1>{{_('Kanseki Repository Catalog')}} {{label}}
+      ({{allc}} 種)
+    </h1>
   </div>
 </header>
 
@@ -29,15 +31,27 @@
       {% set it_txtid = item['ID'] %}
       {% set it_title = item['TITLE'] %}
       {% set it_type =  item['TYPE'] %}
+      {% set it_extra =  item['EXTRAID'] %}
+      {% set it_status =  item['STATUS'] %}
+      {% if it_extra|length > 0 %}
+      {% set it_id = it_extra %}
+      {% else %}
+      {% set it_id = it_txtid %}
+      {% endif %}
+      
       <tr>
 <!-- http://localhost:5000/text/ZB6q0003/003#0221a -->
 <!-- ZB1a0068:007-352:2:6 -->
-         {% if it_txtid|length > 4 %}
-	<td class="text-left"><a href="{{url_for('main.texttop', id=it_txtid)}}" title="{{it_txtid}}">{{it_txtid}}</a></td>
-	{% else %}
-	<td class="text-left"><a href="{{url_for('main.catalog', coll=it_txtid)}}" title="{{it_txtid}}">{{it_txtid}}</a></td>
-	{% endif %}
-	<td  class="text-left">{{it_title}}</td>
+{% if it_txtid|length > 4 %}
+  {% if it_status == 'NOTREADY'%}
+  <td class="text-left"><a title="{{it_status}}">{{it_id}}</a></td>
+  {% else %}
+  <td class="text-left"><a href="{{url_for('main.texttop', id=it_txtid)}}" title="{{it_txtid}}">{{it_id}}</a></td>
+ {% endif %}
+ {% else %}
+  <td class="text-left"><a href="{{url_for('main.catalog', coll=it_txtid)}}" title="{{it_txtid}}">{{it_txtid}}</a></td>
+{% endif %}
+<td  class="text-left">{{it_title}}</td>
       </tr>
     {% endfor %}
     </table>
@@ -54,10 +68,37 @@
 
 {% block sidebar %}
 <div class="sidebar">
-<h2>{{_('Collections')}}</h2>
+<h2>{{_('目錄')}}</h2>
 <ul>
-  <li><a href="{{url_for('main.catalog')}}/coll=DZ"></a></li>
+  <li><b>漢籍リポ</b>
+  <ul>
+  <li><a href="{{url_for('.catalog', coll='KR1', label='經部')}}">經部</a></li>
+  <li><a href="{{url_for('.catalog', coll='KR2', label='史部')}}">史部</a></li>
+  <li><a href="{{url_for('.catalog', coll='KR3', label='子部')}}">子部</a></li>
+  <li><a href="{{url_for('.catalog', coll='KR4', label='集部')}}">集部</a></li>
+  <li><a href="{{url_for('.catalog', coll='KR5', label='道部')}}">道部</a></li>
+  <li><a href="{{url_for('.catalog', coll='KR6', label='佛部')}}">佛部</a></li>
+  </ul>
+  </li>
+  <li><b>叢書</b>
+  <ul>
+  <li><a href="{{url_for('.catalog', coll='SB', label='四部叢刊')}}">四部叢刊</a></li>
+  <li>四庫全書</li>
+  </ul>
+  </li>
+  <li><b>道教文献</b>
+  <ul>
+  <li><a href="{{url_for('.catalog', coll='DZ', label='正統道藏')}}">正統道藏</a></li>
+  <li><a href="{{url_for('.catalog', coll='JY', label='道藏輯要')}}">道藏輯要</a></li>
+  </ul>
+  </li>
+  <li><b>佛教文献</b>
+  <ul>
+  <li><a href="{{url_for('.catalog', coll='T', label='大正新脩大藏經')}}">大正新脩大藏經</a></li>
+  <li><a href="{{url_for('.catalog', coll='X', label='卍字續藏經')}}">卍字續藏經</a></li>
+  </ul>
+  </li>
 </ul>
-
+</div>
 {% endblock sidebar %}
 
