@@ -11,7 +11,7 @@ zbmeta = "kr:meta:"
 
 ## dictionary stuff.  really should wrap this in an object?!
 md_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯\n¶]+|\t[^\n]+\n|\$[^;]+;")
-gaiji = re.compile(r"(&[^;]+;)")
+gaiji = re.compile(r"&([^;]+);")
 imgbase = "<img height='20' width='20' alt='{gaiji}' title='{gaiji}' src='https://raw.githubusercontent.com/kanripo/KR-Gaiji/master/images/{gaiji}.png'/>"
 
 brtab = {
@@ -294,7 +294,7 @@ def doftsearch(key, idxdir=None):
     except subprocess.CalledProcessError:
         return False
     ux = ox.decode('utf8')
-    ux = gaiji.sub(u"⬤", ux)
+    ux = gaiji.sub(lambda x : imgbase.format(gaiji=x.group(1)), x)
     s=ux.split('\n')
     s=[a for a in s if len(a) > 1]
     s.sort()
