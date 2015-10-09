@@ -191,7 +191,9 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master", user="kanripo"):
     #get branches  -- we could get this from github, but it counts against the limit...
     try:
         g=Github(token)
-        rp=g.get_repo(user+"/"+id)
+        #rp=g.get_repo(user+"/"+id)
+        #need to make this more variable...
+        rp=g.get_repo("kanripo/"+id)
         branches=[a.name for a in rp.get_branches() if not a.name in ['_data', 'master']]
     except:
         try:
