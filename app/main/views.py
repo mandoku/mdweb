@@ -1,6 +1,6 @@
 #    -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from flask import Response, render_template, redirect, url_for, abort, flash, Markup, request,\
+from flask import Response, session, render_template, redirect, url_for, abort, flash, Markup, request,\
     current_app, make_response, send_from_directory, g
 from flask.ext.login import login_required, current_user
 #from flask.ext.sqlalchemy import get_debug_queries
@@ -159,15 +159,15 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master", user="kanripo"):
             #TODO need to find the canonical id for this, go to redis, pull it out
             id="Not Implemented"
     #the filename is of the form ZB1a/ZB1a0001/ZB1a0001_002.txt
-    u = g.get("user", None)
-    if u :
-        user = u
+    if "user" in session:
+        user = session['user']
+    #print user
     url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
     # url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
     #     current_app.config['GITHUB_OAUTH_CLIENT_ID'],
     #     current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
     r = requests.get(url)
-    print url, r.status_code
+    #print url, r.status_code
     if r.status_code == 200:
         fn = r.content
     else:
@@ -176,8 +176,9 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master", user="kanripo"):
         if r.status_code == 200:
             fn = r.content
         else:
-            print "Not retrieved from Gitlab!", id
-    print "fn, " , len(fn)
+            pass
+            #print "Not retrieved from Gitlab!", id
+    #print "fn, " , len(fn)
     if branch == "master":
         #url =  "%s/%s/%s/raw/%s/%s_%s.txt?private_token=%s" % (current_app.config['GITLAB_HOST'], id[0:4], id,  id, juan, current_app.config['GITLAB_TOKEN'])
 
@@ -188,10 +189,15 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master", user="kanripo"):
     rpath = "%s/%s/%s" % (current_app.config['TXTDIR'], id[0:4], id[0:8])
     #get branches  -- we could get this from github, but it counts against the limit...
     try:
-        repo=git.Repo(rpath)
-        branches=[(a.name.decode('utf-8'), lib.brtab[a.name.decode('utf-8')]) for a in repo.branches if not a.name in ['_data', 'master']]
+        g=Github(token)
+        rp=g.get_repo(user+"/"+id)
+        branches=[a.name for a in rp.get_branches() if not a.name in ['_data', 'master']]
     except:
-        branches=[]
+        try:
+            repo=git.Repo(rpath)
+            branches=[(a.name.decode('utf-8'), lib.brtab[a.name.decode('utf-8')]) for a in repo.branches if not a.name in ['_data', 'master']]
+        except:
+            branches=[]
     if len(fn) == 0:
         try:
             datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
@@ -379,12 +385,11 @@ def server_shutdown():
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    if not github.authorized:
-        user = "Login"
+    if "user" in session:
+        user = session['user']
+        #print "token, ", session["token"]
     else:
-        resp = github.get("/user")
-        assert resp.ok
-        user = resp.json()["login"]
+        user = "Login"
     return render_template('index.html', user=user)
 
 @main.route('/login/<user>', methods=['GET',])
@@ -398,19 +403,22 @@ def usersettings(user=None):
 @main.route('/login',methods=['GET',])
 def login():
     if not github.authorized:
-        #print url_for("github.login")
+        print url_for("github.login")
         return redirect(url_for("github.login"))
     resp = github.get("/user")
     assert resp.ok
-    g.user = resp.json()["login"]
-    g.token = github.token["access_token"]
-    lib.ghuserdata(resp.json()["login"])
+    session['user'] = resp.json()["login"]
+    session['token'] = github.token["access_token"]
+    #lib.ghuserdata(resp.json()["login"])
     return render_template('index.html', user=resp.json()["login"])
-    return "You are @{login} on GitHub, token: {token}".format(login=resp.json()["login"],token=github.token["access_token"] )
+#return "You are @{login} on GitHub, token: {token}".format(login=resp.json()["login"],token=github.token["access_token"] )
 #return "%s," % (github.token)
 #          <!-- <li><a href="{{url_for('main.login')}}">{{_('Login')}}</a></li> -->
     
-
+@main.route('/profile/<id>')
+def profile(id):
+    return render_template('index.html', user=id)
+    
 
 @main.route('/about/<id>')
 def about(id):

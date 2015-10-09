@@ -53,5 +53,11 @@
 {% endblock %}
 
 {% block sidebar %}
+<div class="sidebar">
+<h2>{{_('Collections')}}</h2>
+<ul>
+  <li><a href="{{url_for('main.catalog')}}/coll=DZ"></a></li>
+</ul>
+
 {% endblock sidebar %}
 
