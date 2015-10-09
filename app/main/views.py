@@ -158,9 +158,10 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master"):
             #TODO need to find the canonical id for this, go to redis, pull it out
             id="Not Implemented"
     #the filename is of the form ZB1a/ZB1a0001/ZB1a0001_002.txt
-    url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
-        current_app.config['GITHUB_OAUTH_CLIENT_ID'],
-        current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
+    url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt" % (id, branch,  id, juan,)
+    # url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
+    #     current_app.config['GITHUB_OAUTH_CLIENT_ID'],
+    #     current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
     print url
     r = requests.get(url)
     if b"<!DOCTYPE html>" in r.content:
@@ -366,14 +367,14 @@ def index():
     return render_template('index.html')
 
 @main.route('/login',methods=['GET',])
-def login():
+def github_login():
     if not github.authorized:
         #print url_for("github.login")
         return redirect(url_for("github.login"))
     resp = github.get("/user")
     assert resp.ok
-#    return render_template('index.html')
-    return "You are @{login} on GitHub, token: {token}".format(login=resp.json()["login"],token=github.token["access_token"] )
+    return render_template('index.html')
+#    return "You are @{login} on GitHub, token: {token}".format(login=resp.json()["login"],token=github.token["access_token"] )
 #return "%s," % (github.token)
 #          <!-- <li><a href="{{url_for('main.login')}}">{{_('Login')}}</a></li> -->
     
