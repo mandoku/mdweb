@@ -6,12 +6,6 @@
 
 {% block navlinks %}
 <li><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
-{%- if user == 'Login' %}
-<li><a href="{{url_for('main.login')}}">{{user}}</a></li>
-{% else %}
-<li><a href="{{url_for('main.login')}}/{{user}}">{{user}}</a></li>
-{%- endif %}
-
 {% endblock navlinks%}
 
 

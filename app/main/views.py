@@ -409,7 +409,7 @@ def usersettings(user=None):
     pass
 
 @main.route('/login',methods=['GET',])
-def github_login():
+def login():
     if not github.authorized:
         print url_for("github.login")
         return redirect(url_for("github.login"))

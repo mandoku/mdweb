@@ -5,7 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     MDBASE="/Users/Shared/krp"
-    TXTDIR="/Users/Shared/krpdev/src"
+    TXTDIR="/Users/Shared/krp/gh"
     IDXDIR="/Users/Shared/krp/index"
     IMGDIR="/Users/Shared/images/general/skqs/wyg"
     LANGUAGES = {
@@ -36,7 +36,6 @@ class Config:
     DEBUG = True
     GITHUB_OAUTH_CLIENT_SECRET=os.environ.get('GITHUB_OAUTH_CLIENT_SECRET')
     GITHUB_OAUTH_CLIENT_ID=os.environ.get('GITHUB_OAUTH_CLIENT_ID')
-    GHRAWURL="https://raw.githubusercontent.com/"
     GHRAWURL="https://raw.githubusercontent.com/"
     GHKANRIPO="kanripo"
 
