@@ -1,9 +1,9 @@
 #    -*- coding: utf-8 -*-
 ## this is lifted from flask_sqlalchemy,
 ## maybe overkill...
-from flask import current_app
+from flask import current_app, g
 from math import ceil
-import re
+import re, requests
 from . import redis_store
 import subprocess
 
@@ -339,7 +339,45 @@ def applyfilter(key, fs, tpe):
         ox.sort()
     #print ox
     return ox
+def ghsave(pathname, content, repo=None, commit_message=None, new=False):
+    #we need the PyGithub patched version with the PR of June 2015 from @ahmad88me 
+    #with additional patch by CW [2015-10-08T16:01:18+0900]
+    if not repo:
+        repo = g.get('ws', None)
+    if not commit_message:
+        if new:
+            commit_message="Added file %s." % (pathname)
+        else:
+            commit_message="Updated file %s." % (pathname)
+    if new:
+        #we could also test for existence in the library...
+        repo.create_content(pathname, commit_message, content, branch=repo.default_branch)
+    else:
+        repo.update_content(pathname, commit_message, content, branch=repo.default_branch)
 
+
+def ghuserdata(user):
+    #this will retrieve the userdata from gh, clone if necessary
+    #kanripo/KR-Workspace/master/Settings/kanripo.cfg
+    url = "{url}{user}/KR-Workspace/{user}/Settings/kanripo.cfg".format(url=current_app.config['GHRAWURL'], user=user)
+    r = requests.get(url)
+    if r.status_code != 200:
+        token = g.get('token', None)
+        gh = Github(token)
+        u=gh.get_user()
+        #it seems like if the fork exists, this will just return the forked repo
+        ws = u.create_fork(g.get_repo("kanripo/KR-Workspace"))
+        g.ws = ws
+        l=[a for a in ws.get_branches() if a.name=="master"]
+        nb=ws.create_git_ref("refs/heads/%s" % (u.login), l[0].raw_data["commit"]["sha"])
+        rs=ws.edit(name=ws.name, default_branch=u.login)
+        r = requests.get(url)
+    return r.content
+    #r = requests.get(url)
+    #PATCH /repos/<user>/KR-Workspace -d {"default_branch": user} 
+#curl -u b7254056c49642977850667b9022f092bf79a956:x-oauth-basic -X POST https://api.github.com/repos/kanripo/KR-Workspace/forks
+    # print  g.get('token', None)
+    # print "User from lib: ", g.get('user', None), url
 
 
 ## helper object for view, this could at some point be moved into a flask extension

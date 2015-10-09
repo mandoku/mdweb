@@ -33,7 +33,12 @@
         </ul>
       </div>
         <ul class="nav pull-right">
-	<li class="label-important "><a href="{{url_for('main.contact')}}">{{_('Pre-Test 0.1')}}</a></li>
+	<li class="active"><a href="{{url_for('main.contact')}}">{{_('Contact')}}</a></li>
+{% if user == 'Login' %}
+<li class="label-important"><a href="{{url_for('.login')}}">{{user}}</a></li>
+{% else %}
+<li  class="label-important"><a href="{{url_for('.profile', id=user)}}">{{user}}</a></li>
+{% endif %}
       </ul>
       <form class="navbar-search pull-right" action="{{url_for('main.searchtext')}}" method="GET">
 	<input name="query" id="query" type="text" class="search-query" placeholder="{{_('Text Search')}}">

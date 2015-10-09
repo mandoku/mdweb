@@ -7,12 +7,12 @@ from jinja2 import Markup
 config_parser_re=re.compile(r"#\+(.*): (.*)", re.M) 
 hd = re.compile(r"^(\*+) (.*)$")
 vs = re.compile(r"^#\+([^_]+)_V")
-gaiji = re.compile(r"(&[^;]+;)")
+gaiji = re.compile(r"&([^;]+);")
 pb = re.compile(r"<pb:([^_]+)_([^_]+)_([^-]+)-([^>]+)>")
 pby = re.compile(r"<pb:YP-C_([^_]+)_([^-]+)-([^>]+)>")
 pbx = re.compile(r"<pb:([^_]+)_([^_]+)_([^p]+)p([^>]+)>")
 # <pb:KR5a0174_CK-KZ_02p002a>
-
+imgbase = "<img height='20' width='20' alt='{gaiji}' title='{gaiji}' src='https://raw.githubusercontent.com/kanripo/KR-Gaiji/master/images/{gaiji}.png'/>"
 class mdDocument(object):
     def __init__(self, fn, txtid, juan, rep=None):
         self.raw = fn
@@ -99,7 +99,8 @@ class mdDocument(object):
             elif vs_flag == 1:
                 o = "%s<br/>" % (l)
             else:
-                o = gaiji.sub(u"⬤", l)
+                o = gaiji.sub(lambda x : imgbase.format(gaiji=x.group(1)), l)                
+                #o = gaiji.sub(u"⬤", l)
             s.append(o)
         s.append("</p>")
         return s

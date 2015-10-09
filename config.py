@@ -37,7 +37,8 @@ class Config:
     GITHUB_OAUTH_CLIENT_SECRET=os.environ.get('GITHUB_OAUTH_CLIENT_SECRET')
     GITHUB_OAUTH_CLIENT_ID=os.environ.get('GITHUB_OAUTH_CLIENT_ID')
     GHRAWURL="https://raw.githubusercontent.com/"
-
+    GHRAWURL="https://raw.githubusercontent.com/"
+    GHKANRIPO="kanripo"
 
     
     @staticmethod
