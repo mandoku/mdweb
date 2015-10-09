@@ -12,6 +12,7 @@ zbmeta = "kr:meta:"
 ## dictionary stuff.  really should wrap this in an object?!
 md_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯\n¶]+|\t[^\n]+\n|\$[^;]+;")
 gaiji = re.compile(r"(&[^;]+;)")
+imgbase = "<img height='20' width='20' alt='{gaiji}' title='{gaiji}' src='https://raw.githubusercontent.com/kanripo/KR-Gaiji/master/images/{gaiji}.png'/>"
 
 brtab = {
 u'ZTDZ' : u'【正統道藏・三家本】', 
