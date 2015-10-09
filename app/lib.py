@@ -294,7 +294,7 @@ def doftsearch(key, idxdir=None):
     except subprocess.CalledProcessError:
         return False
     ux = ox.decode('utf8')
-    ux = gaiji.sub(lambda x : imgbase.format(gaiji=x.group(1)), x)
+    ux = gaiji.sub(lambda x : imgbase.format(gaiji=x.group(1)), ux)
     s=ux.split('\n')
     s=[a for a in s if len(a) > 1]
     s.sort()
