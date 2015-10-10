@@ -103,7 +103,10 @@ def searchtext(count=20, page=1):
     elif len(fs) < 1:
         key = keys[0]
         total = redis_store.llen(key)
-        ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
+        try:
+            ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
+        except:
+            ox = []
     else:
         key = keys[0]
         ox1 = lib.applyfilter(key, fs, tpe)
