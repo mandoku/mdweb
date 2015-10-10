@@ -37,7 +37,9 @@
 {% if user == 'Login' %}
 <li class="label-important"><a href="{{url_for('.login')}}">{{user}}</a></li>
 {% else %}
+{% if user %}
 <li  class="label-important"><a href="{{url_for('.profile', id=user)}}">{{user}}</a></li>
+{% endif %}
 {% endif %}
       </ul>
       <form class="navbar-search pull-right" action="{{url_for('main.searchtext')}}" method="GET">
