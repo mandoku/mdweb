@@ -62,6 +62,7 @@ def searchtext(count=20, page=1):
     fs = [a for a in fs if len(a) > 0]
     # do we allow filters for AND search?  not for the moment...
     if len(keys) > 1:
+        #so it seems that we cant have filter and AND at the same time...
         d1=defaultdict(list)
         d2=defaultdict(list)
         klen = ""
@@ -100,9 +101,11 @@ def searchtext(count=20, page=1):
         #        ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), " /".join(["".join([b[0][0] ]) for b in d2[a][1:][0]])) for a in d2.keys()]
         ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), "　・　"+"/".join(["".join(b[0]) for b in d2[a][1:2]])) for a in d2.keys()]
     elif len(fs) < 1:
+        key = keys[0]
         total = redis_store.llen(key)
         ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
     else:
+        key = keys[0]
         ox1 = lib.applyfilter(key, fs, tpe)
         total = len(ox1)
         ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
