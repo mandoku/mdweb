@@ -107,14 +107,14 @@ def searchtext(count=20, page=1):
         key = keys[0]
         total = redis_store.llen(key)
         try:
-            ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
+            ox = [("".join([k.split("\t")[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
         except:
             ox = []
     else:
         key = keys[0]
         ox1 = lib.applyfilter(key, fs, tpe)
         total = len(ox1)
-        ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
+        ox = [("".join([k.split("\t")[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
     p = lib.Pagination(key, page, count, total, ox)
     return render_template('result.html', sr={'list' : p.items, 'total': total }, key=q, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), tpe=tpe)
 
@@ -366,7 +366,7 @@ def addfilter(count=20, page=1):
     ox = lib.applyfilter(key, fs)
     total = len(ox)
     ox = ox[start:start+count]
-    oy = [  (k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox]
+    oy = [  (k.split("\t")[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox]
     p = lib.Pagination(key, page, count, total, oy)
     return render_template('result.html', sr={'list' : p.items, 'total': total, 'head' : '', 'link' : '' }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' })
     
