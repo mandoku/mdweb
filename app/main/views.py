@@ -87,10 +87,13 @@ def searchtext(count=20, page=1):
                 continue
             total = redis_store.llen(key)
             #print "key: ", key
+            try:
             ox2 = [(a.split('\t')[1].split(':')[0]+'_'+a.split('\t')[1].split(':')[-1],
                     ([a.split()[0].split(',')[1],key[0], a.split()[0].split(',')[0]], "\t".join(a.split("\t")[1:])))
                    #(a.split()[0].split(','),key[0], a.split()[1]))
                    for a in redis_store.lrange(key, 0, total-1) if len(a) > 0]
+            except:
+                ox2 = []
             for b,a in ox2:
                 if d1.has_key(b):
                     if not d2.has_key(b):
