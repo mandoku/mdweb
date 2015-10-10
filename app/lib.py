@@ -6,6 +6,7 @@ from math import ceil
 import re, requests
 from . import redis_store
 import subprocess
+from github import Github
 
 zbmeta = "kr:meta:"
 
@@ -357,21 +358,23 @@ def ghsave(pathname, content, repo=None, commit_message=None, new=False):
         repo.update_content(pathname, commit_message, content, branch=repo.default_branch)
 
 
-def ghuserdata(user):
+def ghuserdata(user, token):
     #this will retrieve the userdata from gh, clone if necessary
     #kanripo/KR-Workspace/master/Settings/kanripo.cfg
     url = "{url}{user}/KR-Workspace/{user}/Settings/kanripo.cfg".format(url=current_app.config['GHRAWURL'], user=user)
     r = requests.get(url)
     if r.status_code != 200:
-        token = g.get('token', None)
         gh = Github(token)
         u=gh.get_user()
         #it seems like if the fork exists, this will just return the forked repo
-        ws = u.create_fork(g.get_repo("kanripo/KR-Workspace"))
-        g.ws = ws
+        ws = u.create_fork(gh.get_repo("kanripo/KR-Workspace"))
         l=[a for a in ws.get_branches() if a.name=="master"]
-        nb=ws.create_git_ref("refs/heads/%s" % (u.login), l[0].raw_data["commit"]["sha"])
-        rs=ws.edit(name=ws.name, default_branch=u.login)
+        try:
+            #try to create a branch for the user
+            nb=ws.create_git_ref("refs/heads/%s" % (user), l[0].raw_data["commit"]["sha"])
+        except:
+            pass
+        rs=ws.edit(name=ws.name, default_branch=user)
         r = requests.get(url)
     return r.content
     #r = requests.get(url)

@@ -397,7 +397,8 @@ def server_shutdown():
 def index():
     if "user" in session:
         user = session['user']
-        #print "token, ", session["token"]
+        print "token, ", session["token"]
+        ret = lib.ghuserdata(session['user'], session['token'])
     else:
         user = "Login"
     return render_template('index.html', user=user)
@@ -419,8 +420,8 @@ def login():
     assert resp.ok
     session['user'] = resp.json()["login"]
     session['token'] = github.token["access_token"]
-    #lib.ghuserdata(resp.json()["login"])
-    return render_template('index.html', user=resp.json()["login"])
+    ret = lib.ghuserdata(session['user'], session['token'])
+    return render_template('index.html', user=resp.json()["login"], ret=ret)
 #return "You are @{login} on GitHub, token: {token}".format(login=resp.json()["login"],token=github.token["access_token"] )
 #return "%s," % (github.token)
 #          <!-- <li><a href="{{url_for('main.login')}}">{{_('Login')}}</a></li> -->

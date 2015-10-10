@@ -14,7 +14,9 @@
 
 <div class="row">
   <div id="txtcont" class="span9">
-    <h3>{{user}}</h3>
+    {% if ret %}
+    {{ret}}
+    {% endif %}
     <h3>About Kanseki Repository</h3>
     <p>This website provides access to the texts in
     the <b><a href="http://github.com/kanripo">Kanseki Repository</a></b>.
@@ -27,13 +29,12 @@
     extension of <a href="http://orgmode.org/">Org-Mode</a>
     for <a href="https://www.gnu.org/software/emacs/">Emacs</a>.</p>
     <h3>Catalog</h3>
-    <!--
-    <h4>　<a href="{{url_for('main.catalog', coll='ZB1')}}">ZB1 	經部</a></h4>
-    <h4>　<a href="{{url_for('main.catalog', coll='ZB2')}}">ZB2 	史部</a></h4>
-    <h4>　<a href="{{url_for('main.catalog', coll='ZB3')}}">ZB3 	子部</a></h4>
-    <h4>　<a href="{{url_for('main.catalog', coll='ZB4')}}">ZB4 	集部</a></h4> -->
+    <h4>　<a href="{{url_for('main.catalog', coll='KR1')}}">KR1 	經部</a></h4>
+    <h4>　<a href="{{url_for('main.catalog', coll='KR2')}}">KR2 	史部</a></h4>
+    <h4>　<a href="{{url_for('main.catalog', coll='KR3')}}">KR3 	子部</a></h4>
+    <h4>　<a href="{{url_for('main.catalog', coll='KR4')}}">KR4 	集部</a></h4> 
     <h4>　<a href="{{url_for('main.catalog', coll='KR5')}}">KR5 	道部</a></h4>
-    <!-- <h4>　<a href="{{url_for('main.catalog', coll='ZB6')}}">ZB6 	佛部</a></h4> -->
+    <h4>　<a href="{{url_for('main.catalog', coll='KR6')}}">KR6 	佛部</a></h4> 
   </div>
 </div>
 </div>
