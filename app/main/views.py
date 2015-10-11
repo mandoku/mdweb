@@ -7,6 +7,7 @@ from flask.ext.login import login_required, current_user
 ## github authentication [2015-10-03T17:08:15+0900]
 from werkzeug.contrib.fixers import ProxyFix
 from flask_dance.contrib.github import make_github_blueprint, github
+from jinja2 import Environment, PackageLoader
 
 from . import main
 # from .forms import EditProfileForm, EditProfileAdminForm, PostForm,\
@@ -27,6 +28,7 @@ import codecs, re
 from .. import mandoku_view
 import git, requests, sys
 
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -34,6 +36,8 @@ zbmeta = "kr:meta:"
 titpref = "kr:title:"
 link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
 hd = re.compile(r"^(\*+) (.*)$")
+env = Environment(loader=PackageLoader('__main__', 'templates'))
+    
 
 
 @main.route('/robots.txt')
@@ -284,6 +288,7 @@ def searchdic():
 ## catalog
 @main.route('/catalog', methods=['GET',])
 def catalog(page=1, count=20, coll="", label=""):
+    env.globals['session'] = session 
     page=int(request.values.get('page', page))
     count=int(request.values.get('count', count))
     label=request.values.get('label', label)
@@ -406,7 +411,6 @@ def server_shutdown():
 def index():
     if "user" in session:
         user = session['user']
-        print "token, ", session["token"]
         ret = lib.ghuserdata(session['user'], session['token'])
     else:
         user = "Login"

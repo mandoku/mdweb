@@ -3,6 +3,7 @@
 {% import "_macros.html" as macros %}
 
 {% block navlinks %}
+<li><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
 {% endblock navlinks%}
 
 
@@ -82,7 +83,14 @@
   <li><b>叢書</b>
   <ul>
   <li><a href="{{url_for('.catalog', coll='SB', label='四部叢刊')}}">四部叢刊</a></li>
-  <li>四庫全書</li>
+  <li>四庫全書
+    <ul>
+  <li><a href="{{url_for('.catalog', coll='SK1', label='四庫全書 經部')}}">經部</a></li>
+  <li><a href="{{url_for('.catalog', coll='SK2', label='四庫全書 史部')}}">史部</a></li>
+  <li><a href="{{url_for('.catalog', coll='SK3', label='四庫全書 子部')}}">子部</a></li>
+  <li><a href="{{url_for('.catalog', coll='SK4', label='四庫全書 集部')}}">集部</a></li>
+    </ul>
+  </li>
   </ul>
   </li>
   <li><b>道教文献</b>

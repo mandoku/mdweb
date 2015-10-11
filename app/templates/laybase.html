@@ -34,12 +34,10 @@
       </div>
         <ul class="nav pull-right">
 	<li class="active"><a href="{{url_for('main.contact')}}">{{_('Contact')}}</a></li>
-{% if user == 'Login' %}
-<li class="label-important"><a href="{{url_for('.login')}}">{{user}}</a></li>
+{% if session['user'] %}
+<li  class="label-important"><a href="{{url_for('.profile', id=session['user'])}}">{{session['user']}}</a></li>
 {% else %}
-{% if user %}
-<li  class="label-important"><a href="{{url_for('.profile', id=user)}}">{{user}}</a></li>
-{% endif %}
+<li class="label-important"><a href="{{url_for('.login')}}">{{_('Login')}}</a></li>
 {% endif %}
       </ul>
       <form class="navbar-search pull-right" action="{{url_for('main.searchtext')}}" method="GET">
