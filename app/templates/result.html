@@ -30,7 +30,6 @@
 {% block body %}
 
 <div>
-  <div>
     <table>
       {% for item in sr.list %}
       {% set it_txtid, it_juan = item[1].split(':')[0].split('_') %}
@@ -43,7 +42,7 @@
 <!-- http://localhost:5000/text/ZB6q0003/003#0221a -->
 <!-- ZB1a0068:007-352:2:6 -->
 	<td class="text-left"><a href="{{url_for('main.showtext', id=it_txtid, juan=it_juan, query=key, _anchor=it_page)}}" title="{{it_txtid}}">{{item[2]['TITLE']}}, {{it_juan.lstrip('0')}}, {{it_page.lstrip('0')}}</a></td>
-<td>{{item[0]}}</td> <!--<td class="text-left">{{key[0]}}{{item[0][0]}}</td>-->
+<td>{{item[0]}}</td> 
 <td class="text-left">{{item[3]}}</td>
 <td class="text-right">
 {% if vs == "n" %}
@@ -51,21 +50,17 @@
 {% elif vs %}
 <span title="{{vs}}">　(異本)</span>
 {% endif %}
-<!--   {% for edx in vs %} -->
-<!-- <a href="{{url_for('main.showtext', id=it_txtid, juan=it_juan, query=key, _anchor=it_page, branch=edx)}}" title="{{it_txtid}}">{{edx}} "{{vs}}"</a> -->
-<!--   {% endfor %} -->
-
 </td>
       </tr>
     {% endfor %}
     </table>
-  </div>
-</div>
 {% if sr.total > 20 %}
 <div class="pagination">
     {{ macros.pagination_widget(pagination, '.searchtext', query=key, filter=filter, type=tpe, count=count) }}
 </div>
 {% endif %}
+
+</div>
 
 
 {% endblock %}
