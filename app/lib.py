@@ -9,7 +9,7 @@ import subprocess
 from github import Github
 
 zbmeta = "kr:meta:"
-
+kr_user = "kr:user:"
 ## dictionary stuff.  really should wrap this in an object?!
 md_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯\n¶]+|\t[^\n]+\n|\$[^;]+;")
 gaiji = re.compile(r"&([^;]+);")
@@ -330,17 +330,39 @@ def applyfilter(key, fs, tpe):
     for f in fs:
         # apply the filters:
         if len(f) > 0:
-            if tpe == 'DYNASTY':
-                fx = [redis_store.hgetall("%s%s" % (zbmeta, a.split('\t')[1].split(':')[0])) for a in redis_store.lrange(key, 1, redis_store.llen(key))]
+            if f.startswith("$"):
+                #e.g. cwittern:$Favorites == content of KR-Workspace/Texts/Favorites.txt
+                #first, see if we already have this text in redis:
+                if redis_store.key(kr_user + f):
+                    ls = redis_store.hgetall(kr_user + f)
+                else:
+                    if ghfilterfile2redis(f) > 0:
+                        ls = redis_store.hgetall(kr_user + f)
+                ox.extend([k for k in redis_store.lrange(key, 1, redis_store.llen(key)) if k.split()[1].split(':')[0] in ls])
+            elif tpe == 'DYNASTY':
+                fx = [redis_store.hgetall("%s%s" % (zbmeta, a.split('\t')[1].split(':')[0].split("_")[0])) for a in redis_store.lrange(key, 1, redis_store.llen(key))]
                 fx = ([a['ID'] for a in fx if a.has_key('DYNASTY') and a['DYNASTY'] == f])
-                ox.extend([k for k in redis_store.lrange(key, 1, redis_store.llen(key)) if k.split()[1].split(':')[0] in fx])
+                ox.extend([k for k in redis_store.lrange(key, 1, redis_store.llen(key)) if k.split()[1].split(':')[0].split("_")[0] in fx])
             else:
                 ox.extend([k for k in redis_store.lrange(key, 1, redis_store.llen(key)) if k.split()[1].split(':')[0][0:len(f)] == f])
     if len(ox) > 0:
         ox=list(set(ox))
         ox.sort()
-    #print ox
     return ox
+
+def ghfilterfile2redis(ffile):
+    #ffile is the filter file to be read $username:filterfile, the location is expanded to a github raw url
+    l=[]
+    user, gfile = ffile[1:].split(":")
+    url = "{url}{user}/KR-Workspace/{user}/Texts/{gf}.txt".format(url=current_app.config['GHRAWURL'], user=user, gf=gfile)
+    r = requests.get(url)
+    if r.status_code != 200:
+        return -1
+    for line in r.content:
+        l.append(line.split()[0])
+    #should we first make sure the list is empty?
+    return redis_store.lpush(kr_user + ffile, l)
+
 def ghsave(pathname, content, repo=None, commit_message=None, new=False):
     #we need the PyGithub patched version with the PR of June 2015 from @ahmad88me 
     #with additional patch by CW [2015-10-08T16:01:18+0900]
