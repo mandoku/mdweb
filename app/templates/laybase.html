@@ -67,16 +67,26 @@
 
 
 <div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
   <div class="row">
     <div id="sidebardiv" class="span2">
     {% block sidebar %}
     <h2>{{_('News')}}</h2>
     <ul>
     <li><span class="label-info">[2014-09-27]</span><br />
-      First pretest release of the Kanseki Repository </a>.
+      First pretest release of the Kanseki Repository.
       </li>
     <li><span class="label-info">[2015-05-06]</span><br />
-      Started move to github. Some Daoist texts are up for testing purposes. </a>.
+      Started move to github. Some Daoist texts are up for testing purposes.
+      </li>
+    <li><span class="label-info">[2015-10-22]</span><br />
+      New website available, more than 9000 texts online.
       </li>
     </ul>
     {% endblock sidebar %}
@@ -119,6 +129,13 @@
     <script  src="{{ url_for('static', filename='js/highlight.js')}}"></script>
     <script src="{{ url_for('static', filename='js/jquery.panzoom.js')}}"></script>
     {% block closingscript %}
+    {% endblock %}
+    {% block footer %}
+    <div id="footer">
+      <div class="container">
+	<p>(c) Kanseki Repository. All content created by us is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" title="Creative Commons Attribution-ShareAlike 4.0 International License">CC BY SA</a> license. <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>. Users retain copyright of their contributions.</p>
+      </div>
+    </div>    
     {% endblock %}
   </body>
 </html>

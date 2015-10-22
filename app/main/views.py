@@ -8,6 +8,8 @@ from flask.ext.login import login_required, current_user
 from werkzeug.contrib.fixers import ProxyFix
 from flask_dance.contrib.github import make_github_blueprint, github
 from jinja2 import Environment, PackageLoader
+from github import Github
+import urllib
 
 from . import main
 # from .forms import EditProfileForm, EditProfileAdminForm, PostForm,\
@@ -45,7 +47,37 @@ env = Environment(loader=PackageLoader('__main__', 'templates'))
 # @main.route('/sitemap.xml')
 def static_from_root():
     return send_from_directory(current_app.static_folder, request.path[1:])
+@main.route('/savetextlist', methods=['POST',])
+def savetextlist():
+    x = request.form.getlist("cb")
+    fn= request.form["filename"]
+    user=session['user']
+    token=session['token']
+    gh=Github(token)
+    ws=gh.get_repo("%s/%s" % (user, "KR-Workspace"))
+    fx = [redis_store.hgetall("%s%s" % (zbmeta, a)) for a in x]
+    lines = ["%s\t%s"% (a['ID'], a['TITLE']) for a in fx]
+    print lines
+    try:
+        lib.ghsave(u"Texts/%s.txt" % (urllib.quote_plus(fn.encode("utf-8"))), "\n".join(lines), ws, new=True)
+        flash("Saved %s" % (fn))
+    except:
+        flash("There was a problem saving the text list.")
+    return redirect(request.form.get('next') or '/')
 
+@main.route('/bytext', methods=['GET',])
+def bytext():
+    ld = defaultdict(list)
+    key = request.values.get('query', '')
+    sort = request.values.get('sort', '')
+    total = redis_store.llen(key)
+    [ld[(a.split('\t')[1].split(':')[0].split("_")[0])].append(1) for a in redis_store.lrange(key, 0, total-1) if len(a) > 0]
+    ox = [(a, len(ld[a])) for a in ld]
+    ox = sorted(ox, key=lambda x : x[1], reverse=True)
+    ids = [(redis_store.hgetall("%s%s" % (zbmeta, a[0])), a[1]) for a in ox]
+    return render_template('bytext.html',  key=key, ret=ids, total=total, uniq = len(ids))
+
+    
 @main.route('/<coll>/search', methods=['GET', 'POST',])
 @main.route('/search', methods=['GET', 'POST',])
 def searchtext(count=20, page=1):
@@ -300,9 +332,6 @@ def catalog(page=1, count=20, coll="", label=""):
         cat.sort(key=lambda t : t['ID'])
     else:
         cat = [r.hgetall("%s%s" %( zbmeta, k.split(':')[-1])) for k in r.keys(zbmeta+coll+"*")]
-        #cat = [r.hgetall("%s%s" %( zbmeta, k.split(':')[-1][0:8])) for k in r.keys(zbmeta+coll+"*")]
-#        cat = [c for c in cat if coll in  c['ID']]
-
         if coll in ['DZ', 'JY', 'T', 'X', 'SB']:
             cat.sort(key=lambda t : t['EXTRAID'])
         else:
@@ -411,6 +440,7 @@ def server_shutdown():
 def index():
     if "user" in session:
         user = session['user']
+        #print "token", session['token']
         ret = lib.ghuserdata(session['user'], session['token'])
     else:
         user = "Login"
@@ -433,15 +463,29 @@ def login():
     assert resp.ok
     session['user'] = resp.json()["login"]
     session['token'] = github.token["access_token"]
-    ret = lib.ghuserdata(session['user'], session['token'])
+    #ret = lib.ghuserdata(session['user'], session['token'])
+    ret="Welcome to the Kanseki Repository, user %s! " % (session['user'])
     return render_template('index.html', user=resp.json()["login"], ret=ret)
 #return "You are @{login} on GitHub, token: {token}".format(login=resp.json()["login"],token=github.token["access_token"] )
 #return "%s," % (github.token)
 #          <!-- <li><a href="{{url_for('main.login')}}">{{_('Login')}}</a></li> -->
-    
+
+@main.route('/profile/signout')
+def signout():
+    try:
+        del(session['user'])
+        del(session['token'])
+    except:
+        pass
+    ret="You have been logged out."
+    return render_template('index.html', user="Login", ret=ret)
+
 @main.route('/profile/<id>')
 def profile(id):
-    return render_template('index.html', user=id)
+    r=[]
+    for d in ["Texts", "Notes"]:
+        r.append([d, lib.ghlistcontent("KR-Workspace", d, ext="txt")])
+    return render_template('profile.html', user=id, ret=r)
     
 
 @main.route('/about/<id>')

@@ -18,10 +18,13 @@
     {{_('Found')}} 
     {{sr.total}},
     {{_('showing %d to %d.' % (start+1, n))}}
+    <span  class="pull-right">　<a href="bytext?query={{key}}">by text</a></span>
     {% if filter %}
+    <span  class="pull-right">　
     <a href="search?query={{key}}">
       {{_('release filter')}}
     </a>
+    </span>
     {% endif %}
     </p>
   </div>

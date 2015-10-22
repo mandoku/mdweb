@@ -1,7 +1,7 @@
 #    -*- coding: utf-8 -*-
 ## this is lifted from flask_sqlalchemy,
 ## maybe overkill...
-from flask import current_app, g
+from flask import current_app, g, session
 from math import ceil
 import re, requests
 from . import redis_store
@@ -9,7 +9,7 @@ import subprocess
 from github import Github
 
 zbmeta = "kr:meta:"
-kr_user = "kr:user:"
+kr_user = "kr_user:"
 ## dictionary stuff.  really should wrap this in an object?!
 md_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯\n¶]+|\t[^\n]+\n|\$[^;]+;")
 gaiji = re.compile(r"&([^;]+);")
@@ -333,12 +333,15 @@ def applyfilter(key, fs, tpe):
             if f.startswith("$"):
                 #e.g. cwittern:$Favorites == content of KR-Workspace/Texts/Favorites.txt
                 #first, see if we already have this text in redis:
-                if redis_store.key(kr_user + f):
-                    ls = redis_store.hgetall(kr_user + f)
+                u=session['user']
+                if len(redis_store.keys(kr_user + u + f)) > 0:
+                    ls = redis_store.lrange(kr_user + u + f, 0, redis_store.llen(kr_user + u + f))
                 else:
-                    if ghfilterfile2redis(f) > 0:
-                        ls = redis_store.hgetall(kr_user + f)
-                ox.extend([k for k in redis_store.lrange(key, 1, redis_store.llen(key)) if k.split()[1].split(':')[0] in ls])
+                    if ghfilterfile2redis(u+f) > 0:
+                        ls = redis_store.lrange(kr_user + u + f, 0, redis_store.llen(kr_user + u + f))
+                    else:
+                        ls = []
+                ox.extend([k for k in redis_store.lrange(key, 1, redis_store.llen(key)) if k.split("\t")[1].split(':')[0].split("_")[0] in ls])
             elif tpe == 'DYNASTY':
                 fx = [redis_store.hgetall("%s%s" % (zbmeta, a.split('\t')[1].split(':')[0].split("_")[0])) for a in redis_store.lrange(key, 1, redis_store.llen(key))]
                 fx = ([a['ID'] for a in fx if a.has_key('DYNASTY') and a['DYNASTY'] == f])
@@ -353,15 +356,24 @@ def applyfilter(key, fs, tpe):
 def ghfilterfile2redis(ffile):
     #ffile is the filter file to be read $username:filterfile, the location is expanded to a github raw url
     l=[]
-    user, gfile = ffile[1:].split(":")
+    user, gfile = ffile.split("$")
+    print user, gfile
     url = "{url}{user}/KR-Workspace/{user}/Texts/{gf}.txt".format(url=current_app.config['GHRAWURL'], user=user, gf=gfile)
+    print url
     r = requests.get(url)
     if r.status_code != 200:
         return -1
-    for line in r.content:
-        l.append(line.split()[0])
+    print r.content
+    for line in r.content.split("\n"):
+        if line.startswith("#"):
+            continue
+        try:
+            l.append(line.split()[0])
+        except:
+            pass
     #should we first make sure the list is empty?
-    return redis_store.lpush(kr_user + ffile, l)
+    print l
+    return redis_store.lpush(kr_user + ffile, *l)
 
 def ghsave(pathname, content, repo=None, commit_message=None, new=False):
     #we need the PyGithub patched version with the PR of June 2015 from @ahmad88me 
@@ -379,6 +391,23 @@ def ghsave(pathname, content, repo=None, commit_message=None, new=False):
     else:
         repo.update_content(pathname, commit_message, content, branch=repo.default_branch)
 
+def ghlistcontent(repo, dir, branch=None, ext=None):
+    #get the content from default branch otherwise branch specified, optionally filtered by extension
+    if not session.has_key('user'):
+        return -1
+    user=session['user']
+    token=session['token']
+    gh=Github(token)
+    ws=gh.get_repo("%s/%s" % (user, repo))
+    if branch:
+        c=ws.get_contents(dir, branch)
+    else:
+        c=ws.get_contents(dir)
+    if ext:
+        ls = [(a['name'], a['download_url']) for a in c.raw_data if a['name'].endswith(ext)]
+    else:
+        ls = [(a['name'], a['download_url']) for a in c.raw_data]
+    return ls
 
 def ghuserdata(user, token):
     #this will retrieve the userdata from gh, clone if necessary
