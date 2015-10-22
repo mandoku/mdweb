@@ -404,9 +404,9 @@ def ghlistcontent(repo, dir, branch=None, ext=None):
     else:
         c=ws.get_contents(dir)
     if ext:
-        ls = [(a['name'], a['download_url']) for a in c.raw_data if a['name'].endswith(ext)]
+        ls = [(a['name'], a['html_url'].replace("/blob/", "/edit/"), a['download_url']) for a in c.raw_data if a['name'].endswith(ext)]
     else:
-        ls = [(a['name'], a['download_url']) for a in c.raw_data]
+        ls = [(a['name'], a['html_url'].replace("/blob/", "/edit/"), a['download_url']) for a in c.raw_data]
     return ls
 
 def ghuserdata(user, token):

@@ -47,7 +47,20 @@ env = Environment(loader=PackageLoader('__main__', 'templates'))
 # @main.route('/sitemap.xml')
 def static_from_root():
     return send_from_directory(current_app.static_folder, request.path[1:])
-@main.route('/savetextlist', methods=['POST',])
+@main.route('/textlist/load', methods=['GET',])
+def loadtextlist():
+    tl=request.values.get("ffile")
+    user=session['user']
+    print user, tl
+    lib.ghfilterfile2redis("%s$%s" % (user, tl))
+    try:
+        flash("Loaded %s into the internal database." % (tl))
+    except:
+        flash("Could not load %s." % (tl))
+    return redirect(request.values.get('next') or '/')
+    
+        
+@main.route('/textlist/save', methods=['POST',])
 def savetextlist():
     x = request.form.getlist("cb")
     fn= request.form["filename"]
@@ -83,6 +96,9 @@ def bytext():
 def searchtext(count=20, page=1):
     q = request.values.get('query', '')
     keys = q.split()
+    #store the search key, we retrieve this in the profile page
+    if 'user' in session:
+        sa=redis_store.sadd("kr_user:%s:searchkeys" % (session['user']), q)
     count=int(request.values.get('count', count))
     page=int(request.values.get('page', page))
     filters = request.values.get('filter', '')
@@ -96,6 +112,8 @@ def searchtext(count=20, page=1):
     start = (page - 1) * count 
     fs = filters.split(';')
     fs = [a for a in fs if len(a) > 0]
+    if "filter" in session:
+        fs.append(session["filter"])
     # do we allow filters for AND search?  not for the moment...
     if len(keys) > 1:
         #so it seems that we cant have filter and AND at the same time...
@@ -464,11 +482,8 @@ def login():
     session['user'] = resp.json()["login"]
     session['token'] = github.token["access_token"]
     #ret = lib.ghuserdata(session['user'], session['token'])
-    ret="Welcome to the Kanseki Repository, user %s! " % (session['user'])
-    return render_template('index.html', user=resp.json()["login"], ret=ret)
-#return "You are @{login} on GitHub, token: {token}".format(login=resp.json()["login"],token=github.token["access_token"] )
-#return "%s," % (github.token)
-#          <!-- <li><a href="{{url_for('main.login')}}">{{_('Login')}}</a></li> -->
+    flash("Welcome to the Kanseki Repository, user %s! " % (session['user']))
+    return render_template('index.html', user=resp.json()["login"])
 
 @main.route('/profile/signout')
 def signout():
@@ -485,7 +500,9 @@ def profile(id):
     r=[]
     for d in ["Texts", "Notes"]:
         r.append([d, lib.ghlistcontent("KR-Workspace", d, ext="txt")])
-    return render_template('profile.html', user=id, ret=r)
+    loaded=[a.split("$")[-1] for a in redis_store.keys("kr_user:%s$*" % (id))]
+    searchkeys=[a for a in redis_store.smembers("kr_user:%s:searchkeys" % (id))]
+    return render_template('profile.html', user=id, ret=r, loaded=loaded, searches=searchkeys)
     
 
 @main.route('/about/<id>')
