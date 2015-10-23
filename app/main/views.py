@@ -537,8 +537,14 @@ def profile(uid):
     r=[]
     for d in ["Texts", "Notes"]:
         r.append([d, lib.ghlistcontent("KR-Workspace", d, ext="txt")])
-    loaded=[a.split("$")[-1] for a in redis_store.keys("%s%s$*" % (kr_user,uid))]
-    searchkeys=[a for a in redis_store.smembers("%s%s:searchkeys" % (kr_user, uid))]
+    try:
+        loaded=[a.split("$")[-1] for a in redis_store.keys("%s%s$*" % (kr_user,uid))]
+    except:
+        loaded=[]
+    try:
+        searchkeys=[a for a in redis_store.smembers("%s%s:searchkeys" % (kr_user, uid))]
+    except:
+        searchkeys=[]
     return render_template('profile.html', user=uid, ret=r, loaded=loaded, searches=searchkeys)
     
 
