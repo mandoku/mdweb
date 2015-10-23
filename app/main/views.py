@@ -269,7 +269,13 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
                 ftoc = ""
         toc = defaultdict(list)
         [re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : toc[x.group(2)].append(x.groups()), l) for l in ftoc.split("\n") if "file" in l]
-        redis_store.hmset(tockey, toc)
+        if len(toc) < 1:
+            [re.sub(r"\[\[file:([^_]+)_([^\.]+)\.([^]]+)\]\[([^]]+)\]", lambda x : toc[x.group(2)].append(x.groups()), l) for l in ftoc.split("\n") if "file" in l]
+            
+        try:
+            redis_store.hmset(tockey, toc)
+        except:
+            pass
     tk = toc.keys()
     tk.sort()
     try:
