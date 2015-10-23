@@ -3,7 +3,7 @@
 {% import "_macros.html" as macros %}
 
 {% block navlinks %}
-          <li class="active"><a href="{{url_for('main.texttop', id=txtid)}}" title="{{txtid}}">{{title}}</a></li>
+          <li class="active"><a href="{{url_for('main.showtext', id=txtid)}}" title="{{txtid}}">{{title}}</a></li>
           <li><a href="http://github.com/kanripo/{{txtid}}">GitHub</a></li>
           <li><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
 {% endblock navlinks%}
@@ -36,23 +36,13 @@
     {% endfor %}
   </ul>
 
-<h2>{{_('Facsimile')}}</h2>
-    <ul>
-    {% for s, f in ct.doc.sections %}
-    <li><a href="{{s}}">{{s}}</a></li>
-    {% endfor %}
-    </ul>
 <h2>{{_('Contents')}}</h2>
   <ul>
-    {%- for item in ct.doc.toc recursive %}
-    {%- if item[0] is number %}
-    <li class="l{{item[0]}}"><a href="{{item[2]}}#p{{item[3]}}">{{item[1]}}</a></li>
-    {% else %}
-    {%- if loop.index <  20 %}
-    <ul>{{loop(item)}}</ul>
-    {%- endif %}
-    {%- endif %}
-    {%- endfor %}
+    {% for i in toc %}
+    {% for item in i %}
+    <li><a href="{{item[0]}}#{{item[1]}}">{{item[2]}}</a></li>
+    {% endfor %}
+    {% endfor %}
   </ul>
 
 

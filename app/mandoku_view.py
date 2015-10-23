@@ -101,6 +101,13 @@ class mdDocument(object):
             else:
                 o = gaiji.sub(lambda x : imgbase.format(gaiji=x.group(1)), l)                
                 #o = gaiji.sub(u"⬤", l)
+            #o=re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]\]", "<a href='/text/\\1/\\2#\\3'>\\4</a>", o)
+            o=re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]\]", "<a href='\\2#\\3'>\\4</a>", o)
+            if o.strip()==u"目次":
+                o = "<h1>%s</h1>" % (o)
+            lx = o.strip().split("|")
+            if len(lx) == 4:
+                o = "<p><a href='/edition/%s/%s/'>%s</a></p>" % (lx[1].strip(), self.config['ID'], lx[2].strip())
             s.append(o)
         s.append("</p>")
         return s

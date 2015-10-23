@@ -35,6 +35,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 zbmeta = "kr:meta:"
+kr_user = "kr_user:"
 titpref = "kr:title:"
 link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
 hd = re.compile(r"^(\*+) (.*)$")
@@ -94,11 +95,12 @@ def bytext():
 @main.route('/<coll>/search', methods=['GET', 'POST',])
 @main.route('/search', methods=['GET', 'POST',])
 def searchtext(count=20, page=1):
+    sort = request.values.get('sort', '')
     q = request.values.get('query', '')
     keys = q.split()
     #store the search key, we retrieve this in the profile page
     if 'user' in session:
-        sa=redis_store.sadd("kr_user:%s:searchkeys" % (session['user']), q)
+        sa=redis_store.sadd("%s%s:searchkeys" % (kr_user, session['user']), q)
     count=int(request.values.get('count', count))
     page=int(request.values.get('page', page))
     filters = request.values.get('filter', '')
@@ -170,7 +172,7 @@ def searchtext(count=20, page=1):
         total = len(ox1)
         ox = [("".join([k.split("\t")[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
     p = lib.Pagination(key, page, count, total, ox)
-    return render_template('result.html', sr={'list' : p.items, 'total': total }, key=q, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), tpe=tpe)
+    return render_template('result.html', sr={'list' : p.items, 'total': total }, key=q, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), tpe=tpe, sort=sort)
 
 
 
@@ -178,35 +180,37 @@ def searchtext(count=20, page=1):
 def showcoll(coll, edition=None, fac=False):
     return coll
 
-@main.route('/text/<id>/', methods=['GET',])
-def texttop(id=0, coll=None, seq=0):
-    ct = {'toc' : [], 'id' : id}
-    filename = "%s/%s/Readme.org" % (id[0:4], id[0:8])
-    datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-    try:
-        datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-        fn = codecs.open(datei, 'r', 'utf-8')
-    except:
-        return "File Not found: %s" % (filename)
-    for line in fn:
-        if line.startswith('#+TITLE:'):
-            ct['title'] = line[:-1].split(' ', 1)[-1]
-        if hd.search(line):
-            tmp = hd.findall(line)[0][0]
-            lev = len(tmp[0])
-        else:
-            tmp = ""
-        if link_re.search(line):
-            l = [tmp]
-            l.extend(re.findall(r'\[\[([^\]]+)\]\[([^\]]+)', line))
-            ct['toc'].append(l)
-    return  render_template('texttop.html', ct=ct)
+# @main.route('/text/<id>/', methods=['GET',])
+# def texttop(id=0, coll=None, seq=0):
+#     ct = {'toc' : [], 'id' : id}
+#     filename = "%s/%s/Readme.org" % (id[0:4], id[0:8])
+#     datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
+#     try:
+#         datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
+#         fn = codecs.open(datei, 'r', 'utf-8')
+#     except:
+#         return "File Not found: %s" % (filename)
+#     for line in fn:
+#         if line.startswith('#+TITLE:'):
+#             ct['title'] = line[:-1].split(' ', 1)[-1]
+#         if hd.search(line):
+#             tmp = hd.findall(line)[0][0]
+#             lev = len(tmp[0])
+#         else:
+#             tmp = ""
+#         if link_re.search(line):
+#             l = [tmp]
+#             l.extend(re.findall(r'\[\[([^\]]+)\]\[([^\]]+)', line))
+#             ct['toc'].append(l)
+#     return  render_template('texttop.html', ct=ct)
 
 #@main.route('/text/<coll>/<int:seq>/<int:juan>', methods=['GET',] )
+@main.route('/text/<id>/', methods=['GET',])
 @main.route('/text/<coll>/<seq>/<juan>', methods=['GET',] )
 @main.route('/text/<id>/<juan>', methods=['GET',])
 @main.route('/edition/<branch>/<id>/<juan>', methods=['GET',])
-def showtext(juan, id=0, coll=None, seq=0, branch="master", user="kanripo"):
+@main.route('/edition/<branch>/<id>/', methods=['GET',])
+def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo"):
     doc = {}
     fn = ""
     key = request.values.get('query', '')
@@ -214,7 +218,6 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master", user="kanripo"):
         juan = "%3.3d" % (int(juan))
     except:
         pass
-    print "Juan: ", juan
     if coll:
         #TODO: allow for different repositories, make this configurable
         if coll.startswith('KR'):
@@ -226,7 +229,10 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master", user="kanripo"):
     if "user" in session:
         user = session['user']
     #print user
-    url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
+    if juan.startswith("Readme"):
+        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s" % (user, id, branch, juan)
+    else:
+        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
     # url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
     #     current_app.config['GITHUB_OAUTH_CLIENT_ID'],
     #     current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
@@ -235,7 +241,10 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master", user="kanripo"):
     if r.status_code == 200:
         fn = r.content
     else:
-        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (current_app.config['GHKANRIPO'], id, branch,  id, juan,)
+        if juan.startswith("Readme"):
+            url =  "https://raw.githubusercontent.com/%s/%s/%s/%s" % (current_app.config['GHKANRIPO'], id, branch, juan,)
+        else:
+            url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (current_app.config['GHKANRIPO'], id, branch,  id, juan,)
         r = requests.get(url)
         if r.status_code == 200:
             fn = r.content
@@ -243,6 +252,27 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master", user="kanripo"):
             pass
             #print "Not retrieved from Gitlab!", id
     #print "fn, " , len(fn)
+    tockey="%s%s:toc:%s:%s" % (kr_user, user, branch, id)
+    if redis_store.hgetall(tockey):
+        toc = redis_store.hgetall(tockey)
+    else:
+        if juan.startswith("Readme"):
+            ftoc=fn
+        else:
+            tocurl = re.sub(r"KR[^/]+txt", "Readme.org", url)
+            r = requests.get(tocurl)
+            if r.status_code == 200:
+                ftoc = r.content
+            else:
+                ftoc = ""
+        toc = defaultdict(list)
+        [re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : toc[x.group(2)].append(x.groups()), l) for l in ftoc.split("\n") if "file" in l]
+        redis_store.hmset(tockey, toc)
+    tk = toc.keys()
+    tk.sort()
+    print toc
+    t2 = [[(a, b[2], b[3].split()[-1]) for b in eval(toc[a])] for a in tk]
+    print t2
     if branch == "master":
         #url =  "%s/%s/%s/raw/%s/%s_%s.txt?private_token=%s" % (current_app.config['GITLAB_HOST'], id[0:4], id,  id, juan, current_app.config['GITLAB_TOKEN'])
 
@@ -253,11 +283,9 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master", user="kanripo"):
     rpath = "%s/%s/%s" % (current_app.config['TXTDIR'], id[0:4], id[0:8])
     #get branches  -- we could get this from github, but it counts against the limit...
     try:
-        g=Github(token)
-        #rp=g.get_repo(user+"/"+id)
-        #need to make this more variable...
+        g=Github()
         rp=g.get_repo("kanripo/"+id)
-        branches=[a.name for a in rp.get_branches() if not a.name in ['_data', 'master']]
+        branches=[(a.name, lib.brtab[a.name.decode('utf-8')]) for a in rp.get_branches() if not a.name in ['_data', 'master']]
     except:
         try:
             repo=git.Repo(rpath)
@@ -283,7 +311,7 @@ def showtext(juan, id=0, coll=None, seq=0, branch="master", user="kanripo"):
         title = ""
     # else:
     #     md = mandoku_view.mdDocument(r.content.decode('utf-8'))
-    return render_template('showtext.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch)
+    return render_template('showtext.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2)
 #return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
 
 def showtextredis(juan, id=0, coll=None, seq=0):
@@ -495,14 +523,14 @@ def signout():
     ret="You have been logged out."
     return render_template('index.html', user="Login", ret=ret)
 
-@main.route('/profile/<id>')
-def profile(id):
+@main.route('/profile/<uid>')
+def profile(uid):
     r=[]
     for d in ["Texts", "Notes"]:
         r.append([d, lib.ghlistcontent("KR-Workspace", d, ext="txt")])
-    loaded=[a.split("$")[-1] for a in redis_store.keys("kr_user:%s$*" % (id))]
-    searchkeys=[a for a in redis_store.smembers("kr_user:%s:searchkeys" % (id))]
-    return render_template('profile.html', user=id, ret=r, loaded=loaded, searches=searchkeys)
+    loaded=[a.split("$")[-1] for a in redis_store.keys("%s%s$*" % (kr_user,uid))]
+    searchkeys=[a for a in redis_store.smembers("%s%s:searchkeys" % (kr_user, uid))]
+    return render_template('profile.html', user=uid, ret=r, loaded=loaded, searches=searchkeys)
     
 
 @main.route('/about/<id>')
