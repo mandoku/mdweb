@@ -272,9 +272,10 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
         redis_store.hmset(tockey, toc)
     tk = toc.keys()
     tk.sort()
-    print toc
-    t2 = [[(a, b[2], b[3].split()[-1]) for b in eval(toc[a])] for a in tk]
-    print t2
+    try:
+        t2 = [[(a, b[2], b[3].split()[-1]) for b in eval(toc[a])] for a in tk]
+    except:
+        t2 = [[(a, b[2], b[3].split()[-1]) for b in toc[a]] for a in tk]
     if branch == "master":
         #url =  "%s/%s/%s/raw/%s/%s_%s.txt?private_token=%s" % (current_app.config['GITLAB_HOST'], id[0:4], id,  id, juan, current_app.config['GITLAB_TOKEN'])
 
