@@ -35,7 +35,7 @@
         <ul class="nav pull-right">
 	<li class="active"><a href="{{url_for('main.contact')}}">{{_('Contact')}}</a></li>
 {% if session['user'] %}
-<li  class="label-important"><a href="{{url_for('.profile', uid=session['user'])}}">{{session['user']}}</a></li>
+<li  class="label-important"><a href="{{url_for('main.profile', uid=session['user'])}}">{{session['user']}}</a></li>
 {% else %}
 <li class="label-important"><a href="{{url_for('.login')}}">{{_('Login')}}</a></li>
 {% endif %}

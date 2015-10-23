@@ -52,7 +52,6 @@ def static_from_root():
 def loadtextlist():
     tl=request.values.get("ffile")
     user=session['user']
-    print user, tl
     lib.ghfilterfile2redis("%s$%s" % (user, tl))
     try:
         flash("Loaded %s into the internal database." % (tl))
@@ -66,17 +65,24 @@ def savetextlist():
     x = request.form.getlist("cb")
     fn= request.form["filename"]
     user=session['user']
+    load = request.form.getlist("load")
     token=session['token']
     gh=Github(token)
     ws=gh.get_repo("%s/%s" % (user, "KR-Workspace"))
     fx = [redis_store.hgetall("%s%s" % (zbmeta, a)) for a in x]
     lines = ["%s\t%s"% (a['ID'], a['TITLE']) for a in fx]
-    print lines
     try:
         lib.ghsave(u"Texts/%s.txt" % (urllib.quote_plus(fn.encode("utf-8"))), "\n".join(lines), ws, new=True)
-        flash("Saved %s" % (fn))
+        flash("Saved text list for %s with %d texts" % (fn, len(lines)))
     except:
         flash("There was a problem saving the text list.")
+    if len(load) > 0:
+        try:
+            lib.ghfilterfile2redis("%s$%s" % (user, fn))
+            flash("Loaded the text list for %s with %d texts into the internal database." % (fn, len(lines)))
+        except:
+            flash("There was a problem loading the text list.")
+        
     return redirect(request.form.get('next') or '/')
 
 @main.route('/bytext', methods=['GET',])
@@ -87,8 +93,13 @@ def bytext():
     total = redis_store.llen(key)
     [ld[(a.split('\t')[1].split(':')[0].split("_")[0])].append(1) for a in redis_store.lrange(key, 0, total-1) if len(a) > 0]
     ox = [(a, len(ld[a])) for a in ld]
-    ox = sorted(ox, key=lambda x : x[1], reverse=True)
+    if "txtid" in sort:
+        ox = sorted(ox, key=lambda x : x[0], reverse= "-" in sort)
+    elif "count":
+        ox = sorted(ox, key=lambda x : x[1], reverse= "+" in sort)
     ids = [(redis_store.hgetall("%s%s" % (zbmeta, a[0])), a[1]) for a in ox]
+    if "title" in sort:
+        ids= sorted(ids, key=lambda x : x[0]['TITLE'])
     return render_template('bytext.html',  key=key, ret=ids, total=total, uniq = len(ids))
 
     

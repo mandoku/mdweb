@@ -25,6 +25,16 @@
 {% block body %}
 
 <div>
+  <form id="textlist" action="{{url_for('main.savetextlist')}}" method="POST">
+{% if session['user'] %}
+    <p style="line-height:0.5em;"></p>
+    <span style="background-color:linen;margin-top:2px;border: 3px solid blue;padding:8px 5px 5px 5px;">{{_('Filename:')}} 
+    <input style="padding:1px;margin-top:3px" type="text" name="filename" value="{{key}}"/>　
+    <input style="margin-bottom:5px" type="submit" value="{{_('Save text list')}}"/>　
+    <input style="padding:1px;margin-top:3px" type="checkbox" name="load" value=""/>Load
+    <input type="hidden" name="next" value="{{url_for('main.titlesearch', query=key)}}"/>
+    </span>
+{% endif %}    
   <div>
     <table>
       {% for item in sr.list %}
@@ -33,12 +43,16 @@
       <tr>
 	<!-- http://localhost:5000/text/ZB6q0003/003#0221a -->
 	<!-- ZB1a0068:007-352:2:6 -->
+{% if session['user'] %}
+	<td><input name="cb" value="{{it_txtid}}" type="checkbox"/>　</td>
+{% endif %}    
 	<td class="text-left"><a href="{{url_for('main.showtext', id=it_txtid)}}" title="{{it_txtid}}">{{it_txtid}}</a></td>
 	<td  class="text-left">{{it_title}}</td>
       </tr>
     {% endfor %}
     </table>
   </div>
+</form>
 </div>
 {% if sr.total > 20 %}
 <div class="pagination">
@@ -50,13 +64,31 @@
 {% endblock %}
 
 {% block sidebar %}
-<div id="bu"></div>
-<hr/>
-<div id="lei"></div>
-<hr/>
-<div id="texts"></div>
+<div>
+{% if session['user'] %}
+  <h2>Actions</h2>
+  <p id="select-all" onclick="toggle()">Select all</p>
+  <p>Order
+    <ul>
+    <li><a href="{{url_for('main.titlesearch', query=key, sort='+count' )}}">by number of matches</a></li>
+    <li><a href="{{url_for('main.titlesearch', query=key, sort='+txtid' )}}">by text number</a></li>
+    <li><a href="{{url_for('main.titlesearch', query=key, sort='+title' )}}">by text title</a></li>
+  </ul></p>
+{% endif %} 
+</div>
 {% endblock sidebar %}
 
 {% block closingscript %}
-
+<script>
+function toggle() {
+checkboxes = document.getElementsByName('cb');
+for(var i=0, n=checkboxes.length;i<n;i++) {
+    if (checkboxes[i].checked){
+	checkboxes[i].checked = false;
+	 }
+	 else {
+    checkboxes[i].checked = true;}
+  };
+};
+</script>
 {% endblock %}

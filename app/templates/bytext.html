@@ -31,16 +31,22 @@
 {% block body %}
 
 <div>
-  <form id="textlist" action="savetextlist" method="POST">
-    <span>
-    　{{_('Filename:')}}　
-    <input type="text" name="filename" value="{{key}}"/>　　
-    <input type="submit" value="Save"/>
-    <input type="hidden" name="next" value="{{request.path}}?query={{key}}"/>
+  <form id="textlist" action="{{url_for('main.savetextlist')}}" method="POST">
+{% if session['user'] %}
+    <p style="line-height:0.5em;"></p>
+    <span style="background-color:linen;margin-top:2px;border: 3px solid blue;padding:8px 5px 5px 5px;">
+    　{{_('Filename:')}} 
+    <input style="padding:1px;margin-top:3px" type="text" name="filename" value="{{key}}"/>　
+    <input style="margin-bottom:5px" type="submit" value="Save"/>　
+     <input style="padding:1px;margin-top:3px" type="checkbox" name="load" value=""/>Load
+    <input type="hidden" name="next" value="{{url_for('main.bytext', query=key)}}"/>
     </span>
+{% endif %}    
   <table class="table-striped">
     <tr>
+{% if session['user'] %}
       <td>select</td>
+{% endif %}
       <td>id</td>
       <td>title</td>
       <td>count</td>
@@ -52,7 +58,9 @@
       <tr>
 <!-- http://localhost:5000/text/ZB6q0003/003#0221a -->
 <!-- ZB1a0068:007-352:2:6 -->
+{% if session['user'] %}
 <td><input name="cb" value="{{it_txtid}}" type="checkbox"/>　</td>
+{% endif %}
 <td class="text-left"><a href="{{url_for('main.searchtext', filter=it_txtid, query=key)}}" title="{{it_txtid}}">{{it_txtid}}</a></td>
 <td  class="text-left">　{{tit}} </td>
 <td  class="text-right">{{item[1]}}</td>
@@ -70,9 +78,15 @@
 {% block sidebar %}
 <div>
   <h2>Actions</h2>
+{% if session['user'] %}
   <p id="select-all" onclick="toggle()">Select all</p>
-  <p id="save" onclick="postform()">Save</p>
-    
+{% endif %} 
+  <p>Order
+    <ul>
+    <li><a href="{{url_for('main.bytext', query=key, sort='+count' )}}">by number of matches</a></li>
+    <li><a href="{{url_for('main.bytext', query=key, sort='+txtid' )}}">by text number</a></li>
+    <li><a href="{{url_for('main.bytext', query=key, sort='+title' )}}">by text title</a></li>
+  </ul></p>
 </div>
 {% endblock sidebar %}
 
