@@ -1,0 +1,113 @@
+{% extends "laybase.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+
+{% block subhead %}
+
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <p>
+    {{_('Textlist for')}}
+    {{key}}.
+    {% if filter %}
+    {{_('Filtered by: ')}}
+    {{filter}}
+    {% endif %}
+    {{_('found')}} 
+    {{total}},
+    {{_('unique texts')}} 
+    {{uniq}}
+    <span  class="pull-right"><a href="search?query={{key}}">by content</a></span>
+    </p>
+  </div>
+</header>
+
+
+{% endblock subhead %}
+
+
+
+{% block body %}
+
+<div>
+  <form id="textlist" action="savetextlist" method="POST">
+    <span>
+    　{{_('Filename:')}}　
+    <input type="text" name="filename" value="{{key}}"/>　　
+    <input type="submit" value="Save"/>
+    <input type="hidden" name="next" value="{{request.path}}?query={{key}}"/>
+    </span>
+  <table class="table-striped">
+    <tr>
+      <td>select</td>
+      <td>id</td>
+      <td>title</td>
+      <td>count</td>
+<!--      <td></td> -->
+    </tr>
+      {% for item in ret %}
+      {% set it_txtid = item[0]['ID'] %}
+      {% set tit = item[0]['TITLE'] %}
+      <tr>
+<!-- http://localhost:5000/text/ZB6q0003/003#0221a -->
+<!-- ZB1a0068:007-352:2:6 -->
+<td><input name="cb" value="{{it_txtid}}" type="checkbox"/>　</td>
+<td class="text-left"><a href="{{url_for('main.searchtext', filter=it_txtid, query=key)}}" title="{{it_txtid}}">{{it_txtid}}</a></td>
+<td  class="text-left">　{{tit}} </td>
+<td  class="text-right">{{item[1]}}</td>
+</td>
+      </tr>
+    {% endfor %}
+</table>
+
+</form>
+</div>
+
+
+{% endblock %}
+
+{% block sidebar %}
+<div>
+  <h2>Actions</h2>
+  <p id="select-all" onclick="toggle()">Select all</p>
+  <p id="save" onclick="postform()">Save</p>
+    
+</div>
+{% endblock sidebar %}
+
+{% block closingscript %}
+<script>
+
+  function postform() {
+  f = document.getElementsByName('textlist')
+  f.submit();
+  }
+  
+function toggle() {
+  checkboxes = document.getElementsByTagName('input');
+for(var i=0, n=checkboxes.length;i<n;i++) {
+    if (checkboxes[i].checked){
+	checkboxes[i].checked = false;
+	 }
+	 else {
+    checkboxes[i].checked = true;}
+  };
+					  };
+//this is not used:					  
+  $(document).ready(function() {
+  $('#select-all').click(function(event) {
+  alert("Clicked!");
+  if(this.checked) {
+  // Iterate each checkbox
+  $(':checkbox').each(function() {
+  this.checked = true;                        
+  });
+  }
+  });
+});
+
+
+</script>
+
+{% endblock %}

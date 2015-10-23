@@ -101,7 +101,7 @@ class mdDocument(object):
             else:
                 o = gaiji.sub(lambda x : imgbase.format(gaiji=x.group(1)), l)                
                 #o = gaiji.sub(u"⬤", l)
-            #o=re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]\]", "<a href='/text/\\1/\\2#\\3'>\\4</a>", o)
+            #this is for the links in readme files.. we are in the same folder, so do not need the ID
             o=re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]\]", "<a href='\\2#\\3'>\\4</a>", o)
             o=re.sub(r"\[\[file:([^_]+)_([^\.]+)\.([^]]+)\]\[([^]]+)\]\]", "<a href='\\2'>\\4</a>", o)
             if o.strip()==u"目次":

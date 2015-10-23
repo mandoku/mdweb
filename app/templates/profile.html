@@ -1,0 +1,47 @@
+{% extends "laybase.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Kanripo{% endblock %}
+
+
+{% block navlinks %}
+<li><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
+{% endblock navlinks%}
+
+
+
+{% block body %}
+
+<div class="row">
+  <div id="txtcont" class="span9">
+    <h2>Settings for user <u>{{user}}</u>　　<a class="btn-danger" href="{{url_for('main.signout')}}">{{_("Logout")}}</a></h2>
+    {% for d in ret %}
+    <h3>{{d[0]}}</h3>
+    <table>
+      {% for t in d[1] %}
+      {% set tl = t[0][0:-4] %}
+    <tr>
+      <td  class="text-left"><b>{{tl}}</b>:</td>
+      <td> view</td>
+      <td><a target="github" href="{{t[1]}}"> edit (GitHub)</a></td>
+      <td><a href="{{url_for('main.loadtextlist', ffile=tl, next='profile/'+user)}}">
+	  {% if tl in loaded %}
+	  {{_("reload")}}
+	  {% else %}
+	  {{_("load")}}
+	  {% endif %}
+    </a></td></tr>
+      <tr><td><div id="{{tl}}"</div></td></tr>
+		   {% endfor %}
+		   </table>
+{% endfor %}
+<h3>Recent searches</h3>
+<ul>
+{% for s in searches %}
+<li><a href="{{url_for('main.searchtext', query=s)}}">{{s}}</a></li>
+{% endfor %}
+</ul>
+  </div>
+</div>
+{% endblock %}
+
