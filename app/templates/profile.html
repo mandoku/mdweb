@@ -14,7 +14,7 @@
 
 <div class="row">
   <div id="txtcont" class="span9">
-    <h2>Settings for user <u>{{user}}</u>　　<a class="btn-danger" href="{{url_for('main.signout')}}">{{_("Logout")}}</a></h2>
+    <h2>Profile for user <u>{{user}}</u>　　<a class="btn-danger" href="{{url_for('main.signout')}}">{{_("Logout")}}</a></h2>
     {% for d in ret %}
     <h3>{{d[0]}}</h3>
     <table>

@@ -438,10 +438,21 @@ def getfacets():
     ln = int(request.values.get('len', '3'))
     # number of top_most entries, 0 = all
     cnt = int(request.values.get('cnt', '3'))
+    if 'user' in session:
+        user = session['user']
+    else:
+        user = False
     if cnt == 0:
         cnt = None
     if tpe == 'ID':
         f = [a.split('\t')[1][0:ln] for a in redis_store.lrange(prefix+key, 1, redis_store.llen(prefix+key))]
+    elif tpe == 'FILTER':
+        fs = []
+        if user:
+            tf = redis_store.keys("%s%s$*" % (kr_user, user))
+            for f in tf:
+                fk, ft = f.split("$")
+                fs.append(("$"+ft, {'TITLE': ft}, "", ft))
     elif tpe == 'DYNASTY':
         f = [redis_store.hgetall("%s%s" % (zbmeta, a.split('\t')[1].split('_')[0])) for a in redis_store.lrange(prefix+key, 1, redis_store.llen(prefix+key))]
         f = [a['DYNASTY'] for a in f if a.has_key('DYNASTY')]

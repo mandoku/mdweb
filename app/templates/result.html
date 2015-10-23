@@ -74,6 +74,8 @@
 {% endblock %}
 
 {% block sidebar %}
+<div id="filter"><h4>特別 (Filter)</h4></div>
+<hr/>
 <div id="dyn"><h4>朝代</h4></div>
 <hr/>
 <div id="bu"><h4>部</h4></div>
@@ -87,6 +89,17 @@
 <script>
 (function($) {
     $(document).ready(function() {
+            $.ajax({
+                type: 'GET',
+                url: '/getfacets?query={{key}}&type=FILTER&cnt=10',
+                dataType: 'html',
+                success: function(html, textStatus) {
+                    $('#filter').append(html);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
+                }
+        });
             $.ajax({
                 type: 'GET',
                 url: '/getfacets?query={{key}}&type=DYNASTY&cnt=4',
