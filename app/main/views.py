@@ -211,13 +211,15 @@ def showcoll(coll, edition=None, fac=False):
 @main.route('/edition/<branch>/<id>/<juan>', methods=['GET',])
 @main.route('/edition/<branch>/<id>/', methods=['GET',])
 def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo"):
+    showtoc = True
     doc = {}
     fn = ""
     key = request.values.get('query', '')
     try:
         juan = "%3.3d" % (int(juan))
     except:
-        pass
+        showtoc = False
+
     if coll:
         #TODO: allow for different repositories, make this configurable
         if coll.startswith('KR'):
@@ -311,7 +313,7 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
         title = ""
     # else:
     #     md = mandoku_view.mdDocument(r.content.decode('utf-8'))
-    return render_template('showtext.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2)
+    return render_template('showtext.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2, showtoc=showtoc)
 #return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
 
 def showtextredis(juan, id=0, coll=None, seq=0):

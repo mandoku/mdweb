@@ -23,7 +23,7 @@
 
 {% block sidebar %}
 <div class="sidebar">
-
+{% if showtoc %}
 <h2>{{_('Versions')}}</h2>
   <ul>
     {% for v in branches %} 
@@ -45,7 +45,7 @@
     {% endfor %}
   </ul>
 
-
+{% endif %}
 </div>
 {% endblock sidebar %}
 
