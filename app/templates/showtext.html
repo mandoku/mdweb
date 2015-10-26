@@ -3,9 +3,13 @@
 {% import "_macros.html" as macros %}
 
 {% block navlinks %}
-          <li class="active"><a href="{{url_for('main.showtext', id=txtid)}}" title="{{txtid}}">{{title}}</a></li>
-          <li><a href="http://github.com/kanripo/{{txtid}}">GitHub</a></li>
-          <li><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
+<li class="active"><a href="{{url_for('main.showtext', id=txtid)}}" title="{{txtid}}">{{title}}</a></li>
+{% if session['user'] and editurl %}
+<li><a href="{{editurl}}">GitHub</a></li>
+{% else %}
+<li><a href="http://github.com/kanripo/{{txtid}}">GitHub</a></li>
+{% endif %}
+<li><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
 {% endblock navlinks%}
 
 

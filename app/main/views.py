@@ -255,6 +255,7 @@ def showcoll(coll, edition=None, fac=False):
 @main.route('/edition/<branch>/<id>/<juan>', methods=['GET',])
 @main.route('/edition/<branch>/<id>/', methods=['GET',])
 def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo"):
+    editurl=False
     showtoc = True
     doc = {}
     fn = ""
@@ -277,8 +278,10 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     #print user
     if juan.startswith("Readme"):
         url =  "https://raw.githubusercontent.com/%s/%s/%s/%s" % (user, id, branch, juan)
+        editurl =  "https://github.com/%s/%s/edit/%s/%s" % (user, id, branch, juan,)
     else:
         url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
+        editurl =  "https://github.com/%s/%s/edit/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
     # url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
     #     current_app.config['GITHUB_OAUTH_CLIENT_ID'],
     #     current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
@@ -364,7 +367,8 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
         title = ""
     # else:
     #     md = mandoku_view.mdDocument(r.content.decode('utf-8'))
-    return render_template('showtext.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2, showtoc=showtoc)
+    print "url: ", url
+    return render_template('showtext.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2, showtoc=showtoc, editurl=editurl)
 #return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
 
 def showtextredis(juan, id=0, coll=None, seq=0):
