@@ -74,8 +74,10 @@
 {% endblock %}
 
 {% block sidebar %}
+{% if session['user'] %}
 <div id="filter"><h4>特別 (Filter)</h4></div>
 <hr/>
+{% endif %}
 <div id="dyn"><h4>朝代</h4></div>
 <hr/>
 <div id="bu"><h4>部</h4></div>

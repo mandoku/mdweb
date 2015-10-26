@@ -409,24 +409,38 @@ def ghlistcontent(repo, dir, branch=None, ext=None):
         ls = [(a['name'], a['html_url'].replace("/blob/", "/edit/"), a['download_url']) for a in c.raw_data]
     return ls
 
-def ghuserdata(user, token):
-    #this will retrieve the userdata from gh, clone if necessary
-    #kanripo/KR-Workspace/master/Settings/kanripo.cfg
-    url = "{url}{user}/KR-Workspace/{user}/Settings/kanripo.cfg".format(url=current_app.config['GHRAWURL'], user=user)
-    r = requests.get(url)
-    if r.status_code != 200:
-        gh = Github(token)
-        u=gh.get_user()
-        #it seems like if the fork exists, this will just return the forked repo
-        ws = u.create_fork(gh.get_repo("kanripo/KR-Workspace"))
+def ghclone(user, token, src="kanripo/KR-Workspace", userbranch=True):
+    gh = Github(token)
+    u=gh.get_user()
+    ws = u.create_fork(gh.get_repo(src))
+    if userbranch:
         l=[a for a in ws.get_branches() if a.name=="master"]
         try:
-            #try to create a branch for the user
             nb=ws.create_git_ref("refs/heads/%s" % (user), l[0].raw_data["commit"]["sha"])
         except:
             pass
         rs=ws.edit(name=ws.name, default_branch=user)
+    return "Created fork of %s for user %s" % (src, user)
+
+def ghuserdata(user, token):
+    #this will retrieve the userdata from gh, clone if necessary
+    #kanripo/KR-Workspace/master/Settings/kanripo.cfg
+    for d in ["global", "kanripo"]:
+        url = "{url}{user}/KR-Workspace/{user}/Settings/{file}.cfg".format(url=current_app.config['GHRAWURL'], user=user, file=d)
         r = requests.get(url)
+        if r.status_code != 200:
+            gh = Github(token)
+            u=gh.get_user()
+            #it seems like if the fork exists, this will just return the forked repo
+            ws = u.create_fork(gh.get_repo("kanripo/KR-Workspace"))
+            l=[a for a in ws.get_branches() if a.name=="master"]
+            try:
+                #try to create a branch for the user
+                nb=ws.create_git_ref("refs/heads/%s" % (user), l[0].raw_data["commit"]["sha"])
+            except:
+                pass
+            rs=ws.edit(name=ws.name, default_branch=user)
+            r = requests.get(url)
     return r.content
     #r = requests.get(url)
     #PATCH /repos/<user>/KR-Workspace -d {"default_branch": user} 

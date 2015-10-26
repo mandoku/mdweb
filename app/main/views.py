@@ -48,6 +48,13 @@ env = Environment(loader=PackageLoader('__main__', 'templates'))
 # @main.route('/sitemap.xml')
 def static_from_root():
     return send_from_directory(current_app.static_folder, request.path[1:])
+@main.route('/textlist/unload', methods=['GET',])
+def unloadtextlist():
+    tl=request.values.get("ffile")
+    user=session['user']
+    redis_store.delete("%s%s$%s" % (kr_user, user, tl))
+    flash("File %s removed from internal database." % (tl))
+    return redirect(request.values.get('next') or '/')
 @main.route('/textlist/load', methods=['GET',])
 def loadtextlist():
     tl=request.values.get("ffile")
@@ -89,7 +96,7 @@ def savetextlist():
 def bytext():
     ld = defaultdict(list)
     key = request.values.get('query', '')
-    sort = request.values.get('sort', '')
+    sort = request.values.get('sort', '+count')
     total = redis_store.llen(key)
     [ld[(a.split('\t')[1].split(':')[0].split("_")[0])].append(1) for a in redis_store.lrange(key, 0, total-1) if len(a) > 0]
     ox = [(a, len(ld[a])) for a in ld]
@@ -431,6 +438,7 @@ def titlesearch(count=20, page=1):
 ## filter
 @main.route('/getfacets', methods=['GET', ])
 def getfacets():
+    f = []
     key = request.values.get('query', '')
     tpe = request.values.get('type', 'ID')
     prefix = request.values.get('prefix', '')
@@ -518,7 +526,6 @@ def index():
     if "user" in session:
         user = session['user']
         #print "token", session['token']
-        ret = lib.ghuserdata(session['user'], session['token'])
     else:
         user = "Login"
     return render_template('index.html', user=user)
@@ -540,9 +547,11 @@ def login():
     assert resp.ok
     session['user'] = resp.json()["login"]
     session['token'] = github.token["access_token"]
-    #ret = lib.ghuserdata(session['user'], session['token'])
+    #this is mainly to make sure we have a fork of the workspace
+    flash(lib.ghclone(session['user'], session['token']))
     flash("Welcome to the Kanseki Repository, user %s! " % (session['user']))
-    return render_template('index.html', user=resp.json()["login"])
+    return redirect(request.values.get('next') or '/')
+
 
 @main.route('/profile/signout')
 def signout():
@@ -551,8 +560,9 @@ def signout():
         del(session['token'])
     except:
         pass
-    ret="You have been logged out."
-    return render_template('index.html', user="Login", ret=ret)
+    flash("You have been logged out.")
+    return redirect(request.values.get('next') or '/')
+
 
 @main.route('/profile/<uid>')
 def profile(uid):

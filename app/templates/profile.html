@@ -24,10 +24,11 @@
       <td  class="text-left"><b>{{tl}}</b>:</td>
       <td> view</td>
       <td><a target="github" href="{{t[1]}}"> edit (GitHub)</a></td>
-      <td><a href="{{url_for('main.loadtextlist', ffile=tl, next='profile/'+user)}}">
 	  {% if tl in loaded %}
-	  {{_("reload")}}
+      <td><a href="{{url_for('main.unloadtextlist', ffile=tl, next='profile/'+user)}}">
+	  {{_("unload")}}
 	  {% else %}
+      <td><a href="{{url_for('main.loadtextlist', ffile=tl, next='profile/'+user)}}">
 	  {{_("load")}}
 	  {% endif %}
     </a></td></tr>
@@ -35,6 +36,7 @@
 		   {% endfor %}
 		   </table>
 {% endfor %}
+<h3>Settings</h3>
 <h3>Recent searches</h3>
 <ul>
 {% for s in searches %}
