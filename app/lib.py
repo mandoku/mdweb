@@ -449,23 +449,26 @@ def ghtextdates(user, rsort):
     ud=ghuserdata(user)
     br="master"
     if not "kanripo" in rsort:
-        br=ud["textdates"]
+        try:
+            br=ud["textdates"]
+        except:
+            pass
     else:
         td = "kanripo"
+    #for 
     url = "{url}{td}/KR-Workspace/{br}/Settings/krp-by-date.txt".format(url=current_app.config['GHRAWURL'], td=td, br=br)
     r = requests.get(url)
     if r.status_code == 200:
+        print r.status_code, url
         try:
-            redis_store.delete(k)
+            redis_store.delete(rsort)
         except:
             pass
         for line in r.content.split("\n"):
             f=line.split()
             cnt +=1
-            try:
+            if len(f) > 0:
                 redis_store.zadd(rsort, f[0], cnt)
-            except:
-                pass
     return 1
 
 def ghuserdata(user):

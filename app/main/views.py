@@ -139,6 +139,7 @@ def searchtext(count=20, page=1):
             rsort="%s%s:bydate" % (kr_user, td)
             if not redis_store.keys(rsort):
                 ret=lib.ghtextdates(user, rsort)
+                print ret
         if len(filters) < 1:
             filter = ud['filter']
         if 'pinned' in ud:
