@@ -74,6 +74,12 @@
 {% endblock %}
 
 {% block sidebar %}
+<div id="sort"><h4>Sort</h4></div>
+<ul>
+  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=+txtid">By text number</a></li>
+  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=-date">By text date</a></li>
+  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=-date">By search term</a></li>
+</ul>  
 {% if session['user'] %}
 <div id="filter"><h4>特別 (Filter)</h4></div>
 <hr/>

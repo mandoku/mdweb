@@ -89,7 +89,6 @@ def savetextlist():
             flash("Loaded the text list for %s with %d texts into the internal database." % (fn, len(lines)))
         except:
             flash("There was a problem loading the text list.")
-        
     return redirect(request.form.get('next') or '/')
 
 @main.route('/bytext', methods=['GET',])
@@ -113,16 +112,37 @@ def bytext():
 @main.route('/<coll>/search', methods=['GET', 'POST',])
 @main.route('/search', methods=['GET', 'POST',])
 def searchtext(count=20, page=1):
+    rsort=""
     sort = request.values.get('sort', '')
     q = request.values.get('query', '')
     keys = q.split()
-    #store the search key, we retrieve this in the profile page
-    if 'user' in session:
-        sa=redis_store.sadd("%s%s:searchkeys" % (kr_user, session['user']), q)
     count=int(request.values.get('count', count))
     page=int(request.values.get('page', page))
     filters = request.values.get('filter', '')
     tpe = request.values.get('type', '')
+    #store the search key, we retrieve this in the profile page
+    if 'user' in session:
+        user=session['user']
+        sa=redis_store.sadd("%s%s:searchkeys" % (kr_user, user), q)
+        ud=redis_store.hgetall("%s%s:settings" % (kr_user,user))
+        if len(ud) < 1:
+            lib.ghuserdata(user)
+            ud=redis_store.hgetall("%s%s:settings" % (kr_user,user))
+        if len(sort) < 1:
+            sort = ud['sort']
+        if "date" in sort:
+            #make sure we have the dates loaded
+            if "textdates" in ud:
+                td = ud["textdates"]
+            else:
+                td = "kanripo"
+            rsort="%s%s:bydate" % (kr_user, td)
+            if not redis_store.keys(rsort):
+                ret=lib.ghtextdates(user, rsort)
+        if len(filters) < 1:
+            filter = ud['filter']
+        if 'pinned' in ud:
+            pinned=ud['pinned']
     if len(keys) > 0:
         for key in keys:
             if not redis_store.exists(key): 
@@ -180,10 +200,16 @@ def searchtext(count=20, page=1):
     elif len(fs) < 1:
         key = keys[0]
         total = redis_store.llen(key)
-        try:
-            ox = [("".join([k.split("\t")[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
-        except:
-            ox = []
+            #first: sort, rsort is the redis key for
+        rkey="key:%s" % (key)
+        rkey = key
+        if len(sort) > 0:
+            ks = lib.sortres(rkey, sort, rsort)
+            ox = [("".join([k.split("\t")[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k, j in ks[start:start+count-1]]
+        else:
+            ox = [("".join([k.split("\t")[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(rkey, start, start+count-1)]
+        # except:
+        #     ox = []
     else:
         key = keys[0]
         ox1 = lib.applyfilter(key, fs, tpe)
@@ -548,7 +574,9 @@ def login():
     session['user'] = resp.json()["login"]
     session['token'] = github.token["access_token"]
     #this is mainly to make sure we have a fork of the workspace
-    flash(lib.ghclone(session['user'], session['token']))
+    ret = lib.ghclone(session['user'], session['token'])
+    if len(ret) > 0:
+        flash(ret)
     flash("Welcome to the Kanseki Repository, user %s! " % (session['user']))
     return redirect(request.values.get('next') or '/')
 
@@ -563,9 +591,47 @@ def signout():
     flash("You have been logged out.")
     return redirect(request.values.get('next') or '/')
 
+@main.route('/profile/<uid>/settings/reload')
+def reloadsettings(uid):
+    redis_store.delete("%s%s:settings" % (kr_user, uid))
+    ret=lib.ghuserdata(uid)
+    if ret == 1:
+        flash("loaded user data")
+    else:
+        flash("could not load user data")
+    userdata=redis_store.hgetall("%s%s:settings" % (kr_user,uid))
+    return redirect(request.values.get('next') or '/')
+
+@main.route('/profile/<uid>/settings/save', methods=['POST',])
+def saveuserdata(uid):
+    sort = request.form.getlist("sort")[0]
+    url = "{url}{user}/KR-Workspace/{user}/Settings/kanripo.cfg".format(url=current_app.config['GHRAWURL'], user=uid)
+    r = requests.get(url)
+    ol=[]
+    if r.status_code == 200:
+        for line in r.content.split("\n"):
+            if line.startswith("sort"):
+                line="sort=%s" % (sort)
+            ol.append(line)
+    token=session['token']
+    gh=Github(token)
+    ws=gh.get_repo("%s/%s" % (uid, "KR-Workspace"))
+    try:
+        lib.ghsave(u"Settings/kanripo.cfg", "\n".join(ol), ws)
+        flash("Saved settings.")
+    except:
+        flash("There was a problem saving the settings.")
+    return redirect(request.form.get('next') or '/')
+
 
 @main.route('/profile/<uid>')
 def profile(uid):
+    #for the moment, load settings every time, later maybe expire after some minutes and then reload if necessary
+    redis_store.delete("%s%s:settings" % (kr_user, uid))
+    ret=lib.ghuserdata(uid)
+    # if not redis_store.key("%s%s:settings" % (kr_user,uid)):
+    # else:
+    #     ret = 0
     r=[]
     for d in ["Texts", "Notes"]:
         r.append([d, lib.ghlistcontent("KR-Workspace", d, ext="txt")])
@@ -577,7 +643,12 @@ def profile(uid):
         searchkeys=[a for a in redis_store.smembers("%s%s:searchkeys" % (kr_user, uid))]
     except:
         searchkeys=[]
-    return render_template('profile.html', user=uid, ret=r, loaded=loaded, searches=searchkeys)
+    if ret == 1:
+        flash("loaded user data")
+    elif ret == -1:
+        flash("could not load user data")
+    userdata=redis_store.hgetall("%s%s:settings" % (kr_user,uid))
+    return render_template('profile.html', user=uid, ret=r, loaded=loaded, searches=searchkeys, userdata=userdata)
     
 
 @main.route('/about/<id>')

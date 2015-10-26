@@ -37,6 +37,23 @@
 		   </table>
 {% endfor %}
 <h3>Settings</h3>
+<form id="userdata" action="{{url_for('main.saveuserdata', uid=session['user'])}}" method="POST">
+  
+  <p>Sort by:
+    <select name="sort">
+      <option value="-txtid" {% if userdata['sort'] == "+txtid" %} selected {% endif %}>By text number</option>
+      <option value="+txtid" {% if userdata['sort'] == "-txtid" %} selected {% endif %}>By text number (reversed)</option>
+      <option value="+date" {% if userdata['sort'] == "+date" %} selected {% endif %}>By date</option>
+      <option value="-date" {% if userdata['sort'] == "-date" %} selected {% endif %}>By date (reversed)</option>
+      <option value="+term" {% if userdata['sort'] == "+term" %} selected {% endif %}>By term</option>
+      <option value="-term" {% if userdata['sort'] == "-term" %} selected {% endif %}>By term (reversed)</option>
+      <option value="+pre" {% if userdata['sort'] == "+pre" %} selected {% endif %}>By preceding characters</option>
+     </select>
+    </p>
+    <input type="hidden" name="next" value="{{url_for('main.profile', uid=session['user'])}}"/>
+    <input style="margin-bottom:5px" type="submit" value="Save"/>　
+</form>
+<p>Advanced: <a target="github" href="https://github.com/{{session['user']}}/KR-Workspace/edit/{{session['user']}}/Settings/kanripo.cfg"> edit settings on GitHub</a></p>
 <h3>Recent searches</h3>
 <ul>
 {% for s in searches %}

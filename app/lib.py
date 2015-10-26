@@ -298,6 +298,7 @@ def doftsearch(key, idxdir=None):
     ux = gaiji.sub(lambda x : imgbase.format(gaiji=x.group(1)), ux)
     s=ux.split('\n')
     s=[a for a in s if len(a) > 1]
+    #do we want to sort right away here?
     s.sort()
     if len(s) > 0:
         redis_store.rpush(key, *s)
@@ -353,6 +354,19 @@ def applyfilter(key, fs, tpe):
         ox.sort()
     return ox
 
+def sortres(rkey, sort, rsort):
+    #sort the redis contents of rkey by sort, return list of keys
+    llen=redis_store.llen(rkey)
+    if "date" in sort:
+    #retrieve the sort keys
+        ks=[(k, redis_store.zrevrank(rsort, k.split()[1].split(':')[0][0:8])) for k in redis_store.lrange(rkey, 0, llen-1)]
+    elif "txtid" in sort:
+        ks=[(k, k.split()[1].split(':')[0][0:8]) for k in redis_store.lrange(rkey, 0, llen-1)]
+    elif "pre" in sort:
+        ks=[(k, "".join([k.split("\t")[0].split(',')[1]])[::-1]) for k in redis_store.lrange(rkey, 0, llen-1)]
+    #then sort and return the sorted list
+    return sorted(ks, key=lambda x : x[1], reverse=sort[0] == "-")
+    
 def ghfilterfile2redis(ffile):
     #ffile is the filter file to be read $username:filterfile, the location is expanded to a github raw url
     l=[]
@@ -412,7 +426,13 @@ def ghlistcontent(repo, dir, branch=None, ext=None):
 def ghclone(user, token, src="kanripo/KR-Workspace", userbranch=True):
     gh = Github(token)
     u=gh.get_user()
-    ws = u.create_fork(gh.get_repo(src))
+    try:
+        ws = gh.get_repo("user/%s" % (src.split("/")[-1]))
+        dlu = ws.downloads_url
+        print dlu
+        return ""
+    except:
+        ws = u.create_fork(gh.get_repo(src))
     if userbranch:
         l=[a for a in ws.get_branches() if a.name=="master"]
         try:
@@ -420,33 +440,51 @@ def ghclone(user, token, src="kanripo/KR-Workspace", userbranch=True):
         except:
             pass
         rs=ws.edit(name=ws.name, default_branch=user)
-    return "Created fork of %s for user %s" % (src, user)
+    return ""
+    #return "Created fork of %s for user %s" % (src, user)
 
-def ghuserdata(user, token):
+def ghtextdates(user, rsort):
+    cnt=0
+    ud=ghuserdata(user)
+    br="master"
+    if not "kanripo" in rsort:
+        br=ud["textdates"]
+    else:
+        td = "kanripo"
+    url = "{url}{td}/KR-Workspace/{br}/Settings/krp-by-date.txt".format(url=current_app.config['GHRAWURL'], td=td, br=br)
+    r = requests.get(url)
+    print "r, ", r.status_code, url
+    if r.status_code == 200:
+        try:
+            redis_store.delete(k)
+        except:
+            pass
+        for line in r.content.split("\n"):
+            f=line.split()
+            cnt +=1
+            try:
+                redis_store.zadd(rsort, f[0], cnt)
+            except:
+                pass
+    return 1
+
+def ghuserdata(user):
     #this will retrieve the userdata from gh, clone if necessary
     #kanripo/KR-Workspace/master/Settings/kanripo.cfg
+    dx = {}
     for d in ["global", "kanripo"]:
         url = "{url}{user}/KR-Workspace/{user}/Settings/{file}.cfg".format(url=current_app.config['GHRAWURL'], user=user, file=d)
         r = requests.get(url)
-        if r.status_code != 200:
-            gh = Github(token)
-            u=gh.get_user()
-            #it seems like if the fork exists, this will just return the forked repo
-            ws = u.create_fork(gh.get_repo("kanripo/KR-Workspace"))
-            l=[a for a in ws.get_branches() if a.name=="master"]
-            try:
-                #try to create a branch for the user
-                nb=ws.create_git_ref("refs/heads/%s" % (user), l[0].raw_data["commit"]["sha"])
-            except:
-                pass
-            rs=ws.edit(name=ws.name, default_branch=user)
-            r = requests.get(url)
-    return r.content
-    #r = requests.get(url)
-    #PATCH /repos/<user>/KR-Workspace -d {"default_branch": user} 
-#curl -u b7254056c49642977850667b9022f092bf79a956:x-oauth-basic -X POST https://api.github.com/repos/kanripo/KR-Workspace/forks
-    # print  g.get('token', None)
-    # print "User from lib: ", g.get('user', None), url
+        if r.status_code == 200:
+            for line in r.content.split("\n"):
+                if "=" in line:
+                    f = line.split("=", 1)
+                    dx[f[0]] = f[1]
+    try:
+        redis_store.hmset("%s%s:settings" % (kr_user, user), dx)
+        return 1
+    except:
+        return -1
 
 
 ## helper object for view, this could at some point be moved into a flask extension
