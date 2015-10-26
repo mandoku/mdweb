@@ -373,13 +373,13 @@ def ghfilterfile2redis(ffile):
     #ffile is the filter file to be read $username:filterfile, the location is expanded to a github raw url
     l=[]
     user, gfile = ffile.split("$")
-    print user, gfile
+#    print user, gfile
     url = "{url}{user}/KR-Workspace/{user}/Texts/{gf}.txt".format(url=current_app.config['GHRAWURL'], user=user, gf=gfile)
-    print url
+#    print url
     r = requests.get(url)
     if r.status_code != 200:
         return -1
-    print r.content
+#    print r.content
     for line in r.content.split("\n"):
         if line.startswith("#"):
             continue
@@ -388,7 +388,7 @@ def ghfilterfile2redis(ffile):
         except:
             pass
     #should we first make sure the list is empty?
-    print l
+#    print l
     return redis_store.lpush(kr_user + ffile, *l)
 
 def ghsave(pathname, content, repo=None, commit_message=None, new=False):
@@ -431,7 +431,6 @@ def ghclone(user, token, src="kanripo/KR-Workspace", userbranch=True):
     try:
         ws = gh.get_repo("user/%s" % (src.split("/")[-1]))
         dlu = ws.downloads_url
-        print dlu
         return ""
     except:
         ws = u.create_fork(gh.get_repo(src))
@@ -455,7 +454,6 @@ def ghtextdates(user, rsort):
         td = "kanripo"
     url = "{url}{td}/KR-Workspace/{br}/Settings/krp-by-date.txt".format(url=current_app.config['GHRAWURL'], td=td, br=br)
     r = requests.get(url)
-    print "r, ", r.status_code, url
     if r.status_code == 200:
         try:
             redis_store.delete(k)
