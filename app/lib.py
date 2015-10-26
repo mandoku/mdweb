@@ -364,6 +364,8 @@ def sortres(rkey, sort, rsort):
         ks=[(k, k.split()[1].split(':')[0][0:8]) for k in redis_store.lrange(rkey, 0, llen-1)]
     elif "pre" in sort:
         ks=[(k, "".join([k.split("\t")[0].split(',')[1]])[::-1]) for k in redis_store.lrange(rkey, 0, llen-1)]
+    elif "term" in sort:
+        ks=[(k, "".join([k.split("\t")[0].split(',')[0]])) for k in redis_store.lrange(rkey, 0, llen-1)]
     #then sort and return the sorted list
     return sorted(ks, key=lambda x : x[1], reverse=sort[0] == "-")
     

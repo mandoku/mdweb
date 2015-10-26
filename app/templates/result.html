@@ -78,7 +78,8 @@
 <ul>
   <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=+txtid">By text number</a></li>
   <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=-date">By text date</a></li>
-  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=-date">By search term</a></li>
+  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=+term">By search term</a></li>
+  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=+pre">By preceding characters</a></li>
 </ul>  
 {% if session['user'] %}
 <div id="filter"><h4>特別 (Filter)</h4></div>
