@@ -129,7 +129,13 @@ def searchtext(count=20, page=1):
             lib.ghuserdata(user)
             ud=redis_store.hgetall("%s%s:settings" % (kr_user,user))
         if len(sort) < 1:
-            sort = ud['sort']
+            try:
+                sort = ud['sort']
+            except:
+                try:
+                    sort = session['sort']
+                except:
+                    sort = ""
         if "date" in sort:
             #make sure we have the dates loaded
             if "textdates" in ud:
