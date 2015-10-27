@@ -288,10 +288,10 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     #print user
     if juan.startswith("Readme"):
         url =  "https://raw.githubusercontent.com/%s/%s/%s/%s" % (user, id, branch, juan)
-        editurl =  "https://github.com/%s/%s/edit/%s/%s" % (user, id, branch, juan,)
+        xediturl =  "https://github.com/%s/%s/edit/%s/%s" % (user, id, branch, juan,)
     else:
         url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
-        editurl =  "https://github.com/%s/%s/edit/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
+        xediturl =  "https://github.com/%s/%s/edit/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
     # url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
     #     current_app.config['GITHUB_OAUTH_CLIENT_ID'],
     #     current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
@@ -299,6 +299,7 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     #print url, r.status_code
     if r.status_code == 200:
         fn = r.content
+        editurl = xediturl
     else:
         if juan.startswith("Readme"):
             url =  "https://raw.githubusercontent.com/%s/%s/%s/%s" % (current_app.config['GHKANRIPO'], id, branch, juan,)
