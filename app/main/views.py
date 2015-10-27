@@ -147,7 +147,10 @@ def searchtext(count=20, page=1):
                 ret=lib.ghtextdates(user, rsort)
                 print ret
         if len(filters) < 1:
-            filter = ud['filter']
+            try:
+                filter = ud['filter']
+            except:
+                pass
         if 'pinned' in ud:
             pinned=ud['pinned']
     if len(keys) > 0:
