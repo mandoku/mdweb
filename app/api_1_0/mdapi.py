@@ -24,18 +24,23 @@ def procline():
     l = request.values.get('query', '')
     l = lib.md_re.sub("", l)
     de = []
-    try:
-        for i in range(0, len(l)):
-            j = i+1
+    for i in range(0, len(l)):
+        j = i+1
+        try:
             res = lib.dicentry(l[i:j], current_app.config['DICURL'])
-            de.append(res)
-            while res and j < len(l):
-                j += 1
+        except:
+            res = ""
+        de.append(res)
+        while res and j < len(l):
+            j += 1
+            try:
                 res = lib.dicentry(l[i:j], current_app.config['DICURL'])
-                de.append(res)
-        return "\n%s" % ("".join(de))
-    except:
-        return "Not Found: %s " % (l)
+            except:
+                res = ""
+            de.append(res)
+    return "\n%s" % ("".join(de))
+    # except:
+    #     return "Not Found: %s " % (l)
 
 # for the moment, we are just dumping out all matches
 @api.route('/search', methods=['GET', 'POST',])

@@ -200,7 +200,10 @@ def formatle(l, e, dicurl):
         return "[[%szhwdcd/zhwdcd-p%5.5d][%s : %s]]" % (dicurl, int(ec[1][1:]), dictab[l], e)
     elif l == "oda" :
         ec = e.split('*')
-        pg = int(ec[-1].split('-')[0])
+        try:
+            pg = int(ec[-1].split('-')[0])
+        except:
+            pg = 0
         return "[[%soda/oda-p%4.4d][%s : %s]]" % (dicurl, pg, dictab[l], e)
     else:
         try:
@@ -459,7 +462,6 @@ def ghtextdates(user, rsort):
     url = "{url}{td}/KR-Workspace/{br}/Settings/krp-by-date.txt".format(url=current_app.config['GHRAWURL'], td=td, br=br)
     r = requests.get(url)
     if r.status_code == 200:
-        print r.status_code, url
         try:
             redis_store.delete(rsort)
         except:
