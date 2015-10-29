@@ -1,0 +1,169 @@
+{% extends "laybase.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block navlinks %}
+<li class="active"><a href="{{url_for('main.read', id=txtid)}}" title="{{txtid}} {{title}}">{{title|truncate(8, true)}}</a></li>
+{% if session['user'] and editurl %}
+<li><a href="{{editurl}}">GitHub</a></li>
+{% else %}
+<li><a href="http://github.com/kanripo/{{txtid}}">GitHub</a></li>
+{% endif %}
+<li><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
+{% endblock navlinks%}
+
+
+{% block subhead %}
+{% endblock subhead %}
+
+<div class="container">
+  <div class="row">
+    <div class="span2">
+
+{% block sidebar %}
+<div class="sidebar">
+{% if showtoc %}
+<h2>{{_('Versions')}}</h2>
+  <ul>
+    {% for v in branches %} 
+    <li><a href="/edition/{{v[0]}}/{{txtid}}/{{juan}}">{{v[1]}}</a></li>
+    <ul>
+    {% for s, f in ct.doc.sections %}
+    <li><a href="{{s}}?edition={{v}}&amp;pos=1&amp;fac=True">{{s}}</a></li>
+    {% endfor %}
+    </ul>
+    {% endfor %}
+  </ul>
+
+<h2>{{_('Contents')}}</h2>
+  <ul>
+    {% for i in toc %}
+    {% for item in i %}
+    <li><a href="{{item[0]}}#{{item[1]}}">{{item[2]}}</a></li>
+    {% endfor %}
+    {% endfor %}
+  </ul>
+
+{% endif %}
+</div>
+{% endblock sidebar %}
+
+
+{% block body %}
+
+<div class="row">
+  <div id="txtcont" class="span4">
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1><a href="{{url_for('main.showcoll', coll=ct.doc.id)}}">{{ct.doc.id}}</a> {{doc['TITLE']}} </h1>
+  </div>
+</header>
+    {{ct.mtext}}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block closingscript %}
+<script>
+  var imglist={};
+  var urlist={};
+  var noimg = 0
+
+  
+function displayPageImage(txtid, edition, juan, page){
+    im=imglist[edition+" "+juan+ "-" + page]
+    if (typeof im === 'undefined') {
+       alert("No digital facsimile available for this text!")
+    } else {
+	$( "#sidebardiv" ).addClass('hidden');
+	$( "#md-fac" ).detach()
+	$( "#maintextdiv" ).removeClass('span9').addClass('span5');
+	$( "#imagediv" ).removeClass('span1').addClass('span7');
+	$( "#imagediv" ).removeClass('hidden')
+	$( "#imageinner" ).addClass('krp-fixed');
+	var w = $( "#imgcont").width();
+	var h = $( window ).height() 
+	$( ".panzoom" ).append( "<img id='md-fac' src='" + imglist[edition+" "+juan+ "-" + page] + "' style='max-width: 90%; max-height: 90%;'/>" );
+  
+	$( ".panzoom" ).panzoom({
+            $zoomIn: $(".zoom-in"),
+            $zoomOut: $(".zoom-out"),
+            $zoomRange: $(".zoom-range"),
+            $reset: $(".reset")
+	});
+	$( ".pz-close" ).click(function(){
+	    $( "#sidebardiv" ).removeClass('hidden')
+	    $( "#imagediv" ).addClass('hidden');
+	});
+    }
+};
+
+
+(function($) {
+
+    $(document).ready(function() {
+	$.ajax({
+	    type: 'GET',
+	    url: 'https://raw.githubusercontent.com/kanripo/{{txtid}}/_data/imglist/imginfo.cfg',
+	    dataType: 'text',
+	    success: function(data, textStatus) {
+		//Console.log(data.length);
+		//$('#imagediv').append(data);
+		var lines = data.split('\n');
+		for (var j=0; j < lines.length; j++) {
+		    if (lines[j].indexOf('=') > 0){
+			f = lines[j].split('=');
+			if (f[0]) {
+			    urlist[f[0]] = f[1]
+			};
+		    };
+		};
+	$.ajax({
+	    type: 'GET',
+	    url: 'https://raw.githubusercontent.com/kanripo/{{txtid}}/_data/imglist/{{txtid}}_{{juan}}.txt',
+	    dataType: 'text',
+	    success: function(data, textStatus) {
+		//Console.log(data.length);
+		//$('#imagediv').append(data);
+		var lines = data.split('\n');
+		for (var j=0; j < lines.length; j++) {
+		    f = lines[j].split('\t');
+		    if (f[1]) {
+			r = f[1].split(' ')
+			if (r[1]) {
+			   // console.log("F1:" + r[0])
+			    f2 = urlist[r[0]] + "/" + f[2]
+			    if (r[1].indexOf('-') < 0){
+				imglist[r[0] + ' {{juan}}-' + r[1]] = f2;
+			    } 
+			    else if (f[1].indexOf('JY') > -1){
+				imglist[r[0] + ' {{juan}}-' + r[1]] = f2;
+			    }
+			    else
+				
+				imglist[f[1]]=f2;
+			};
+		    };
+		};
+	    },
+	    error: function(xhr, textStatus, errorThrown) {
+	    	   noimg = 1
+		//alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
+	    }
+	});
+		
+	    },
+	    error: function(xhr, textStatus, errorThrown) {
+	    	   noimg = 1
+	    	//alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
+	    }
+	});
+// ajax 2	
+
+
+});
+})
+(jQuery);  
+</script>  
+{% endblock %}
