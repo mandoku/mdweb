@@ -66,11 +66,14 @@ class mdDocument(object):
     def parse(self, content):
         vs_flag = 0
         cnt = 0
+        llen = 0
         self._toc=[]
         s = ["<p>"]
         o = ""
         lines = content.split('\n')
         for l in lines:
+            oldlen = llen
+            llen += len(l) + 1
             cnt += 1
             l = l.replace('¶', '')
             l = re.sub(r'@[a-z]+', '', l)
@@ -106,6 +109,7 @@ class mdDocument(object):
             o=re.sub(r"\[\[file:([^_]+)_([^\.]+)\.([^]]+)\]\[([^]]+)\]\]", "<a href='\\2'>\\4</a>", o)
             if o.strip()==u"目次":
                 o = "<h1>%s</h1>" % (o)
+            o = "<span class='tline' id='l%d' data-llen='%d'>%s</span>" % (cnt, oldlen, o)
             lx = o.strip().split("|")
             if len(lx) == 4:
                 o = "<p><a href='/edition/%s/%s/'>%s</a></p>" % (lx[1].strip(), self.config['ID'], lx[2].strip())
