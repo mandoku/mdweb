@@ -41,10 +41,10 @@
 {% endif %}
       </ul>
       <form class="navbar-search pull-right" action="{{url_for('main.searchtext')}}" method="GET">
-	<input name="query" id="query" type="text" class="search-query" placeholder="{{_('Text Search')}}">
+	<input size="10" name="query" id="query" type="text" class="search-query" placeholder="{{_('Text Search')}}">
       </form>
       <form class="navbar-search pull-right" action="{{url_for('main.titlesearch')}}" method="GET">
-	<input name="query" id="query" type="text" class="search-query" placeholder="{{_('Title Search')}}">
+	<input  size="5" name="query" id="query" type="text" class="search-query" placeholder="{{_('Title Search')}}">
       </form>
 
 

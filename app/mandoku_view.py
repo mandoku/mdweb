@@ -103,13 +103,13 @@ class mdDocument(object):
                 o = "%s<br/>" % (l)
             else:
                 o = gaiji.sub(lambda x : imgbase.format(gaiji=x.group(1)), l)                
+                o = "<span class='tline' id='l%d' data-llen='%d:%d'>%s</span>" % (cnt, oldlen, llen, o)
                 #o = gaiji.sub(u"⬤", l)
             #this is for the links in readme files.. we are in the same folder, so do not need the ID
             o=re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]\]", "<a href='\\2#\\3'>\\4</a>", o)
             o=re.sub(r"\[\[file:([^_]+)_([^\.]+)\.([^]]+)\]\[([^]]+)\]\]", "<a href='\\2'>\\4</a>", o)
             if o.strip()==u"目次":
                 o = "<h1>%s</h1>" % (o)
-            o = "<span class='tline' id='l%d' data-llen='%d'>%s</span>" % (cnt, oldlen, o)
             lx = o.strip().split("|")
             if len(lx) == 4:
                 o = "<p><a href='/edition/%s/%s/'>%s</a></p>" % (lx[1].strip(), self.config['ID'], lx[2].strip())

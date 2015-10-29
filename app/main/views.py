@@ -257,6 +257,12 @@ def showcoll(coll, edition=None, fac=False):
 #             l.extend(re.findall(r'\[\[([^\]]+)\]\[([^\]]+)', line))
 #             ct['toc'].append(l)
 #     return  render_template('texttop.html', ct=ct)
+@main.route('/read/<branch>/<id>/<juan>', methods=['GET',])
+@main.route('/read/<id>/<juan>', methods=['GET',])
+@main.route('/read/<id>/', methods=['GET',])
+def read(juan="Readme.org", id=0, coll=None, seq=0, branch="master"):
+    return render_template('read.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2, showtoc=showtoc, editurl=editurl)
+#return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
 
 #@main.route('/text/<coll>/<int:seq>/<int:juan>', methods=['GET',] )
 @main.route('/text/<id>/', methods=['GET',])
@@ -373,7 +379,7 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
         res = {}
     res['ID'] = id
     try:
-        title = res['TITLE']
+        title = res['TITLE'].decode('utf-8')
     except:
         title = ""
     # else:

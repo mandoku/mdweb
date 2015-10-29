@@ -3,7 +3,7 @@
 {% import "_macros.html" as macros %}
 
 {% block navlinks %}
-<li class="active"><a href="{{url_for('main.showtext', id=txtid)}}" title="{{txtid}}">{{title}}</a></li>
+<li class="active"><a href="{{url_for('main.showtext', id=txtid)}}" title="{{txtid}} {{title}}">{{title|truncate(8, true)}}</a></li>
 {% if session['user'] and editurl %}
 <li><a href="{{editurl}}">GitHub</a></li>
 {% else %}
