@@ -7,6 +7,10 @@
     position: fixed; top : 60px;  
 }
 
+.krp-note {
+    color : magenta;
+    font-size : 90%;
+}
 
 .ui-draggable-dragging {
     z-index: 10000!important

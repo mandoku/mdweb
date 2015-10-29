@@ -77,12 +77,14 @@ class mdDocument(object):
             cnt += 1
             l = l.replace('¶', '')
             l = re.sub(r'@[a-z]+', '', l)
+            l = l.replace("(", "<span class='krp-note'>")
+            l = l.replace(")", "</span>")
             if pby.search(l):
-                l = pby.sub(r'''<a onclick="displayPageImage('%s', 'JY-C', '%s', '\2-\3' );" name="\2-\3" class="pb">[\2-\3]</a>''' % (self.txtid, self.juan), l)
+                l = pby.sub(r'''<a onclick="displayPageImage('%s', 'JY-C', '%s', '\2-\3' );" name="\2-\3" class="pb">[\2-\3] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)
             elif pb.search(l):
-                l = pb.sub(r'''<a onclick="displayPageImage('\1', '\2', '\3', '\4' );" name="\4" class="pb">[\3-\4]</a>''', l)
+                l = pb.sub(r'''<a onclick="displayPageImage('\1', '\2', '\3', '\4' );" name="\4" class="pb">[\3-\4] <img width="20"  src="/static/img/kanseki-5.png"/></a>''', l)
             elif pbx.search(l):
-                l = pbx.sub(r'''<a onclick="displayPageImage('%s', '\2', '%s', '\3p\4' );" name="\4" class="pb">[\3-\4]</a>''' % (self.txtid, self.juan), l)
+                l = pbx.sub(r'''<a onclick="displayPageImage('%s', '\2', '%s', '\3p\4' );" name="\4" class="pb">[\3-\4] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)
             if vs.search(l):
                 tmp = vs.findall(l)[0]
                 if tmp.upper() == "BEGIN":

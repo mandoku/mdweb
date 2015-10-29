@@ -260,8 +260,38 @@ def showcoll(coll, edition=None, fac=False):
 @main.route('/read/<branch>/<id>/<juan>', methods=['GET',])
 @main.route('/read/<id>/<juan>', methods=['GET',])
 @main.route('/read/<id>/', methods=['GET',])
-def read(juan="Readme.org", id=0, coll=None, seq=0, branch="master"):
-    return render_template('read.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2, showtoc=showtoc, editurl=editurl)
+def read(juan="Readme.org", id=0, seq=0, branch="master"):
+    session['pinned']=id
+    if "user" in session:
+        user = session['user']
+    else:
+        return render_template("error_page.html", code="400", name = "Authentication Error", description = "User must be logged in for this function.")
+    try:
+        juan = "%3.3d" % (int(juan))
+    except:
+        showtoc = False
+    if juan.startswith("Readme"):
+        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s" % (user, id, branch, juan)
+        xediturl =  "https://github.com/%s/%s/edit/%s/%s" % (user, id, branch, juan,)
+    else:
+        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
+        xediturl =  "https://github.com/%s/%s/edit/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
+    r = requests.get(url)
+    if r.status_code == 200:
+        fn = r.content
+    else:
+        return render_template("error_page.html", code="400", name = "Authentication Error", description = "Please create a fork of this document before using this function.")
+    md = mandoku_view.mdDocument(fn, id, juan)
+    try:
+        res = redis_store.hgetall("%s%s" % ( zbmeta, id[0:8]))
+    except:
+        res = {}
+    res['ID'] = id
+    try:
+        title = res['TITLE'].decode('utf-8')
+    except:
+        title = ""
+    return render_template('read.html', ct={'mtext': Markup("<br/>\n".join(md.md)), 'doc': res}, doc=res, title=title, txtid=res['ID'], juan=juan, editurl=xediturl)
 #return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
 
 #@main.route('/text/<coll>/<int:seq>/<int:juan>', methods=['GET',] )
@@ -385,7 +415,7 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     # else:
     #     md = mandoku_view.mdDocument(r.content.decode('utf-8'))
     print "url: ", url
-    return render_template('showtext.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2, showtoc=showtoc, editurl=editurl)
+    return render_template('showtext.html', ct={'mtext': Markup("<br/>\n".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2, showtoc=showtoc, editurl=editurl)
 #return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
 
 def showtextredis(juan, id=0, coll=None, seq=0):
