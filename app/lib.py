@@ -16,6 +16,7 @@ gaiji = re.compile(r"&([^;]+);")
 imgbase = "<img height='20' width='20' alt='{gaiji}' title='{gaiji}' src='https://raw.githubusercontent.com/kanripo/KR-Gaiji/master/images/{gaiji}.png'/>"
 
 brtab = {
+u'CK-KZ-jye' : u'【道藏輯要電子版】',
 u'ZTDZ' : u'【正統道藏・三家本】', 
 u'T@DUN' : u'【大→敦】', 
 u'T@XI' : u'【大→西】', 

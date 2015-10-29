@@ -390,6 +390,7 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
         rp=g.get_repo("kanripo/"+id)
         branches=[(a.name, lib.brtab[a.name.decode('utf-8')]) for a in rp.get_branches() if not a.name in ['_data', 'master']]
     except:
+        print branches
         try:
             repo=git.Repo(rpath)
             branches=[(a.name.decode('utf-8'), lib.brtab[a.name.decode('utf-8')]) for a in repo.branches if not a.name in ['_data', 'master']]
