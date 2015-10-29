@@ -77,14 +77,16 @@ function displayPageImage(txtid, edition, juan, page){
        alert("No digital facsimile available for this text!")
     } else {
 	$( "#sidebardiv" ).addClass('hidden');
-	$( "#txtcont" ).removeClass('span9').addClass('span5');
+	$( "#txtcont" ).removeClass('span9').addClass('span4');
 	$( "#md-fac" ).detach()
-	$( "#imagediv" ).removeClass('span1').addClass('span7');
+  $( "#maintextdiv" ).removeClass('span9').addClass('span5');
+	$( "#imagediv" ).removeClass('span1').addClass('span4');
 	$( "#imagediv" ).removeClass('hidden')
 	$( "#imageinner" ).addClass('krp-fixed');
-	var w = $( "#imgcont").width();
-	var h = $( window ).height() 
-	$( ".panzoom" ).append( "<img id='md-fac' src='" + imglist[edition+" "+juan+ "-" + page] + "' style='max-width: 90%; max-height: 90%;'/>" );
+        var w = $( "#imgcont").width();
+
+	var h = $( window ).height();
+	$( ".panzoom" ).append( "<img id='md-fac' src='" + imglist[edition+" "+juan+ "-" + page] + "' style='max-width: 50%; max-height: 90%;'/>" );
   
 	$( ".panzoom" ).panzoom({
             $zoomIn: $(".zoom-in"),
@@ -93,7 +95,8 @@ function displayPageImage(txtid, edition, juan, page){
             $reset: $(".reset")
 	});
 	$( ".pz-close" ).click(function(){
-            $( "#txtcont" ).removeClass('span5').addClass('span9');
+            $( "#txtcont" ).removeClass('span4').addClass('span9');
+	$( "#maintextdiv" ).removeClass('span5').addClass('span9');
 	    $( "#sidebardiv" ).removeClass('hidden')
 	    $( "#imagediv" ).addClass('hidden');
 	});
