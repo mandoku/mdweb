@@ -97,7 +97,7 @@ function displayPageImage(txtid, edition, juan, page){
 	$( "#imageinner" ).addClass('krp-fixed');
         var w = $( "#imgcont").width();
 	var h = $( window ).height();
-  $( ".panzoom" ).append( "<p id='md-fac' data-ilk='"+edition+" "+juan+ "-" + page+"'><img  src='" + imglist[edition+" "+juan+ "-" + page] + "' style='max-width: 90%; max-height: 90%;'/></p>" );
+  $( ".panzoom" ).append( "<p id='md-fac' data-ilk='"+edition+" "+juan+ "-" + page+"'><img  src='" + imglist[edition+" "+juan+ "-" + page] + "' style='max-width: 90%; max-height: 90%;'/><br/>"+edition+" "+juan+ "-" + page+"</p>" );
   
   
 	$( ".panzoom" ).panzoom({
@@ -125,7 +125,7 @@ function displayPageImage(txtid, edition, juan, page){
   tm = ilk.split(" ")[0];
   }
   $( "#md-fac" ).detach();
-  $( ".panzoom" ).append( "<p id='md-fac'  data-ilk='"+ilk+"'><img  src='" + imglist[ilk] + "' style='max-width: 90%; max-height: 90%;'/></p>" );
+  $( ".panzoom" ).append( "<p id='md-fac'  data-ilk='"+ilk+"'><img  src='" + imglist[ilk] + "' style='max-width: 90%; max-height: 90%;'/><br/>"+ilk+"</p>" );
   });
 	$( ".pz-prev" ).click(function(){
   var el = $( "#md-fac").attr("data-ilk");
@@ -139,7 +139,7 @@ function displayPageImage(txtid, edition, juan, page){
   tm = ilk.split(" ")[0];
   }
   $( "#md-fac" ).detach();
-  $( ".panzoom" ).append( "<p id='md-fac'  data-ilk='"+ilk+"'><img  src='" + imglist[ilk] + "' style='max-width: 90%; max-height: 90%;'/></p>" );
+  $( ".panzoom" ).append( "<p id='md-fac'  data-ilk='"+ilk+"'><img  src='" + imglist[ilk] + "' style='max-width: 90%; max-height: 90%;'/><br/>"+ilk+"</p>" );
   });
 };
 };
