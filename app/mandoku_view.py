@@ -25,7 +25,13 @@ class mdDocument(object):
         self._config = None
         self._md = None
         self._toc = None
+        self._ed = None
     
+    @property
+    def ed(self):
+        if not isinstance(self._md, list):
+            self._md = self.parse(self.raw)
+        return self._ed
     @property
     def config(self):
         if not isinstance(self._config, dict):
@@ -79,6 +85,9 @@ class mdDocument(object):
             l = re.sub(r'@[a-z]+', '', l)
             l = l.replace("(", "<span class='krp-note'>")
             l = l.replace(")", "</span>")
+            if l.startswith('#'): continue
+            if not self._ed and "<pb" in l:
+                self._ed = re.findall(r"<pb[^_]+_([^_]+)_", l)[0]
             if pby.search(l):
                 l = pby.sub(r'''<a onclick="displayPageImage('%s', 'JY-C', '%s', '\2-\3' );" name="\2-\3" class="pb">[\2-\3] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)
             elif pb.search(l):
@@ -91,7 +100,6 @@ class mdDocument(object):
                     vs_flag = 1
                 else:
                     vs_flag = 0
-            elif l.startswith('#'): continue
             elif l.startswith(':'): continue
             elif hd.search(l):
 #                print l

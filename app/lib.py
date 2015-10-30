@@ -7,6 +7,7 @@ import re, requests
 from . import redis_store
 import subprocess
 from github import Github
+from collections import defaultdict
 
 zbmeta = "kr:meta:"
 kr_user = "kr_user:"
@@ -15,7 +16,7 @@ md_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯\n¶]+|\t[^\n]+\n|\$[^;]+;")
 gaiji = re.compile(r"&([^;]+);")
 imgbase = "<img height='20' width='20' alt='{gaiji}' title='{gaiji}' src='https://raw.githubusercontent.com/kanripo/KR-Gaiji/master/images/{gaiji}.png'/>"
 
-brtab = {
+brtab = defaultdict(lambda : u"【使用者版】", {
 u'CK-KZ-jye' : u'【道藏輯要電子版】',
 u'ZTDZ' : u'【正統道藏・三家本】', 
 u'T@DUN' : u'【大→敦】', 
@@ -105,7 +106,7 @@ u'T@DUNFANG' : u'【大→敦方】',
 u'T@SHIGU' : u'【大→獅谷】', 
 u'T@LI-CBETA' : u'【大→麗-CB】', 
 u'T@BEI' : u'【大→別】', 
-}
+})
 
 
 dictab = {'hydcd1' : u'漢語大詞典',
