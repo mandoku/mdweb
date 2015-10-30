@@ -77,7 +77,8 @@ function displayPageImage(txtid, edition, juan, page){
   im=imglist[edition+" "+juan+ "-" + page]
   if (typeof im === 'undefined') {
        alert("No digital facsimile available for this text!")
-    } else {
+  } else {
+  $( "#overview" ).addClass('hidden');
 	$( "#sidebardiv" ).addClass('hidden');
 	$( "#txtcont" ).removeClass('span9').addClass('span5');
 	$( "#md-fac" ).detach()
@@ -100,6 +101,7 @@ function displayPageImage(txtid, edition, juan, page){
             $( "#txtcont" ).removeClass('span5').addClass('span9');
 	$( "#maintextdiv" ).removeClass('span5').addClass('span9');
 	    $( "#sidebardiv" ).removeClass('hidden')
+  $( "#overview" ).removeClass('hidden');
 	    $( "#imagediv" ).addClass('hidden');
 	});
 	$( ".pz-next" ).click(function(){
