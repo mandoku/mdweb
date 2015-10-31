@@ -82,8 +82,9 @@
   
 function displayPageImage(txtid, edition, juan, page){
   var ob = Object.keys( imglist );
-//  ob.sort();
-  im=imglist[edition+" "+juan+ "-" + page]
+  //  ob.sort();
+  var ejp = edition+" "+juan+ "-" + page
+  im = imglist[ejp]
   if (typeof im === 'undefined') {
        alert("No digital facsimile available for this text!")
   } else {
@@ -97,7 +98,7 @@ function displayPageImage(txtid, edition, juan, page){
 	$( "#imageinner" ).addClass('krp-fixed');
         var w = $( "#imgcont").width();
 	var h = $( window ).height();
-  $( ".panzoom" ).append( "<p id='md-fac' data-ilk='"+edition+" "+juan+ "-" + page+"'><img  src='" + imglist[edition+" "+juan+ "-" + page] + "' style='max-width: 90%; max-height: 90%;'/><br/>"+edition+" "+juan+ "-" + page+"</p>" );
+  $( ".panzoom" ).append( "<p id='md-fac' data-ilk='"+ejp+"'><img  src='" + imglist[edition+" "+juan+ "-" + page] + "' style='max-width: 90%; max-height: 90%;'/><br/>"+ejp+"</p>" );
   
   
 	$( ".panzoom" ).panzoom({
@@ -105,7 +106,23 @@ function displayPageImage(txtid, edition, juan, page){
             $zoomOut: $(".zoom-out"),
             $zoomRange: $(".zoom-range"),
             $reset: $(".reset")
-	});
+  });
+  $( "#edoption").on('change', function(){
+  ind = ob.indexOf(ejp);
+  ilk=ob[ind];
+  //console.log(ind);
+  //console.log(ejp);
+  tm = ilk.split(" ")[0];
+  edo = $( "#edoption :selected").val();
+  while(tm != edo){
+  ind = ind + 1;
+  ilk = ob[ind];
+  tm = ilk.split(" ")[0];
+  }
+  $( "#md-fac" ).detach();
+  $( ".panzoom" ).append( "<p id='md-fac'  data-ilk='"+ilk+"'><img  src='" + imglist[ilk] + "' style='max-width: 90%; max-height: 90%;'/><br/>"+ilk+"</p>" );
+  });
+
 	$( ".pz-close" ).click(function(){
             $( "#txtcont" ).removeClass('span5').addClass('span9');
 	$( "#maintextdiv" ).removeClass('span5').addClass('span9');
