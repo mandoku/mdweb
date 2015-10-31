@@ -194,8 +194,12 @@ function displayPageImage(txtid, edition, juan, page){
 		    if (f[1]) {
 			r = f[1].split(' ')
 			if (r[1]) {
-			   // console.log("F1:" + r[0])
-			    f2 = urlist[r[0]] + "/" + f[2]
+				  // console.log("F1:" + r[0])
+			  
+				  f2 = urlist[r[0]] + "/" + f[2]
+				  if (f2.slice(-3) == "TIF"){
+				  f2 = f2.replace("\.TIF", ".png")
+				  }
 			    if (r[1].indexOf('-') < 0){
 				imglist[r[0] + ' {{juan}}-' + r[1]] = f2;
 			    } 
