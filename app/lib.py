@@ -17,6 +17,8 @@ gaiji = re.compile(r"&([^;]+);")
 imgbase = "<img height='20' width='20' alt='{gaiji}' title='{gaiji}' src='https://raw.githubusercontent.com/kanripo/KR-Gaiji/master/images/{gaiji}.png'/>"
 
 brtab = defaultdict(lambda : u"【使用者版】", {
+u'DCS' : u'【東禪寺】',
+u'GOZAN' : u'【日本五山版】',
 u'CK-KZ-jye' : u'【道藏輯要電子版】',
 u'ZTDZ' : u'【正統道藏・三家本】', 
 u'T@DUN' : u'【大→敦】', 
@@ -43,9 +45,11 @@ u'T@NAN' : u'【大→南】',
 u'T@JIU' : u'【大→久】', 
 u'T@JIN' : u'【大→金】', 
 u'SBCK' : u'【四部叢刊】', 
+u'SBCK-zw' : u'【四部叢刊-別】', 
 u'T@SHENGYI' : u'【大→聖乙】', 
 u'T@JIA' : u'【大→甲】', 
 u'TKD' : u'【高麗藏・東國影印版】', 
+u'TK' : u'【高麗藏・東國影印版】', 
 u'T@RIGUANG' : u'【大→日光】', 
 u'T@BO' : u'【大→博】', 
 u'T@WAN' : u'【大→万】', 
