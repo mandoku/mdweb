@@ -8,7 +8,7 @@ config_parser_re=re.compile(r"#\+(.*): (.*)", re.M)
 hd = re.compile(r"^(\*+) (.*)$")
 vs = re.compile(r"^#\+([^_]+)_V")
 gaiji = re.compile(r"&([^;]+);")
-pb = re.compile(r"<pb:([^_]+)_([^_]+)_([^-]+)-([^>]+)>")
+pb = re.compile(r"<pb:([^_]+)_([^_]+)_([^>]+)>")
 pby = re.compile(r"<pb:YP-C_([^_]+)_([^-]+)-([^>]+)>")
 pbx = re.compile(r"<pb:([^_]+)_([^_]+)_([^p]+)p([^>]+)>")
 # <pb:KR5a0174_CK-KZ_02p002a>
@@ -91,7 +91,7 @@ class mdDocument(object):
             if pby.search(l):
                 l = pby.sub(r'''<a onclick="displayPageImage('%s', 'JY-C', '%s', '\2-\3' );" name="\2-\3" class="pb">[\2-\3] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)
             elif pb.search(l):
-                l = pb.sub(r'''<a onclick="displayPageImage('\1', '\2', '\3', '\4' );" name="\4" class="pb">[\3-\4] <img width="20"  src="/static/img/kanseki-5.png"/></a>''', l)
+                l = pb.sub(r'''<a onclick="displayPageImage('\1', '\2', '\3' );" name="\3" class="pb">[\3] <img width="20"  src="/static/img/kanseki-5.png"/></a>''', l)
             elif pbx.search(l):
                 l = pbx.sub(r'''<a onclick="displayPageImage('%s', '\2', '%s', '\3p\4' );" name="\4" class="pb">[\3-\4] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)
             if vs.search(l):
