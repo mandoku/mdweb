@@ -166,7 +166,7 @@ function displayPageImage(txtid, edition, juan, page){
     $(document).ready(function() {
 	$.ajax({
 	    type: 'GET',
-	    url: 'https://raw.githubusercontent.com/kanripo/{{txtid}}/_data/imglist/imginfo.cfg',
+	    url: 'https://raw.githubusercontent.com/{% if session['user'] and editurl %}{{session['user']}}{% else %}kanripo{% endif %}/{{txtid}}/_data/imglist/imginfo.cfg',
 	    dataType: 'text',
 	    success: function(data, textStatus) {
 		//Console.log(data.length);
@@ -182,7 +182,7 @@ function displayPageImage(txtid, edition, juan, page){
 		};
   	  $.ajax({
 	    type: 'GET',
-	    url: 'https://raw.githubusercontent.com/kanripo/{{txtid}}/_data/imglist/{{txtid}}_{{juan}}.txt',
+	    url: 'https://raw.githubusercontent.com/{% if session['user'] and editurl %}{{session['user']}}{% else %}kanripo{% endif %}/{{txtid}}/_data/imglist/{{txtid}}_{{juan}}.txt',
 	    dataType: 'text',
 	    success: function(data, textStatus) {
 		//Console.log(data.length);
