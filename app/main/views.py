@@ -387,8 +387,12 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     #get branches  -- we could get this from github, but it counts against the limit...
     try:
         g=Github()
-        rp=g.get_repo(user + "/" +id)
+        if editurl:
+            rp=g.get_repo(user + "/" +id)
+        else:
+            rp=g.get_repo("kanripo/" +id)
         branches=[(a.name, lib.brtab[a.name.decode('utf-8')]) for a in rp.get_branches() if not a.name in ['_data', 'master']]
+        print branches
     except:
         try:
             repo=git.Repo(rpath)

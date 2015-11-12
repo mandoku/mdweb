@@ -83,10 +83,10 @@
 function displayPageImage(txtid, edition, juan, page){
   var ob = Object.keys( imglist );
   //  ob.sort();
-  var ejp = edition+" "+juan+ "-" + page
+  var ejp = edition+" "+juan
   im = imglist[ejp]
   if (typeof im === 'undefined') {
-       alert("No digital facsimile available for this text!")
+       alert("No digital facsimile available for this text!" + ejp)
   } else {
   $( "#overview" ).addClass('hidden');
 	$( "#sidebardiv" ).addClass('hidden');
@@ -98,7 +98,7 @@ function displayPageImage(txtid, edition, juan, page){
 	$( "#imageinner" ).addClass('krp-fixed');
         var w = $( "#imgcont").width();
 	var h = $( window ).height();
-  $( ".panzoom" ).append( "<p id='md-fac' data-ilk='"+ejp+"'><img  src='" + imglist[edition+" "+juan+ "-" + page] + "' style='max-width: 90%; max-height: 90%;'/><br/>"+ejp+"</p>" );
+  $( ".panzoom" ).append( "<p id='md-fac' data-ilk='"+ejp+"'><img  src='" + imglist[edition+" "+juan] + "' style='max-width: 90%; max-height: 90%;'/><br/>"+ejp+"</p>" );
   
   
 	$( ".panzoom" ).panzoom({
