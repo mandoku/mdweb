@@ -66,9 +66,10 @@
 
 {% block edoption %}
 <select id="edoption">
-    {% for v in branches %} 
+<!--    {% for v in branches %} 
     <option value="{{v[0]}}" {% if v[0] == ed %}selected="selected"{% endif %}>{{v[1]}}</option>
     {% endfor %}
+-->
 </select>
 {% endblock %}
 
@@ -76,9 +77,23 @@
 {% block closingscript %}
 <script>
   var imglist={};
+  var edlist = {
+ {% for v in branches %} 
+    "{{v[0]}}" : "{{v[1]}}",
+ {% endfor %}
+  };
+  var selx = {
+  {% for v in branches %} 
+  "{{v[0]}}" : {% if v[0] == ed %} "selected='selected'" {% else %} " " {% endif %},
+  {% endfor %}
+  };
   var urlist={};
   var noimg = 0;
 //  var ob = new Array;
+
+function stringStartsWith (string, prefix) {
+    return string.slice(0, prefix.length) == prefix;
+}
   
 function displayPageImage(txtid, edition, juan, page){
   var ob = Object.keys( imglist );
@@ -176,7 +191,10 @@ function displayPageImage(txtid, edition, juan, page){
 		    if (lines[j].indexOf('=') > 0){
 			f = lines[j].split('=');
 			if (f[0]) {
-			    urlist[f[0]] = f[1]
+    urlist[f[0]] = f[1];
+    if (edlist[f[0]]) {
+    $("#edoption").append("<option value='" + f[0] + "' " +  selx[f[0]]  +  ">" + edlist[f[0]] + "</option>");
+    }
 			};
 		    };
 		};

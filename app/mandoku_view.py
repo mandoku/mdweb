@@ -10,6 +10,8 @@ vs = re.compile(r"^#\+([^_]+)_V")
 gaiji = re.compile(r"&([^;]+);")
 pb = re.compile(r"<pb:([^_]+)_([^_]+)_([^>]+)>")
 pby = re.compile(r"<pb:YP-C_([^_]+)_([^-]+)-([^>]+)>")
+# <pb:CK-KZ_KR5i0011_01p001a>¶
+pbk = re.compile(r"<pb:CK-KZ_([^_]+)_([^>]+)>")
 pbx = re.compile(r"<pb:([^_]+)_([^_]+)_([^p]+)p([^>]+)>")
 # <pb:KR5a0174_CK-KZ_02p002a>
 imgbase = "<img height='20' width='20' alt='{gaiji}' title='{gaiji}' src='https://raw.githubusercontent.com/kanripo/KR-Gaiji/master/images/{gaiji}.png'/>"
@@ -89,11 +91,13 @@ class mdDocument(object):
             if not self._ed and "<pb" in l:
                 self._ed = re.findall(r"<pb[^_]+_([^_]+)_", l)[0]
             if pby.search(l):
-                l = pby.sub(r'''<a onclick="displayPageImage('%s', 'JY-C', '%s', '\2-\3' );" name="\2-\3" class="pb">[\2-\3] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)
+                l = pby.sub(r'''<a onclick="displayPageImage('%s', 'JY-C', '%s-\2-\3' );" name="\2-\3" class="pb">[\2-\3] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)
+            if pbk.search(l):
+                l = pbk.sub(r'''<a onclick="displayPageImage('%s', 'CK-KZ', '%s-\2' );" name="\1-\2" class="pb">[\2] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)
             elif pb.search(l):
                 l = pb.sub(r'''<a onclick="displayPageImage('\1', '\2', '\3' );" name="\3" class="pb">[\3] <img width="20"  src="/static/img/kanseki-5.png"/></a>''', l)
             elif pbx.search(l):
-                l = pbx.sub(r'''<a onclick="displayPageImage('%s', '\2', '%s', '\3p\4' );" name="\4" class="pb">[\3-\4] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)
+                l = pbx.sub(r'''<a onclick="displayPageImage('%s', '\2', '%s-\3p\4' );" name="\4" class="pb">[\3-\4] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)
             if vs.search(l):
                 tmp = vs.findall(l)[0]
                 if tmp.upper() == "BEGIN":
