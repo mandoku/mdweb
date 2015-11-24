@@ -16,7 +16,7 @@
 {% block subhead %}
 <header class="jumbotron subhead" id="overview">
   <div class="container">
-    <h1><a href="{{url_for('main.showcoll', coll=ct.doc.id)}}">{{ct.doc.id}}</a> {{doc['TITLE']}} ({{edition}})</h1>
+    <h1>{{txtid}} {{doc['TITLE']}} ({{edition}})</h1>
   </div>
 </header>
 {% endblock subhead %}
@@ -29,7 +29,10 @@
 <div class="sidebar">
 {% if showtoc %}
 <h2>{{_('Versions')}}</h2>
-  <ul>
+<ul>
+  {% if edition != 'master' %}
+    <li><a href="/text/{{txtid}}/{{juan}}">【master】</a></li>
+  {% endif %}
     {% for v in branches %} 
     <li><a href="/edition/{{v[0]}}/{{txtid}}/{{juan}}">{{v[1]}}</a></li>
     <ul>
