@@ -128,31 +128,32 @@ def searchtext(count=20, page=1):
         if len(ud) < 1:
             lib.ghuserdata(user)
             ud=redis_store.hgetall("%s%s:settings" % (kr_user,user))
-        if len(sort) < 1:
+    else:
+        ud={}
+    if len(sort) < 1:
+        try:
+            sort = ud['sort']
+        except:
             try:
-                sort = ud['sort']
+                sort = session['sort']
             except:
-                try:
-                    sort = session['sort']
-                except:
-                    sort = ""
-        if "date" in sort:
-            #make sure we have the dates loaded
-            if "textdates" in ud:
-                td = ud["textdates"]
-            else:
-                td = "kanripo"
-            rsort="%s%s:bydate" % (kr_user, td)
-            if not redis_store.keys(rsort):
-                ret=lib.ghtextdates(user, rsort)
-                print ret
-        if len(filters) < 1:
-            try:
-                filter = ud['filter']
-            except:
-                pass
-        if 'pinned' in ud:
-            pinned=ud['pinned']
+                sort = ""
+    if "date" in sort:
+        #make sure we have the dates loaded
+        if "textdates" in ud:
+            td = ud["textdates"]
+        else:
+            td = "kanripo"
+        rsort="%s%s:bydate" % (kr_user, td)
+        if not redis_store.keys(rsort):
+            ret=lib.ghtextdates(user, rsort)
+    if len(filters) < 1:
+        try:
+            filter = ud['filter']
+        except:
+            pass
+    if 'pinned' in ud:
+        pinned=ud['pinned']
     if len(keys) > 0:
         for key in keys:
             if not redis_store.exists(key): 
