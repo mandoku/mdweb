@@ -14,7 +14,7 @@ pby = re.compile(r"<pb:YP-C_([^_]+)_([^-]+)-([^>]+)>")
 pbk = re.compile(r"<pb:CK-KZ_([^_]+)_([^>]+)>")
 pbx = re.compile(r"<pb:([^_]+)_([^_]+)_([^p]+)p([^>]+)>")
 # <pb:KR5a0174_CK-KZ_02p002a>
-imgbase = "<img height='20' width='20' alt='{gaiji}' title='{gaiji}' src='https://raw.githubusercontent.com/kanripo/KR-Gaiji/master/images/{gaiji}.png'/>"
+imgbase = "<img height='20' width='20' alt='&amp;{gaiji}' title='{gaiji}' src='https://raw.githubusercontent.com/kanripo/KR-Gaiji/master/images/{gaiji}.png'/>"
 class mdDocument(object):
     def __init__(self, fn, txtid, juan, rep=None):
         self.raw = fn
