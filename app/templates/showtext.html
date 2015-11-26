@@ -216,18 +216,14 @@ function displayPageImage(txtid, edition, juan, page){
 				  if (f2.slice(-3) == "TIF"){
 				  f2 = f2.replace("\.TIF", ".png")
 				  }
-			    if (r[1].indexOf('-') < 0){
-				imglist[r[0] + ' {{juan}}-' + r[1]] = f2;
-			    } 
-			    else if (f[1].indexOf('JY') > -1){
-				imglist[r[0] + ' {{juan}}-' + r[1]] = f2;
-			    } 
-			    else if (f[1].indexOf('CK') > -1){
-				imglist[r[0] + ' {{juan}}-' + r[1]] = f2;
-			    }
-			    else
+//			    if (r[1].indexOf('-') < 0){
+//				imglist[r[0] + ' {{juan}}-' + r[1]] = f2;
+//			    } 
+//			    else if (f[1].indexOf('JY') > -1){
+//				imglist[r[0] + ' {{juan}}-' + r[1]] = f2;
+//			    }	else
 				
-				imglist[f[1]]=f2;
+			imglist[f[1]]=f2;
 			};
 		    };
 		};
