@@ -548,8 +548,8 @@ def getfacets():
         f = [a['DYNASTY'] for a in f if a.has_key('DYNASTY')]
     c = Counter(f)
     if tpe == 'ID':
-        if ln == 5:
-            fs = [(a[0], "%s/%s" % (redis_store.hgetall("%s%s" %(zbmeta, a[0][:-1])), redis_store.hgetall("%s%s" %(zbmeta, a[0]))), a[1], tpe) for a in c.most_common(cnt)]
+        if ln == 4:
+            fs = [(a[0], {'TITLE' : "%s/%s" % (redis_store.hgetall("%s%s" %(zbmeta, a[0][:-1]))['TITLE'], redis_store.hgetall("%s%s" %(zbmeta, a[0]))['TITLE'])}, a[1], tpe) for a in c.most_common(cnt)]
         else:
             fs = [(a[0], redis_store.hgetall("%s%s" %(zbmeta, a[0])), a[1], tpe) for a in c.most_common(cnt)]
     elif tpe == 'DYNASTY':
