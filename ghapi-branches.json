@@ -1,0 +1,91 @@
+HTTP/1.1 200 OK
+Server: GitHub.com
+Date: Thu, 21 May 2015 07:18:45 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 2035
+Status: 200 OK
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 55
+X-RateLimit-Reset: 1432196184
+Cache-Control: public, max-age=60, s-maxage=60
+Last-Modified: Thu, 14 May 2015 22:55:20 GMT
+ETag: "cb762df3a57f74a1f3ee545370d70eee"
+Vary: Accept
+X-GitHub-Media-Type: github.v3
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: deny
+Content-Security-Policy: default-src 'none'
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+Access-Control-Allow-Origin: *
+X-GitHub-Request-Id: CB4A2002:1626:43B2C0:555D86D4
+Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
+X-Content-Type-Options: nosniff
+Vary: Accept-Encoding
+X-Served-By: 13d09b732ebe76f892093130dc088652
+
+[
+  {
+    "name": "【大→南藏】",
+    "commit": {
+      "sha": "8d7ce3de9b334f7861707740bf685252cb401f6f",
+      "url": "https://api.github.com/repos/kanripo/KR6q0003/commits/8d7ce3de9b334f7861707740bf685252cb401f6f"
+    }
+  },
+  {
+    "name": "【大→原】",
+    "commit": {
+      "sha": "25602824adc98a301a925588309c11c64e09d671",
+      "url": "https://api.github.com/repos/kanripo/KR6q0003/commits/25602824adc98a301a925588309c11c64e09d671"
+    }
+  },
+  {
+    "name": "【大→明】",
+    "commit": {
+      "sha": "a3bbde941f73692122785aee1c4ebdc8153e707f",
+      "url": "https://api.github.com/repos/kanripo/KR6q0003/commits/a3bbde941f73692122785aee1c4ebdc8153e707f"
+    }
+  },
+  {
+    "name": "【大→甲】",
+    "commit": {
+      "sha": "fa780353213618383ace30356c49c277fe33deed",
+      "url": "https://api.github.com/repos/kanripo/KR6q0003/commits/fa780353213618383ace30356c49c277fe33deed"
+    }
+  },
+  {
+    "name": "【大→磧砂】",
+    "commit": {
+      "sha": "55bcc29cdca0b64977c841eac8a8f1157e3343c1",
+      "url": "https://api.github.com/repos/kanripo/KR6q0003/commits/55bcc29cdca0b64977c841eac8a8f1157e3343c1"
+    }
+  },
+  {
+    "name": "【大】",
+    "commit": {
+      "sha": "043562a5da297b645567493d280252a76e761a72",
+      "url": "https://api.github.com/repos/kanripo/KR6q0003/commits/043562a5da297b645567493d280252a76e761a72"
+    }
+  },
+  {
+    "name": "CBETA",
+    "commit": {
+      "sha": "a8b84581bf6cb679f5de3a58fece9e60a6ce8734",
+      "url": "https://api.github.com/repos/kanripo/KR6q0003/commits/a8b84581bf6cb679f5de3a58fece9e60a6ce8734"
+    }
+  },
+  {
+    "name": "_data",
+    "commit": {
+      "sha": "79b3e240760f8dc91f3db83647be610cf7aec519",
+      "url": "https://api.github.com/repos/kanripo/KR6q0003/commits/79b3e240760f8dc91f3db83647be610cf7aec519"
+    }
+  },
+  {
+    "name": "master",
+    "commit": {
+      "sha": "364d3a48dc8c918e36c37f1f069928a0dead53c0",
+      "url": "https://api.github.com/repos/kanripo/KR6q0003/commits/364d3a48dc8c918e36c37f1f069928a0dead53c0"
+    }
+  }
+]

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kanripo 漢籍リポジトリ : {{title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../static/jquery/jquery.ui.core.css">
+    <link rel="stylesheet" type="text/css" href="../static/jquery/jquery.ui.tabs.css">
+    <link rel="stylesheet" type="text/css" href="../static/jquery/jquery.ui.theme.css">
+    <link href="../static/css/bootstrap.css" rel="stylesheet">
+    <link href="../static/css/docs.css" rel="stylesheet"> 
+    <link href="../static/css/mdweb.css" rel="stylesheet"> 
+    <script  src="../static/jquery/jquery.js"></script>
+    <script  src="../static/jquery/jquery.ui.core.js"></script>
+    <script  src="../static/jquery/jquery.ui.widget.js"></script>
+    <script  src="../static/jquery/jquery.ui.tabs.js"></script>
+    <script  src="../static/js/highlight.js"></script>
+    <script src="../static/js/jquery.panzoom.js"></script>
+    
+
+
+  </head>
+  <body>
+    <div id="imagediv" class="span6" style="margin-left:20px;">
+<div class="buttons">
+    <button class="zoom-in">Zoom In</button>
+    <button class="zoom-out">Zoom Out</button>
+    <input type="range" class="zoom-range">
+    <button class="reset">Reset</button>
+</div>
+      <div id="imgcont">
+<div class="panzoom">
+  <img  src="http://kr.kanripo.org/api/v1.0/getimage?filename=buddhist/T-taisho/T51/01/T51-0196.png"/>
+</div>
+      <script>
+        (function() {
+        var $section = $('#imagediv');
+        // var $section = $('section').first();
+          $section.find('.panzoom').panzoom({
+            $zoomIn: $section.find(".zoom-in"),
+            $zoomOut: $section.find(".zoom-out"),
+            $zoomRange: $section.find(".zoom-range"),
+            $reset: $section.find(".reset")
+          });
+        })();
+      </script>
+
+      </div>
+  </body>
+</html>
