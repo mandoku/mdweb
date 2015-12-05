@@ -40,3 +40,5 @@ nosetests.xml
 
 # Virtual environment
 venv
+.python-version
+.DS_Store
