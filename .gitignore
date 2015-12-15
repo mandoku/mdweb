@@ -42,3 +42,4 @@ nosetests.xml
 venv
 .python-version
 .DS_Store
+.env
