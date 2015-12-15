@@ -1,0 +1,1011 @@
+bash: ulimit: max user processes: cannot modify limit: Operation not permitted
+pyenv-virtualenv: activate venv
+(venv)Sat Oct 10 20:47:40 [15323]
+  chris@mbp3a-3:main (chw3) % python
+Python 2.7.10 (default, Sep 10 2015, 16:32:11) 
+[GCC 4.2.1 Compatible Apple LLVM 6.0 (clang-600.0.57)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+import redis
+myhost = 'localhost'
+pool = redis.ConnectionPool(host=myhost, port=6379, db=5)
+r = redis.Redis(connection_pool=pool)
+key='\xe4\xb8\x83\xe7\xb6\x93'
+>>> x2 = r.lrange('\xe4\xb8\x83\xe7\xb6\x93', 0, -1)
+>>> len(x2)
+0
+>>> import lib
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ImportError: No module named lib
+>>> dir
+<built-in function dir>
+>>> ls
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'ls' is not defined
+>>> keys=[a for a in r.keys("*") if not a.startswith("kr")]
+>>> keys
+[]
+>>> keys=[a for a in r.keys("*")]
+>>> len(keys)
+27993
+>>> keys=[a for a in r.keys("*") if not a.startswith("kr")]
+>>> keys
+['\xe7\x8e\x84\xe5\xbe\xb7']
+>>> key='\xe7\x8e\x84\xe5\xbe\xb7'
+>>> x2 = r.lrange(key, 0, -1)
+>>> len(x2)
+78
+>>> ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), r.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in x2]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'zbmeta' is not defined
+>>> zbmeta = "kr:meta:"
+>>> ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), r.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in x2]
+>>> ox
+[('\xe5\x8c\x96\xe4\xb9\x9d\xe6\xb7\xb5\xe7\xe5\xbe\xb7\xe4\xb8\x89\xe5\x93\x81\xe6\xb0\xb4\xe5\xae\x98\xe7\xab\x8b\xe6\x96\xbc\xe5\xba\xa7\xe5\x8f\xb3', 'KR5a0001_034:003a:10:13:69\tYP-C', {'STATUS': 'READY', 'TPUR': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93', 'TITLE': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93--', 'ID': 'KR5a0001', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)'}), ('\xe4\xb9\x9f\xe5\x9b\xba\xe5\x85\xb6\xe7\xe5\xbe\xb7\xe4\xb8\x8a\xe6\x99\xba\xe7\x94\x9f\xe8\x80\x8c\xe7\x9f\xa5\xe4\xb9\x8b\xe5\xb0\x87\xe8\x87\xaa', 'KR6q0083_001:0347c:12:8:14', {'STATUS': 'READY', 'TPUR': '\xe5\x85\xad\xe7\xa5\x96\xe5\xa4\xa7\xe5\xb8\xab\xe6\xb3\x95\xe5\xaf\xb6\xe5\xa3\x87\xe7\xb6\x93', 'TITLE': '\xe5\x85\xad\xe7\xa5\x96\xe5\xa4\xa7\xe5\xb8\xab\xe6\xb3\x95\xe5\xaf\xb6\xe5\xa3\x87\xe7\xb6\x93-\xe5\x85\x83-\xe5\xae\x97\xe5\xaf\xb6', 'RESP': '\xe5\xae\x97\xe5\xaf\xb6', 'DYNASTY': '\xe5\x85\x83', 'ID': 'KR6q0083'}), ('\xe7\x9a\x86\xe4\xb8\x8d\xe6\x82\x85\xe7\xe5\xbe\xb7\xe4\xb9\x83\xe4\xba\x91\xe5\xad\xa4\xe4\xb9\x8b\xe6\x9c\x89\xe5\xad\x94\xe6\x98\x8e\xe7\x8c\xb6', 'KR6q0153_001:0462a:1:18:866', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe9\x9f\xb3\xe7\xbe\xa9', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe9\x9f\xb3\xe7\xbe\xa9-\xe6\x98\x8e-\xe5\xa4\xa7\xe5\xbb\xba', 'RESP': '\xe5\xa4\xa7\xe5\xbb\xba', 'DYNASTY': '\xe6\x98\x8e', 'ID': 'KR6q0153'}), ('\xe7\x9a\x86\xe4\xb8\x8d\xe6\x82\x85\xe7\xe5\xbe\xb7\xe4\xb9\x83\xe4\xba\x91\xe5\xad\xa4\xe4\xb9\x8b\xe6\x9c\x89\xe5\xad\x94\xe6\x98\x8e\xe7\x8c\xb6', 'KR6q0154_004:0514a:20:18:27', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe5\x90\x88\xe8\xa8\xbb', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe5\x90\x88\xe8\xa8\xbb-\xe6\xb8\x85-\xe5\xbc\xb5\xe6\x96\x87\xe5\x98\x89', 'RESP': '\xe5\xbc\xb5\xe6\x96\x87\xe5\x98\x89', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0154'}), ('\xe6\x98\x8f\xe6\x98\x8f\xe6\x98\xaf\xe7\xe5\xbe\xb7\xe4\xb9\x9f\xe9\x80\x9a\xe4\xba\x91\xe5\xb0\x8d\xe6\x9c\x95\xe8\x80\x85\xe4\xbd\x95\xe4\xb8\x8d', 'KR6q0219_002:0039b:9:6:131', {'STATUS': 'READY', 'TPUR': '\xe6\xbc\x86\xe5\x9c\x92\xe6\x8c\x87\xe9\x80\x9a', 'TITLE': '\xe6\xbc\x86\xe5\x9c\x92\xe6\x8c\x87\xe9\x80\x9a-\xe6\xb8\x85-\xe6\xb7\xa8\xe6\x8c\xba', 'RESP': '\xe6\xb7\xa8\xe6\x8c\xba', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0219'}), ('\xe7\x9a\x86\xe4\xb8\x8d\xe6\x82\x85\xe7\xe5\xbe\xb7\xe4\xba\x91\xe5\xad\xa4\xe4\xb9\x8b\xe6\x9c\x89\xe5\xad\x94\xe6\x98\x8e\xe7\x8c\xb6\xe9\xad\x9a', 'KR6q0157_003:0702c:19:17:190', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe7\xad\x86\xe8\xaa\xaa', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe7\xad\x86\xe8\xaa\xaa-\xe6\xb8\x85-\xe6\x99\xba\xe7\xa5\xa5', 'RESP': '\xe6\x99\xba\xe7\xa5\xa5', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0157'}), ('\xe6\x96\x87\xe5\x91\xaa\xe6\x9b\xb0\xe7\xe5\xbe\xb7\xe4\xba\x94\xe9\x9d\x88\xe5\xba\xa6\xe5\x91\xbd\xe5\x85\x83\xe4\xb8\x80\xe8\x83\x9e\xe7\xb2\xbe', 'KR5a0221_006:010a:6:1:56', {'STATUS': 'READY', 'TPUR': '\xe7\x84\xa1\xe4\xb8\x8a\xe7\x8e\x84\xe5\x85\x83\xe4\xb8\x89\xe5\xa4\xa9\xe7\x8e\x89\xe5\xa0\x82\xe5\xa4\xa7\xe6\xb3\x95', 'TITLE': '\xe7\x84\xa1\xe4\xb8\x8a\xe7\x8e\x84\xe5\x85\x83\xe4\xb8\x89\xe5\xa4\xa9\xe7\x8e\x89\xe5\xa0\x82\xe5\xa4\xa7\xe6\xb3\x95--\xe8\xb7\xaf\xe6\x99\x82\xe4\xb8\xad', 'RESP': '\xe8\xb7\xaf\xe6\x99\x82\xe4\xb8\xad', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0221'}), ('\xe7\xac\xac\xe5\x9b\x9b\xe5\xae\xab\xe7\xe5\xbe\xb7\xe4\xba\x94\xe9\x9d\x88\xe7\x9c\x9e\xe5\x90\x9b\xe4\xb8\x96\xe4\xba\xba\xe6\x89\x80\xe8\xac\x82', 'KR5a0216_000:006b:4:8:10', {'STATUS': 'READY', 'TPUR': '\xe5\x9c\xb0\xe5\xba\x9c\xe5\x8d\x81\xe7\x8e\x8b\xe6\x8b\x94\xe5\xba\xa6\xe5\x84\x80', 'TITLE': '\xe5\x9c\xb0\xe5\xba\x9c\xe5\x8d\x81\xe7\x8e\x8b\xe6\x8b\x94\xe5\xba\xa6\xe5\x84\x80-\xe5\xae\x8b-', 'ID': 'KR5a0216', 'DYNASTY': '\xe5\xae\x8b'}), ('\xe8\x99\x9a\xe5\x99\xa8\xe5\x86\xb2\xe7\xe5\xbe\xb7\xe5\x85\x85\xe8\x94\x9a\xe5\x9f\xba\xe4\xb9\x8b\xe6\x96\xbc\xe6\x80\xa7\xe4\xb9\x9f\xe6\x98\xad', 'KR5a0316_024:011a:8:13:20', {'STATUS': 'READY', 'TPUR': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c', 'TITLE': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c--\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'RESP': '\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0316'}), ('\xe5\x8a\x9f\xe6\xbf\x9f\xe7\x89\xa9\xe7\xe5\xbe\xb7\xe5\x8b\x95\xe5\xa4\xa9\xe6\x95\x85\xe5\xa4\xa9\xe7\x9c\x9e\xe8\xb3\x9c\xe8\x99\x9f\xe6\x9b\xb0', 'KR5a0174_001:001b:4:1:3', {'STATUS': 'READY', 'TPUR': '\xe9\x87\x91\xe8\x93\xae\xe6\xad\xa3\xe5\xae\x97\xe8\xa8\x98', 'TITLE': '\xe9\x87\x91\xe8\x93\xae\xe6\xad\xa3\xe5\xae\x97\xe8\xa8\x98--\xe7\xa7\xa6\xe5\xbf\x97\xe5\xae\x89', 'RESP': '\xe7\xa7\xa6\xe5\xbf\x97\xe5\xae\x89', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0174'}), ('\xe5\x8a\x9f\xe6\xbf\x9f\xe7\x89\xa9\xe7\xe5\xbe\xb7\xe5\x8b\x95\xe5\xa4\xa9\xe6\x95\x85\xe5\xa4\xa9\xe7\x9c\x9f\xe8\xb3\x9c\xe8\x99\x9f\xe6\x9b\xb0', 'KR5a0174_001:001b:4:1:3\tCK-KZ YP-C', {'STATUS': 'READY', 'TPUR': '\xe9\x87\x91\xe8\x93\xae\xe6\xad\xa3\xe5\xae\x97\xe8\xa8\x98', 'TITLE': '\xe9\x87\x91\xe8\x93\xae\xe6\xad\xa3\xe5\xae\x97\xe8\xa8\x98--\xe7\xa7\xa6\xe5\xbf\x97\xe5\xae\x89', 'RESP': '\xe7\xa7\xa6\xe5\xbf\x97\xe5\xae\x89', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0174'}), ('\xe7\x81\xab\xe5\x86\x85\xe9\x81\x8b\xe7\xe5\xbe\xb7\xe5\x8c\x96\xe6\x98\x8e\xe6\xbc\x82\xe6\xb5\x81\xe9\xac\xbc\xe8\xb3\x8a\xe9\xa6\x98\xe6\xbb\x85', 'KR5a0221_006:010a:7:4:56', {'STATUS': 'READY', 'TPUR': '\xe7\x84\xa1\xe4\xb8\x8a\xe7\x8e\x84\xe5\x85\x83\xe4\xb8\x89\xe5\xa4\xa9\xe7\x8e\x89\xe5\xa0\x82\xe5\xa4\xa7\xe6\xb3\x95', 'TITLE': '\xe7\x84\xa1\xe4\xb8\x8a\xe7\x8e\x84\xe5\x85\x83\xe4\xb8\x89\xe5\xa4\xa9\xe7\x8e\x89\xe5\xa0\x82\xe5\xa4\xa7\xe6\xb3\x95--\xe8\xb7\xaf\xe6\x99\x82\xe4\xb8\xad', 'RESP': '\xe8\xb7\xaf\xe6\x99\x82\xe4\xb8\xad', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0221'}), ('\xe6\x88\x90\xe9\x81\x93\xe5\x82\x99\xe7\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe5\xa4\xa9\xe5\xb8\x9d\xe6\x8e\x88\xe6\x9b\xb8\xe7\x88\xb2\xe8\xa5\xbf', 'KR5a0308_009:012b:9:2:21', {'STATUS': 'READY', 'TPUR': '\xe6\xad\xb7\xe4\xb8\x96\xe7\x9c\x9f\xe4\xbb\x99\xe9\xab\x94\xe9\x81\x93\xe9\x80\x9a\xe9\x91\x91', 'TITLE': '\xe6\xad\xb7\xe4\xb8\x96\xe7\x9c\x9f\xe4\xbb\x99\xe9\xab\x94\xe9\x81\x93\xe9\x80\x9a\xe9\x91\x91--\xe8\xb6\x99\xe9\x81\x93\xe4\xb8\x80', 'RESP': '\xe8\xb6\x99\xe9\x81\x93\xe4\xb8\x80', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0308'}), ('\xe6\x9b\xbe\xe6\x9c\x89\xe4\xb9\x9f\xe7\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe5\xad\x9d\xe5\xae\x9a\xe7\x9a\x87\xe5\xa4\xaa\xe5\x90\x8e\xe6\x95\xa6', 'KR6q0214_025:0197a:20:16:11', {'STATUS': 'READY', 'TPUR': '\xe9\x9b\xb2\xe6\xa3\xb2\xe6\xb3\x95\xe5\xbd\x99\xef\xbc\x88\xe9\x81\xb8\xe9\x8c\x84\xef\xbc\x89', 'TITLE': '\xe9\x9b\xb2\xe6\xa3\xb2\xe6\xb3\x95\xe5\xbd\x99\xef\xbc\x88\xe9\x81\xb8\xe9\x8c\x84\xef\xbc\x89-\xe6\x98\x8e-\xe8\xa2\xbe\xe5\xae\x8f', 'RESP': '\xe8\xa2\xbe\xe5\xae\x8f', 'DYNASTY': '\xe6\x98\x8e', 'ID': 'KR6q0214'}), ('\xe5\x8c\x96\xe7\x8e\x8b\xe5\xad\x90\xe7\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe5\xb8\xab\xe9\x8c\xab\xe4\xba\xb9\xe8\xa9\xa2\xe4\xba\x8b\xe8\x80\x83', 'KR6q0221_012:0659b:25:4:66', {'STATUS': 'READY', 'TPUR': '\xe5\xa4\xa9\xe7\x95\x8c\xe8\xa6\xba\xe6\xb5\xaa\xe7\x9b\x9b\xe7\xa6\xaa\xe5\xb8\xab\xe5\x85\xa8\xe9\x8c\x84', 'TITLE': '\xe5\xa4\xa9\xe7\x95\x8c\xe8\xa6\xba\xe6\xb5\xaa\xe7\x9b\x9b\xe7\xa6\xaa\xe5\xb8\xab\xe5\x85\xa8\xe9\x8c\x84-\xe6\x98\x8e-\xe9\x81\x93\xe7\x9b\x9b', 'RESP': '\xe9\x81\x93\xe7\x9b\x9b', 'DYNASTY': '\xe6\x98\x8e', 'ID': 'KR6q0221'}), ('\xe5\xad\x9d\xe4\xb9\x8b\xe9\x81\x93\xe7\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe6\x96\xbc\xe5\xa0\xaf\xe8\x80\x8c\xe7\x82\xba\xe5\xa4\xa9\xe5\xad\x90', 'KR6q0226_004:0324c:27:1:31', {'STATUS': 'READY', 'TPUR': '\xe9\x9d\x88\xe5\xb3\xb0\xe8\x95\x85\xe7\x9b\x8a\xe5\xa4\xa7\xe5\xb8\xab\xe5\xae\x97\xe8\xab\x96', 'TITLE': '\xe9\x9d\x88\xe5\xb3\xb0\xe8\x95\x85\xe7\x9b\x8a\xe5\xa4\xa7\xe5\xb8\xab\xe5\xae\x97\xe8\xab\x96-\xe6\x98\x8e-\xe6\x99\xba\xe6\x97\xad', 'RESP': '\xe6\x99\xba\xe6\x97\xad', 'DYNASTY': '\xe6\x98\x8e', 'ID': 'KR6q0226'}), ('\xe5\x9e\x82\xe7\x99\xbe\xe7\xa5\xa5\xe7\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe6\x97\xa2\xe5\xa3\xbd\xe6\xb0\xb8\xe6\x98\x8c\xe6\x99\x82\xe4\xb9\x97', 'KR5a0316_024:009a:7:13:17', {'STATUS': 'READY', 'TPUR': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c', 'TITLE': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c--\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'RESP': '\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0316'}), ('\xe8\xb1\xab\xe4\xbb\xa5\xe7\x8d\xb2\xe7\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe8\x80\x8c\xe5\x8d\x92\xe5\x8d\x94\xe5\xb8\x9d\xe4\xbd\xbf\xe5\xa4\xa9', 'KR6q0221_019:0698b:5:20:5', {'STATUS': 'READY', 'TPUR': '\xe5\xa4\xa9\xe7\x95\x8c\xe8\xa6\xba\xe6\xb5\xaa\xe7\x9b\x9b\xe7\xa6\xaa\xe5\xb8\xab\xe5\x85\xa8\xe9\x8c\x84', 'TITLE': '\xe5\xa4\xa9\xe7\x95\x8c\xe8\xa6\xba\xe6\xb5\xaa\xe7\x9b\x9b\xe7\xa6\xaa\xe5\xb8\xab\xe5\x85\xa8\xe9\x8c\x84-\xe6\x98\x8e-\xe9\x81\x93\xe7\x9b\x9b', 'RESP': '\xe9\x81\x93\xe7\x9b\x9b', 'DYNASTY': '\xe6\x98\x8e', 'ID': 'KR6q0221'}), ('\xe5\x85\xb6\xe9\xab\x94\xe5\xa6\x82\xe7\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe9\x87\x8d\xe8\x8f\xaf\xe5\x8d\x94\xe5\xb8\x9d\xe6\xad\xa4\xe6\x89\x80', 'KR6q0221_010:0650c:9:3:9', {'STATUS': 'READY', 'TPUR': '\xe5\xa4\xa9\xe7\x95\x8c\xe8\xa6\xba\xe6\xb5\xaa\xe7\x9b\x9b\xe7\xa6\xaa\xe5\xb8\xab\xe5\x85\xa8\xe9\x8c\x84', 'TITLE': '\xe5\xa4\xa9\xe7\x95\x8c\xe8\xa6\xba\xe6\xb5\xaa\xe7\x9b\x9b\xe7\xa6\xaa\xe5\xb8\xab\xe5\x85\xa8\xe9\x8c\x84-\xe6\x98\x8e-\xe9\x81\x93\xe7\x9b\x9b', 'RESP': '\xe9\x81\x93\xe7\x9b\x9b', 'DYNASTY': '\xe6\x98\x8e', 'ID': 'KR6q0221'}), ('\xe5\xad\x90\xe6\x9b\xb8\xe4\xba\x8e\xe7\xe5\xbe\xb7\xe5\xa0\x82\xe5\xa4\xa7\xe9\x81\x93\xe4\xb9\x8b\xe5\xa6\x99\xe6\x9c\x89\xe9\x9d\x9e\xe6\x96\x87', 'KR5a0175_000:001a:10:1:0', {'STATUS': 'READY', 'TPUR': '\xe9\x87\x91\xe8\x93\xae\xe6\xad\xa3\xe5\xae\x97\xe4\xbb\x99\xe6\xba\x90\xe5\x83\x8f\xe5\x82\xb3', 'TITLE': '\xe9\x87\x91\xe8\x93\xae\xe6\xad\xa3\xe5\xae\x97\xe4\xbb\x99\xe6\xba\x90\xe5\x83\x8f\xe5\x82\xb3--\xe5\x8a\x89\xe5\xbf\x97\xe7\x8e\x84', 'RESP': '\xe5\x8a\x89\xe5\xbf\x97\xe7\x8e\x84', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0175'}), ('\xe5\xbe\xb7\xe6\x99\xae\xe6\x87\x89\xe7\xe5\xbe\xb7\xe5\xa4\xa7\xe6\x96\xb9\xe5\xa4\xa7\xe5\xbe\xb7\xe8\x87\xaa\xe7\x84\xb6\xe6\x99\xae\xe5\xbe\xb7', 'KR5a0104_008:014b:3:10:15', {'STATUS': 'READY', 'TPUR': '\xe7\x8e\x89\xe6\xb8\x85\xe7\x84\xa1\xe6\xa5\xb5\xe7\xb8\xbd\xe7\x9c\x9f\xe6\x96\x87\xe6\x98\x8c\xe5\xa4\xa7\xe6\xb4\x9e\xe4\xbb\x99\xe7\xb6\x93\xe8\xa8\xbb', 'TITLE': '\xe7\x8e\x89\xe6\xb8\x85\xe7\x84\xa1\xe6\xa5\xb5\xe7\xb8\xbd\xe7\x9c\x9f\xe6\x96\x87\xe6\x98\x8c\xe5\xa4\xa7\xe6\xb4\x9e\xe4\xbb\x99\xe7\xb6\x93\xe8\xa8\xbb--\xe8\xa1\x9b\xe7\x90\xaa', 'RESP': '\xe8\xa1\x9b\xe7\x90\xaa', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0104'}), ('\xe5\xbe\xb7\xe6\x99\xae\xe6\x87\x89\xe7\xe5\xbe\xb7\xe5\xa4\xaa\xe6\x96\xb9\xe5\xa4\xaa\xe5\xbe\xb7\xe8\x87\xaa\xe7\x84\xb6\xe6\x99\xae\xe5\xbe\xb7', 'KR5a0104_005:027b:2:16:28', {'STATUS': 'READY', 'TPUR': '\xe7\x8e\x89\xe6\xb8\x85\xe7\x84\xa1\xe6\xa5\xb5\xe7\xb8\xbd\xe7\x9c\x9f\xe6\x96\x87\xe6\x98\x8c\xe5\xa4\xa7\xe6\xb4\x9e\xe4\xbb\x99\xe7\xb6\x93\xe8\xa8\xbb', 'TITLE': '\xe7\x8e\x89\xe6\xb8\x85\xe7\x84\xa1\xe6\xa5\xb5\xe7\xb8\xbd\xe7\x9c\x9f\xe6\x96\x87\xe6\x98\x8c\xe5\xa4\xa7\xe6\xb4\x9e\xe4\xbb\x99\xe7\xb6\x93\xe8\xa8\xbb--\xe8\xa1\x9b\xe7\x90\xaa', 'RESP': '\xe8\xa1\x9b\xe7\x90\xaa', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0104'}), ('\xe3\x80\x80\xef\xbc\x88\xe5\xad\x97\xe7\xe5\xbe\xb7\xe5\xad\x97\xe8\x8b\xa5\xe6\x80\x9d\xe6\x99\x89\xe9\xa9\x83\xe9\xa8\x8e\xef\xbc\x89\xe3\x80\x80', 'KR5a0168_000:028b:8:4:28\tn', {'STATUS': 'READY', 'TPUR': '\xe6\xb4\x9e\xe7\x8e\x84\xe9\x9d\x88\xe5\xaf\xb6\xe7\x9c\x9f\xe9\x9d\x88\xe4\xbd\x8d\xe6\xa5\xad\xe5\x9c\x96', 'TITLE': '\xe6\xb4\x9e\xe7\x8e\x84\xe9\x9d\x88\xe5\xaf\xb6\xe7\x9c\x9f\xe9\x9d\x88\xe4\xbd\x8d\xe6\xa5\xad\xe5\x9c\x96--\xe9\x99\xb6\xe5\xbc\x98\xe6\x99\xaf', 'RESP': '\xe9\x99\xb6\xe5\xbc\x98\xe6\x99\xaf', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0168'}), ('\xe5\x8f\x8b\xe6\x99\x82\xe5\x8a\x89\xe7\xe5\xbe\xb7\xe5\xb1\xaf\xe5\x85\xb5\xe6\x96\xbc\xe6\x96\xb0\xe9\x87\x8e\xe5\xba\xb6\xe8\xa6\x8b\xe4\xb9\x8b', 'KR6q0153_001:0446b:21:12:357', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe9\x9f\xb3\xe7\xbe\xa9', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe9\x9f\xb3\xe7\xbe\xa9-\xe6\x98\x8e-\xe5\xa4\xa7\xe5\xbb\xba', 'RESP': '\xe5\xa4\xa7\xe5\xbb\xba', 'DYNASTY': '\xe6\x98\x8e', 'ID': 'KR6q0153'}), ('\xe5\x8f\x8b\xe6\x99\x82\xe5\x8a\x89\xe7\xe5\xbe\xb7\xe5\xb1\xaf\xe5\x85\xb5\xe6\x96\xbc\xe6\x96\xb0\xe9\x87\x8e\xe5\xba\xb6\xe8\xa6\x8b\xe4\xb9\x8b', 'KR6q0154_001:0484c:14:11:401', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe5\x90\x88\xe8\xa8\xbb', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe5\x90\x88\xe8\xa8\xbb-\xe6\xb8\x85-\xe5\xbc\xb5\xe6\x96\x87\xe5\x98\x89', 'RESP': '\xe5\xbc\xb5\xe6\x96\x87\xe5\x98\x89', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0154'}), ('\xe5\x8f\x8b\xe6\x99\x82\xe5\x8a\x89\xe7\xe5\xbe\xb7\xe5\xb1\xaf\xe5\x85\xb5\xe6\x96\xbc\xe6\x96\xb0\xe9\x87\x8e\xe5\xba\xb6\xe8\xa6\x8b\xe4\xb9\x8b', 'KR6q0157_001:0646a:16:3:376', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe7\xad\x86\xe8\xaa\xaa', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe7\xad\x86\xe8\xaa\xaa-\xe6\xb8\x85-\xe6\x99\xba\xe7\xa5\xa5', 'RESP': '\xe6\x99\xba\xe7\xa5\xa5', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0157'}), ('\xe9\x99\xbd\xe6\x99\x82\xe5\x8a\x89\xe7\xe5\xbe\xb7\xe5\xb1\xaf\xe5\x85\xb5\xe8\x96\xaa\xe9\x87\x8e\xe5\xbe\x90\xe5\xba\xb6\xe5\xbe\x80\xe8\xa6\x8b', 'KR6q0156_001:0552a:11:9:145', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe9\xa0\x86\xe7\xa1\x83', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe9\xa0\x86\xe7\xa1\x83-\xe6\xb8\x85-\xe5\xbe\xb7\xe7\x8e\x89', 'RESP': '\xe5\xbe\xb7\xe7\x8e\x89', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0156'}), ('\xe9\x83\xbd\xe4\xbf\xb1\xe5\x8c\x96\xe7\xe5\xbe\xb7\xe5\xb8\xab\xe6\x9b\xb0\xe6\x97\xa3\xe5\xb7\xb3\xe8\x90\xbd\xe4\xb8\x89\xe7\x81\xbd\xe5\xba\xa6', 'KR5a0221_020:013a:2:7:47', {'STATUS': 'READY', 'TPUR': '\xe7\x84\xa1\xe4\xb8\x8a\xe7\x8e\x84\xe5\x85\x83\xe4\xb8\x89\xe5\xa4\xa9\xe7\x8e\x89\xe5\xa0\x82\xe5\xa4\xa7\xe6\xb3\x95', 'TITLE': '\xe7\x84\xa1\xe4\xb8\x8a\xe7\x8e\x84\xe5\x85\x83\xe4\xb8\x89\xe5\xa4\xa9\xe7\x8e\x89\xe5\xa0\x82\xe5\xa4\xa7\xe6\xb3\x95--\xe8\xb7\xaf\xe6\x99\x82\xe4\xb8\xad', 'RESP': '\xe8\xb7\xaf\xe6\x99\x82\xe4\xb8\xad', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0221'}), ('\xe6\x96\x87\xe5\xbc\x98\xe9\x81\x93\xe7\xe5\xbe\xb7\xe5\xbb\xa3\xe5\x8c\x96\xe7\x9c\x9e\xe4\xba\xba\xe7\xb8\xbd\xe6\x94\x9d\xe6\xb1\x9f\xe6\xb7\xae', 'KR5a0316_004:018a:9:10:37', {'STATUS': 'READY', 'TPUR': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c', 'TITLE': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c--\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'RESP': '\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0316'}), ('\xe8\x80\x85\xe4\xb9\x83\xe5\x8a\x89\xe7\xe5\xbe\xb7\xe5\xbe\x97\xe6\xad\xa6\xe4\xbe\xaf\xe6\x99\x82\xe9\x9b\xb2\xe9\x95\xb7\xe7\xbf\xbc\xe5\xbe\xb7', 'KR6q0157_003:0702c:19:4:190', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe7\xad\x86\xe8\xaa\xaa', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe7\xad\x86\xe8\xaa\xaa-\xe6\xb8\x85-\xe6\x99\xba\xe7\xa5\xa5', 'RESP': '\xe6\x99\xba\xe7\xa5\xa5', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0157'}), ('\xe6\x9c\x89\xe6\xb0\xb4\xe5\x8a\x89\xe7\xe5\xbe\xb7\xe5\xbe\x97\xe6\xad\xa6\xe4\xbe\xaf\xe9\x9b\xb2\xe9\x95\xb7\xe7\xbf\xbc\xe5\xbe\xb7\xe7\x9a\x86', 'KR6q0153_001:0462a:1:6:866', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe9\x9f\xb3\xe7\xbe\xa9', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe9\x9f\xb3\xe7\xbe\xa9-\xe6\x98\x8e-\xe5\xa4\xa7\xe5\xbb\xba', 'RESP': '\xe5\xa4\xa7\xe5\xbb\xba', 'DYNASTY': '\xe6\x98\x8e', 'ID': 'KR6q0153'}), ('\xe6\x9c\x89\xe6\xb0\xb4\xe5\x8a\x89\xe7\xe5\xbe\xb7\xe5\xbe\x97\xe6\xad\xa6\xe4\xbe\xaf\xe9\x9b\xb2\xe9\x95\xb7\xe7\xbf\xbc\xe5\xbe\xb7\xe7\x9a\x86', 'KR6q0154_004:0514a:20:6:27', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe5\x90\x88\xe8\xa8\xbb', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe5\x90\x88\xe8\xa8\xbb-\xe6\xb8\x85-\xe5\xbc\xb5\xe6\x96\x87\xe5\x98\x89', 'RESP': '\xe5\xbc\xb5\xe6\x96\x87\xe5\x98\x89', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0154'}), ('\xe6\x9c\x89\xe9\x87\x8d\xe5\xa0\xb1\xe7\xe5\xbe\xb7\xe5\xbf\x85\xe4\xbf\xa1\xe7\x84\xb6\xe9\x9a\x82\xe5\xbe\xb7\xe7\xbd\xaa\xe8\x87\xb3\xe6\xb7\xb1', 'KR5a0326_002:002a:2:2:2', {'STATUS': 'READY', 'TPUR': '\xe4\xb8\x89\xe6\xb4\x9e\xe8\xae\x9a\xe9\xa0\x8c\xe9\x9d\x88\xe7\xab\xa0', 'TITLE': '\xe4\xb8\x89\xe6\xb4\x9e\xe8\xae\x9a\xe9\xa0\x8c\xe9\x9d\x88\xe7\xab\xa0-\xe5\x85\x83-', 'ID': 'KR5a0326', 'DYNASTY': '\xe5\x85\x83'}), ('\xe8\xac\xb9\xe8\xa7\x80\xe5\x85\x83\xe7\xe5\xbe\xb7\xe6\x81\xb1\xe7\x94\x9f\xe5\xa4\xa9\xe5\xb8\x9d\xe4\xbc\xaf\xe8\x8c\xb2\xe5\x91\xbd\xe6\xa3\xb2', 'KR5a0001_028:012a:6:1:16', {'STATUS': 'READY', 'TPUR': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93', 'TITLE': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93--', 'ID': 'KR5a0001', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)'}), ('\xe8\xac\xb9\xe8\xa7\x80\xe5\x85\x83\xe7\xe5\xbe\xb7\xe6\x82\x85\xe7\x94\x9f\xe5\xa4\xa9\xe5\xb8\x9d\xe4\xbc\xaf\xe8\x8c\xb2\xe5\x91\xbd\xe6\xa3\xb2', 'KR5a0001_028:012a:6:1:5\tYP-C', {'STATUS': 'READY', 'TPUR': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93', 'TITLE': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93--', 'ID': 'KR5a0001', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)'}), ('\xe6\xac\xa3\xe4\xb8\x8d\xe9\x81\xa0\xe7\xe5\xbe\xb7\xe6\x86\xbe\xe7\x8c\xb6\xe6\x9a\x8c\xe6\x9c\xab\xe5\xbe\x8c\xe6\x9c\xaa\xe6\x98\x8e\xe5\x8f\xa5', 'KR6q0226_010:0419a:2:6:106', {'STATUS': 'READY', 'TPUR': '\xe9\x9d\x88\xe5\xb3\xb0\xe8\x95\x85\xe7\x9b\x8a\xe5\xa4\xa7\xe5\xb8\xab\xe5\xae\x97\xe8\xab\x96', 'TITLE': '\xe9\x9d\x88\xe5\xb3\xb0\xe8\x95\x85\xe7\x9b\x8a\xe5\xa4\xa7\xe5\xb8\xab\xe5\xae\x97\xe8\xab\x96-\xe6\x98\x8e-\xe6\x99\xba\xe6\x97\xad', 'RESP': '\xe6\x99\xba\xe6\x97\xad', 'DYNASTY': '\xe6\x98\x8e', 'ID': 'KR6q0226'}), ('\xe7\x9c\x9e\xe4\xba\xba\xe4\xbb\xa5\xe7\xe5\xbe\xb7\xe6\x87\x89\xe4\xb8\x96\xe8\x82\x87\xe9\x96\x8b\xe6\x9c\xb1\xe9\x99\xbd\xe4\xb9\x8b\xe9\xa4\xa8', 'KR5a0316_024:006a:1:2:14', {'STATUS': 'READY', 'TPUR': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c', 'TITLE': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c--\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'RESP': '\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0316'}), ('\xe6\xb3\x95\xe6\xa5\xad\xe5\xbe\x8c\xe7\xe5\xbe\xb7\xe6\x88\x90\xe5\xb0\xb1\xe7\x88\xb2\xe4\xba\xba\xe6\x89\x80\xe5\xae\x97\xe7\x9a\x86\xe7\x95\xb6', 'KR5a0179_001:004b:8:12:6', {'STATUS': 'READY', 'TPUR': '\xe4\xb8\x89\xe6\xb4\x9e\xe7\x9c\xbe\xe6\x88\x92\xe6\x96\x87', 'TITLE': '\xe4\xb8\x89\xe6\xb4\x9e\xe7\x9c\xbe\xe6\x88\x92\xe6\x96\x87--\xe5\xbc\xb5\xe8\x90\xac\xe7\xa6\x8f', 'RESP': '\xe5\xbc\xb5\xe8\x90\xac\xe7\xa6\x8f', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0179'}), ('\xe5\x85\xac\xe5\xa4\xa9\xe4\xb9\x8b\xe7\xe5\xbe\xb7\xe6\x97\xa0\xe7\xa7\x81\xe6\x95\x85\xe8\x83\xbd\xe6\x88\x90\xe5\x85\xb6\xe7\xa7\x81\xe8\x80\x85', 'KR5a0124_000:007b:3:3:1', {'STATUS': 'READY', 'TPUR': '\xe9\xbb\x83\xe5\xb8\x9d\xe9\x99\xb0\xe7\xac\xa6\xe7\xb6\x93\xe8\xa8\xbb', 'TITLE': '\xe9\xbb\x83\xe5\xb8\x9d\xe9\x99\xb0\xe7\xac\xa6\xe7\xb6\x93\xe8\xa8\xbb-\xe9\x87\x91-\xe4\xbe\xaf\xe5\x96\x84\xe6\xb7\xb5', 'RESP': '\xe4\xbe\xaf\xe5\x96\x84\xe6\xb7\xb5', 'DYNASTY': '\xe9\x87\x91', 'ID': 'KR5a0124'}), ('\xe4\xbe\x86\xe7\x9b\xb8\xe5\xa0\xb1\xe7\xe5\xbe\xb7\xe6\x9b\xb0\xe4\xb8\x96\xe7\x84\xa1\xe6\x9c\xac\xe9\xac\xbc\xe4\xbd\xbf\xe6\x9b\xb0\xe9\x89\xa2', 'KR5a0011_003:022b:4:12:11\tCK-KZ YP-C', {'STATUS': 'READY', 'TPUR': '\xe9\xab\x98\xe4\xb8\x8a\xe7\x8e\x89\xe7\x9a\x87\xe6\x9c\xac\xe8\xa1\x8c\xe9\x9b\x86\xe7\xb6\x93(\xe4\xba\x8c)', 'TITLE': '\xe9\xab\x98\xe4\xb8\x8a\xe7\x8e\x89\xe7\x9a\x87\xe6\x9c\xac\xe8\xa1\x8c\xe9\x9b\x86\xe7\xb6\x93(\xe4\xba\x8c)--\xe5\xbc\xb5\xe8\x89\xaf', 'RESP': '\xe5\xbc\xb5\xe8\x89\xaf', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0011'}), ('\xe5\x81\x89\xe6\x83\xa0\xe5\xae\x8b\xe7\xe5\xbe\xb7\xe6\x9d\x8e\xe6\x9d\xb1\xe7\xab\xa5\xe5\x88\x9d\xe5\xba\x9c\xe8\x95\xad\xe9\x96\x91\xe5\xae\xab', 'KR5a0168_000:022b:8:2:23', {'STATUS': 'READY', 'TPUR': '\xe6\xb4\x9e\xe7\x8e\x84\xe9\x9d\x88\xe5\xaf\xb6\xe7\x9c\x9f\xe9\x9d\x88\xe4\xbd\x8d\xe6\xa5\xad\xe5\x9c\x96', 'TITLE': '\xe6\xb4\x9e\xe7\x8e\x84\xe9\x9d\x88\xe5\xaf\xb6\xe7\x9c\x9f\xe9\x9d\x88\xe4\xbd\x8d\xe6\xa5\xad\xe5\x9c\x96--\xe9\x99\xb6\xe5\xbc\x98\xe6\x99\xaf', 'RESP': '\xe9\x99\xb6\xe5\xbc\x98\xe6\x99\xaf', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0168'}), ('\xe5\x81\x89\xe6\x83\xa0\xe5\xae\x8b\xe7\xe5\xbe\xb7\xe6\x9d\x8e\xe6\x9d\xb1\xe7\xab\xa5\xe5\x88\x9d\xe5\xba\x9c\xe8\x95\xad\xe9\x96\x91\xe5\xae\xae', 'KR5a0168_000:022b:8:2:24\tCK-KZ YP-C', {'STATUS': 'READY', 'TPUR': '\xe6\xb4\x9e\xe7\x8e\x84\xe9\x9d\x88\xe5\xaf\xb6\xe7\x9c\x9f\xe9\x9d\x88\xe4\xbd\x8d\xe6\xa5\xad\xe5\x9c\x96', 'TITLE': '\xe6\xb4\x9e\xe7\x8e\x84\xe9\x9d\x88\xe5\xaf\xb6\xe7\x9c\x9f\xe9\x9d\x88\xe4\xbd\x8d\xe6\xa5\xad\xe5\x9c\x96--\xe9\x99\xb6\xe5\xbc\x98\xe6\x99\xaf', 'RESP': '\xe9\x99\xb6\xe5\xbc\x98\xe6\x99\xaf', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0168'}), ('\xe5\xae\xb0\xe6\x98\xaf\xe8\xac\x82\xe7\xe5\xbe\xb7\xe6\xad\xb8\xe5\x8e\x9f\xe7\xac\xac\xe4\xba\x94\xe5\x8d\x81\xe4\xba\x8c\xe7\xab\xa0\xe5\xa4\xa9', 'KR6q0227_002:0520c:23:11:41', {'STATUS': 'READY', 'TPUR': '\xe9\x81\x93\xe5\xbe\xb7\xe7\xb6\x93\xe9\xa0\x86\xe7\xa1\x83', 'TITLE': '\xe9\x81\x93\xe5\xbe\xb7\xe7\xb6\x93\xe9\xa0\x86\xe7\xa1\x83-\xe6\xb8\x85-\xe5\xbe\xb7\xe7\x8e\x89', 'RESP': '\xe5\xbe\xb7\xe7\x8e\x89', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0227'}), ('\xe8\xac\x82\xe7\x8e\x84\xe5\xbe\xb7\xe7\xe5\xbe\xb7\xe6\xb7\xb1\xe7\x9f\xa3\xe9\x81\xa0\xe7\x9f\xa3\xe8\x88\x87\xe7\x89\xa9\xe5\x8f\x8d\xe7\x9f\xa3', 'KR6q0227_002:0523a:13:13:83', {'STATUS': 'READY', 'TPUR': '\xe9\x81\x93\xe5\xbe\xb7\xe7\xb6\x93\xe9\xa0\x86\xe7\xa1\x83', 'TITLE': '\xe9\x81\x93\xe5\xbe\xb7\xe7\xb6\x93\xe9\xa0\x86\xe7\xa1\x83-\xe6\xb8\x85-\xe5\xbe\xb7\xe7\x8e\x89', 'RESP': '\xe5\xbe\xb7\xe7\x8e\x89', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0227'}), ('\xe5\xae\xb0\xe6\x98\xaf\xe8\xac\x82\xe7\xe5\xbe\xb7\xe7\x84\xa1\xe7\x94\xa8\xe5\x8d\x81\xe4\xb8\x80\xe7\xab\xa0\xe4\xb8\x89\xe5\x8d\x81\xe8\xbc\xbb', 'KR6q0227_001:0514b:20:8:34', {'STATUS': 'READY', 'TPUR': '\xe9\x81\x93\xe5\xbe\xb7\xe7\xb6\x93\xe9\xa0\x86\xe7\xa1\x83', 'TITLE': '\xe9\x81\x93\xe5\xbe\xb7\xe7\xb6\x93\xe9\xa0\x86\xe7\xa1\x83-\xe6\xb8\x85-\xe5\xbe\xb7\xe7\x8e\x89', 'RESP': '\xe5\xbe\xb7\xe7\x8e\x89', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0227'}), ('\xe5\xbc\x8f\xe6\x98\xaf\xe8\xac\x82\xe7\xe5\xbe\xb7\xe7\x8e\x84\xe5\xbe\xb7\xe6\xb7\xb1\xe7\x9f\xa3\xe9\x81\xa0\xe7\x9f\xa3\xe8\x88\x87\xe7\x89\xa9', 'KR6q0227_002:0523a:13:11:83', {'STATUS': 'READY', 'TPUR': '\xe9\x81\x93\xe5\xbe\xb7\xe7\xb6\x93\xe9\xa0\x86\xe7\xa1\x83', 'TITLE': '\xe9\x81\x93\xe5\xbe\xb7\xe7\xb6\x93\xe9\xa0\x86\xe7\xa1\x83-\xe6\xb8\x85-\xe5\xbe\xb7\xe7\x8e\x89', 'RESP': '\xe5\xbe\xb7\xe7\x8e\x89', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0227'}), ('\xe5\xb6\xbd\xe5\xae\x8b\xe5\xbe\xb7\xe7\xe5\xbe\xb7\xe7\x8e\x84\xe8\x80\x85\xe5\x91\xa8\xe5\xae\xa3\xe6\x99\x82\xe4\xba\xba\xe6\x9c\x8d\xe6\xad\xa4', 'KR5a0308_017:010a:1:15:30', {'STATUS': 'READY', 'TPUR': '\xe6\xad\xb7\xe4\xb8\x96\xe7\x9c\x9f\xe4\xbb\x99\xe9\xab\x94\xe9\x81\x93\xe9\x80\x9a\xe9\x91\x91', 'TITLE': '\xe6\xad\xb7\xe4\xb8\x96\xe7\x9c\x9f\xe4\xbb\x99\xe9\xab\x94\xe9\x81\x93\xe9\x80\x9a\xe9\x91\x91--\xe8\xb6\x99\xe9\x81\x93\xe4\xb8\x80', 'RESP': '\xe8\xb6\x99\xe9\x81\x93\xe4\xb8\x80', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0308'}), ('\xe5\xb6\xbd\xe5\xae\x8b\xe5\xbe\xb7\xe7\xe5\xbe\xb7\xe7\x8e\x84\xe8\x80\x85\xe5\x91\xa8\xe5\xae\xa3\xe7\x8e\x8b\xe6\x99\x82\xe4\xba\xba\xe6\x9c\x8d', 'KR5a0084_000:022b:1:7:81', {'STATUS': 'READY', 'TPUR': '\xe4\xb8\x8a\xe6\xb8\x85\xe7\x93\x8a\xe5\xae\xae\xe9\x9d\x88\xe9\xa3\x9b\xe5\x85\xad\xe7\x94\xb2\xe5\xb7\xa6\xe5\x8f\xb3\xe4\xb8\x8a\xe7\xac\xa6', 'TITLE': '\xe4\xb8\x8a\xe6\xb8\x85\xe7\x93\x8a\xe5\xae\xae\xe9\x9d\x88\xe9\xa3\x9b\xe5\x85\xad\xe7\x94\xb2\xe5\xb7\xa6\xe5\x8f\xb3\xe4\xb8\x8a\xe7\xac\xa6-\xe6\x9d\xb1\xe6\x99\x89-', 'ID': 'KR5a0084', 'DYNASTY': '\xe6\x9d\xb1\xe6\x99\x89'}), ('\xe4\xbd\xbf\xe7\xab\x87\xe5\xbe\xb7\xe7\xe5\xbe\xb7\xe7\x8e\x84\xe9\xa9\x9a\xe6\x80\x96\xe4\xb8\x8b\xe9\xa6\xac\xe6\x8b\x9c\xe6\x9b\xb0\xe6\x88\x91', 'KR5a0011_003:022b:2:2:39', {'STATUS': 'READY', 'TPUR': '\xe9\xab\x98\xe4\xb8\x8a\xe7\x8e\x89\xe7\x9a\x87\xe6\x9c\xac\xe8\xa1\x8c\xe9\x9b\x86\xe7\xb6\x93(\xe4\xba\x8c)', 'TITLE': '\xe9\xab\x98\xe4\xb8\x8a\xe7\x8e\x89\xe7\x9a\x87\xe6\x9c\xac\xe8\xa1\x8c\xe9\x9b\x86\xe7\xb6\x93(\xe4\xba\x8c)--\xe5\xbc\xb5\xe8\x89\xaf', 'RESP': '\xe5\xbc\xb5\xe8\x89\xaf', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0011'}), ('\xe4\xbb\xa5\xe5\xb1\x88\xe6\xb1\x82\xe7\xe5\xbe\xb7\xe7\x94\xb1\xe6\x98\xaf\xe4\xb8\x89\xe9\xa1\xa7\xe8\x8c\x85\xe5\xbb\xac\xe8\x80\x8c\xe8\x88\x89', 'KR6q0156_001:0552a:12:19:145', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe9\xa0\x86\xe7\xa1\x83', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe9\xa0\x86\xe7\xa1\x83-\xe6\xb8\x85-\xe5\xbe\xb7\xe7\x8e\x89', 'RESP': '\xe5\xbe\xb7\xe7\x8e\x89', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0156'}), ('\xe4\xba\xba\xe4\xbc\x81\xe6\x85\x95\xe7\xe5\xbe\xb7\xe7\x9a\x86\xe8\xba\xac\xe8\x87\xa8\xe5\x8f\x83\xe7\xa6\xae\xe5\x82\xbe\xe7\x8f\x8d\xe4\xbe\x9b', 'KR6q0206_001:0171a:4:3:346', {'STATUS': 'READY', 'TPUR': '\xe9\x84\x82\xe5\xb7\x9e\xe9\xbe\x8d\xe5\x85\x89\xe9\x81\x94\xe5\xa4\xab\xe7\xa6\xaa\xe5\xb8\xab\xe9\x9b\x9e\xe8\x82\x8b\xe9\x9b\x86', 'TITLE': '\xe9\x84\x82\xe5\xb7\x9e\xe9\xbe\x8d\xe5\x85\x89\xe9\x81\x94\xe5\xa4\xab\xe7\xa6\xaa\xe5\xb8\xab\xe9\x9b\x9e\xe8\x82\x8b\xe9\x9b\x86-\xe6\xb8\x85-\xe8\x98\x8a\xe4\xb8\x8a', 'RESP': '\xe8\x98\x8a\xe4\xb8\x8a', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0206'}), ('\xe5\x90\x84\xe6\x9c\x89\xe5\x8d\x81\xe7\xe5\xbe\xb7\xe7\x9b\xb8\xe5\x8d\x81\xe7\x8e\x84\xe8\x80\x85\xe4\xb8\x80\xe5\x90\x8c\xe6\x99\x82\xe5\x85\xb7', 'KR6q0092_028:0579c:29:13:10\tCBETA T T@LI T@MING T@QISHA T@SONG T@YUAN', {'STATUS': 'READY', 'TPUR': '\xe5\xae\x97\xe9\x8f\xa1\xe9\x8c\x84', 'TITLE': '\xe5\xae\x97\xe9\x8f\xa1\xe9\x8c\x84-\xe5\xae\x8b-\xe5\xbb\xb6\xe5\xa3\xbd', 'RESP': '\xe5\xbb\xb6\xe5\xa3\xbd', 'DYNASTY': '\xe5\xae\x8b', 'ID': 'KR6q0092'}), ('\xe5\x90\x84\xe6\x9c\x89\xe5\x8d\x81\xe7\xe5\xbe\xb7\xe7\x9b\xb8\xe5\x8d\x81\xe8\x80\x85\xe4\xb8\x80\xe5\x90\x8c\xe6\x99\x82\xe5\x85\xb7\xe8\xb6\xb3', 'KR6q0092_028:0579c:29:13:5', {'STATUS': 'READY', 'TPUR': '\xe5\xae\x97\xe9\x8f\xa1\xe9\x8c\x84', 'TITLE': '\xe5\xae\x97\xe9\x8f\xa1\xe9\x8c\x84-\xe5\xae\x8b-\xe5\xbb\xb6\xe5\xa3\xbd', 'RESP': '\xe5\xbb\xb6\xe5\xa3\xbd', 'DYNASTY': '\xe5\xae\x8b', 'ID': 'KR6q0092'}), ('\xe6\x96\x87\xe5\xbc\x98\xe9\x81\x93\xe7\xe5\xbe\xb7\xe7\x9c\x9e\xe4\xba\xba\xe5\x90\xb4\xe5\x85\xa8\xe7\xaf\x80\xe6\x81\xad\xe5\xa5\x89\xe9\xa6\x99', 'KR5a0316_004:016a:6:12:32', {'STATUS': 'READY', 'TPUR': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c', 'TITLE': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c--\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'RESP': '\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0316'}), ('\xe6\x96\x87\xe5\xbc\x98\xe9\x81\x93\xe7\xe5\xbe\xb7\xe7\x9c\x9e\xe4\xba\xba\xe5\x90\xb4\xe5\x85\xa8\xe7\xaf\x80\xe8\xa9\xa3\xe5\x85\x83\xe7\xac\xa6', 'KR5a0316_004:016b:10:3:34', {'STATUS': 'READY', 'TPUR': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c', 'TITLE': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c--\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'RESP': '\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0316'}), ('\xe5\xa4\xa9\xe5\xb0\x8a\xe9\x87\x8d\xe7\xe5\xbe\xb7\xe7\x9c\x9e\xe5\xa4\xa9\xe5\xb0\x8a\xe5\xaf\xb6\xe6\x98\x8e\xe5\xa4\xa7\xe5\xba\xa6\xe5\xa4\xa9', 'KR5a0190_004:010b:7:2:2\tCK-KZ YP-C', {'STATUS': 'READY', 'TPUR': '\xe5\xa4\xaa\xe4\xb8\x8a\xe9\x9d\x88\xe5\xaf\xb6\xe6\x9c\x9d\xe5\xa4\xa9\xe8\xac\x9d\xe7\xbd\xaa\xe5\xa4\xa7\xe6\x87\xba', 'TITLE': '\xe5\xa4\xaa\xe4\xb8\x8a\xe9\x9d\x88\xe5\xaf\xb6\xe6\x9c\x9d\xe5\xa4\xa9\xe8\xac\x9d\xe7\xbd\xaa\xe5\xa4\xa7\xe6\x87\xba--', 'ID': 'KR5a0190', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)'}), ('\xe6\x9c\x9d\xe7\xa6\xae\xe9\x87\x8d\xe7\xe5\xbe\xb7\xe7\x9c\x9e\xe5\xa4\xa9\xe5\xb0\x8a\xe5\xbf\x97\xe5\xbf\x83\xe6\x9c\x9d\xe7\xa6\xae\xe6\xb5\x81', 'KR5a0190_004:010b:7:6:87', {'STATUS': 'READY', 'TPUR': '\xe5\xa4\xaa\xe4\xb8\x8a\xe9\x9d\x88\xe5\xaf\xb6\xe6\x9c\x9d\xe5\xa4\xa9\xe8\xac\x9d\xe7\xbd\xaa\xe5\xa4\xa7\xe6\x87\xba', 'TITLE': '\xe5\xa4\xaa\xe4\xb8\x8a\xe9\x9d\x88\xe5\xaf\xb6\xe6\x9c\x9d\xe5\xa4\xa9\xe8\xac\x9d\xe7\xbd\xaa\xe5\xa4\xa7\xe6\x87\xba--', 'ID': 'KR5a0190', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)'}), ('\xe6\x96\xb9\xe6\x97\xa0\xe6\xa5\xb5\xe7\xe5\xbe\xb7\xe7\xa5\x9e\xe7\x8e\x8b\xe9\x95\xb7\xe7\x94\x9f\xe5\xa4\xa7\xe8\x81\x96\xe6\x97\xa0\xe9\x87\x8f', 'KR5a0001_007:007b:3:5:8', {'STATUS': 'READY', 'TPUR': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93', 'TITLE': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93--', 'ID': 'KR5a0001', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)'}), ('\xe5\xb8\xab\xe6\x9b\xb0\xe5\x8a\x89\xe7\xe5\xbe\xb7\xe7\xa8\xae\xe5\x9c\x83\xe6\x9b\xb0\xe5\xa6\x82\xe4\xbd\x95\xe6\x98\xaf\xe9\x9b\xb2\xe9\x96\x80', 'KR6q0019_024:0300b:2:13:6', {'STATUS': 'READY', 'TPUR': '\xe4\xba\x94\xe7\x87\x88\xe5\x9a\xb4\xe7\xb5\xb1', 'TITLE': '\xe4\xba\x94\xe7\x87\x88\xe5\x9a\xb4\xe7\xb5\xb1-\xe6\x98\x8e-\xe9\x80\x9a\xe5\xae\xb9', 'RESP': '\xe9\x80\x9a\xe5\xae\xb9', 'DYNASTY': '\xe6\x98\x8e', 'ID': 'KR6q0019'}), ('\xe9\xab\xaf\xe7\xab\x9f\xe5\xbe\x9e\xe7\xe5\xbe\xb7\xe7\xac\x91\xe8\xa3\x8f\xe7\x9e\x9e\xe5\xbe\x92\xe9\x80\xa0\xe5\xad\x90\xe5\xb0\x87\xe6\xbc\xa2', 'KR6q0193_011:0625c:1:20:81\tCBETA J', {'STATUS': 'READY', 'TPUR': '\xe7\x9f\xb3\xe9\x96\x80\xe6\x96\x87\xe5\xad\x97\xe7\xa6\xaa', 'TITLE': '\xe7\x9f\xb3\xe9\x96\x80\xe6\x96\x87\xe5\xad\x97\xe7\xa6\xaa-\xe5\xae\x8b-\xe5\xbe\xb7\xe6\xb4\xaa', 'RESP': '\xe5\xbe\xb7\xe6\xb4\xaa', 'DYNASTY': '\xe5\xae\x8b', 'ID': 'KR6q0193'}), ('\xe9\x81\x93\xe6\x97\xa9\xe5\xb7\xb2\xe7\xe5\xbe\xb7\xe7\xac\xac\xe4\xba\x94\xe5\x8d\x81\xe5\x85\xad\xe7\xab\xa0\xe7\x9f\xa5\xe8\x80\x85\xe4\xb8\x8d', 'KR6q0227_002:0521c:6:1:55', {'STATUS': 'READY', 'TPUR': '\xe9\x81\x93\xe5\xbe\xb7\xe7\xb6\x93\xe9\xa0\x86\xe7\xa1\x83', 'TITLE': '\xe9\x81\x93\xe5\xbe\xb7\xe7\xb6\x93\xe9\xa0\x86\xe7\xa1\x83-\xe6\xb8\x85-\xe5\xbe\xb7\xe7\x8e\x89', 'RESP': '\xe5\xbe\xb7\xe7\x8e\x89', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0227'}), ('\xe6\x9c\x9f\xe5\x8f\x97\xe8\x99\x9f\xe7\xe5\xbe\xb7\xe7\xac\xac\xe5\x85\xad\xe7\xa7\x91\xe6\x9b\xb0\xe9\xbd\x8b\xe8\xae\x80\xe7\xb6\x93\xe6\x88\x92', 'KR5a0130_000:008b:2:1:7', {'STATUS': 'READY', 'TPUR': '\xe5\xa4\xaa\xe9\x9c\x84\xe7\x90\x85\xe6\x9b\xb8\xe7\x93\x8a\xe6\x96\x87\xe5\xb8\x9d\xe7\xab\xa0\xe8\xa8\xa3', 'TITLE': '\xe5\xa4\xaa\xe9\x9c\x84\xe7\x90\x85\xe6\x9b\xb8\xe7\x93\x8a\xe6\x96\x87\xe5\xb8\x9d\xe7\xab\xa0\xe8\xa8\xa3-\xe5\x85\xad\xe6\x9c\x9d-', 'ID': 'KR5a0130', 'DYNASTY': '\xe5\x85\xad\xe6\x9c\x9d'}), ('\xe5\xb0\x84\xe5\xb1\xb1\xe8\xaa\xaa\xe7\xe5\xbe\xb7\xe7\xb6\x93\xe6\x95\x99\xe4\xbb\xa5\xe8\xac\x99\xe9\x81\x9c\xe4\xb9\x8b\xe9\x81\x93\xe4\xb8\x80', 'KR5a0308_002:004a:3:14:15', {'STATUS': 'READY', 'TPUR': '\xe6\xad\xb7\xe4\xb8\x96\xe7\x9c\x9f\xe4\xbb\x99\xe9\xab\x94\xe9\x81\x93\xe9\x80\x9a\xe9\x91\x91', 'TITLE': '\xe6\xad\xb7\xe4\xb8\x96\xe7\x9c\x9f\xe4\xbb\x99\xe9\xab\x94\xe9\x81\x93\xe9\x80\x9a\xe9\x91\x91--\xe8\xb6\x99\xe9\x81\x93\xe4\xb8\x80', 'RESP': '\xe8\xb6\x99\xe9\x81\x93\xe4\xb8\x80', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0308'}), ('\xe5\x89\x87\xe6\x98\xaf\xe8\xac\x82\xe7\xe5\xbe\xb7\xe8\x80\x81\xe5\xad\x90\xe6\x9b\xb0\xe5\x85\xb6\xe9\x81\x93\xe4\xba\xa6\xe6\x9c\x89\xe8\xa1\x93', 'KR5a0310_001:005a:1:13:5', {'STATUS': 'READY', 'TPUR': '\xe6\xad\xb7\xe4\xb8\x96\xe7\x9c\x9f\xe4\xbb\x99\xe9\xab\x94\xe9\x81\x93\xe9\x80\x9a\xe9\x91\x91\xe5\xbe\x8c\xe9\x9b\x86', 'TITLE': '\xe6\xad\xb7\xe4\xb8\x96\xe7\x9c\x9f\xe4\xbb\x99\xe9\xab\x94\xe9\x81\x93\xe9\x80\x9a\xe9\x91\x91\xe5\xbe\x8c\xe9\x9b\x86--\xe8\xb6\x99\xe9\x81\x93\xe4\xb8\x80', 'RESP': '\xe8\xb6\x99\xe9\x81\x93\xe4\xb8\x80', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0310'}), ('\xe6\x99\xba\xe8\x80\x8c\xe6\x9c\x89\xe7\xe5\xbe\xb7\xe8\x80\x85\xe7\x8d\xa8\xe8\xb3\x8a\xe4\xb9\x8b\xe9\xa0\x88\xe5\x8f\x8d\xe4\xba\x8e\xe7\x89\xa9', 'KR6q0227_002:0523a:15:30:84\tn', {'STATUS': 'READY', 'TPUR': '\xe9\x81\x93\xe5\xbe\xb7\xe7\xb6\x93\xe9\xa0\x86\xe7\xa1\x83', 'TITLE': '\xe9\x81\x93\xe5\xbe\xb7\xe7\xb6\x93\xe9\xa0\x86\xe7\xa1\x83-\xe6\xb8\x85-\xe5\xbe\xb7\xe7\x8e\x89', 'RESP': '\xe5\xbe\xb7\xe7\x8e\x89', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0227'}), ('\xe5\xad\x9d\xe4\xb9\x8b\xe9\x81\x93\xe7\xe5\xbe\xb7\xe8\x81\x9e\xe6\x96\xbc\xe6\xb3\x95\xe7\x95\x8c\xe5\xbf\x85\xe6\x88\x90\xe7\x84\xa1\xe4\xb8\x8a', 'KR6q0226_004:0324c:28:2:31', {'STATUS': 'READY', 'TPUR': '\xe9\x9d\x88\xe5\xb3\xb0\xe8\x95\x85\xe7\x9b\x8a\xe5\xa4\xa7\xe5\xb8\xab\xe5\xae\x97\xe8\xab\x96', 'TITLE': '\xe9\x9d\x88\xe5\xb3\xb0\xe8\x95\x85\xe7\x9b\x8a\xe5\xa4\xa7\xe5\xb8\xab\xe5\xae\x97\xe8\xab\x96-\xe6\x98\x8e-\xe6\x99\xba\xe6\x97\xad', 'RESP': '\xe6\x99\xba\xe6\x97\xad', 'DYNASTY': '\xe6\x98\x8e', 'ID': 'KR6q0226'}), ('\xe6\xb4\xaa\xe7\xa6\x8f\xe8\x8f\xb4\xe7\xe5\xbe\xb7\xe8\x8f\xb4\xe5\x85\xa8\xe7\x9c\x9e\xe8\x8f\xb4\xe9\xbb\x84\xe5\xaf\xa7\xe8\x8f\xb4\xe5\x86\xb2', 'KR5a0316_018:005b:5:1:10', {'STATUS': 'READY', 'TPUR': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c', 'TITLE': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c--\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'RESP': '\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0316'}), ('\xe5\x8f\xaf\xe7\x9b\xb8\xe5\x82\xb3\xe7\xe5\xbe\xb7\xe8\xa2\xab\xe7\xbe\xa3\xe6\x9c\x89\xe7\xa8\xbd\xe9\xa6\x96\xe7\xa5\x9e\xe9\x9c\x84\xe6\x96\x87', 'KR5a0001_005:014b:3:1:41\tYP-C', {'STATUS': 'READY', 'TPUR': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93', 'TITLE': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93--', 'ID': 'KR5a0001', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)'}), ('\xe5\x8f\xaf\xe7\x9b\xb8\xe5\x82\xb3\xe7\xe5\xbe\xb7\xe8\xa2\xab\xe7\xbe\xa4\xe6\x9c\x89\xe7\xa8\xbd\xe9\xa6\x96\xe7\xa5\x9e\xe9\x9c\x84\xe6\x96\x87', 'KR5a0001_005:014b:3:1:55', {'STATUS': 'READY', 'TPUR': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93', 'TITLE': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93--', 'ID': 'KR5a0001', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)'}), ('\xe8\xa1\x86\xe8\x87\xb3\xe7\x9c\x9e\xe7\xe5\xbe\xb7\xe8\xab\xb8\xe5\x90\x9b\xe4\xb8\x88\xe4\xba\xba\xe7\x8e\x89\xe8\x99\x9a\xe4\xb8\x8a\xe5\xb8\x9d', 'KR5a0217_000:004a:8:9:21', {'STATUS': 'READY', 'TPUR': '\xe4\xb8\x8a\xe6\xb8\x85\xe5\xa4\xa9\xe5\xaf\xb6\xe9\xbd\x8b\xe5\x88\x9d\xe5\xa4\x9c\xe5\x84\x80', 'TITLE': '\xe4\xb8\x8a\xe6\xb8\x85\xe5\xa4\xa9\xe5\xaf\xb6\xe9\xbd\x8b\xe5\x88\x9d\xe5\xa4\x9c\xe5\x84\x80--', 'ID': 'KR5a0217', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)'}), ('\xe9\xa4\x8a\xe8\x82\xb2\xe5\xbd\xb0\xe7\xe5\xbe\xb7\xe8\xb1\x88\xe5\x81\x87\xe6\x81\xa9\xe6\x80\x9c\xe5\xa5\x91\xe6\x9c\xac\xe7\x9c\x9f\xe8\x8e\xab', 'KR6q0252_005:0361b:6:2:29', {'STATUS': 'READY', 'TPUR': '\xe6\x9e\x97\xe6\xb3\x89\xe8\x80\x81\xe4\xba\xba\xe8\xa9\x95\xe5\x94\xb1\xe4\xb8\xb9\xe9\x9c\x9e\xe6\xb7\xb3\xe7\xa6\xaa\xe5\xb8\xab\xe9\xa0\x8c\xe5\x8f\xa4\xe8\x99\x97\xe5\xa0\x82\xe9\x9b\x86', 'TITLE': '\xe6\x9e\x97\xe6\xb3\x89\xe8\x80\x81\xe4\xba\xba\xe8\xa9\x95\xe5\x94\xb1\xe4\xb8\xb9\xe9\x9c\x9e\xe6\xb7\xb3\xe7\xa6\xaa\xe5\xb8\xab\xe9\xa0\x8c\xe5\x8f\xa4\xe8\x99\x97\xe5\xa0\x82\xe9\x9b\x86-\xe5\xae\x8b-\xe5\xad\x90\xe6\xb7\xb3', 'RESP': '\xe5\xad\x90\xe6\xb7\xb3', 'DYNASTY': '\xe5\xae\x8b', 'ID': 'KR6q0252'}), ('\xe5\xb1\x88\xe7\x94\xb1\xe6\x98\xaf\xe7\xe5\xbe\xb7\xe9\x81\x82\xe8\xa9\xa3\xe4\xba\xae\xe6\x89\x80\xe5\x87\xa1\xe4\xb8\x89\xe5\xbe\x80\xe8\x80\x8c', 'KR6q0153_001:0446b:23:11:357', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe9\x9f\xb3\xe7\xbe\xa9', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe9\x9f\xb3\xe7\xbe\xa9-\xe6\x98\x8e-\xe5\xa4\xa7\xe5\xbb\xba', 'RESP': '\xe5\xa4\xa7\xe5\xbb\xba', 'DYNASTY': '\xe6\x98\x8e', 'ID': 'KR6q0153'}), ('\xe5\xb1\x88\xe7\x94\xb1\xe6\x98\xaf\xe7\xe5\xbe\xb7\xe9\x81\x82\xe8\xa9\xa3\xe4\xba\xae\xe6\x89\x80\xe5\x87\xa1\xe4\xb8\x89\xe5\xbe\x80\xe8\x80\x8c', 'KR6q0154_001:0484c:16:10:401', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe5\x90\x88\xe8\xa8\xbb', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe5\x90\x88\xe8\xa8\xbb-\xe6\xb8\x85-\xe5\xbc\xb5\xe6\x96\x87\xe5\x98\x89', 'RESP': '\xe5\xbc\xb5\xe6\x96\x87\xe5\x98\x89', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0154'}), ('\xe5\xb1\x88\xe7\x94\xb1\xe6\x98\xaf\xe7\xe5\xbe\xb7\xe9\x81\x82\xe8\xa9\xa3\xe4\xba\xae\xe6\x89\x80\xe5\x87\xa1\xe4\xb8\x89\xe5\xbe\x80\xe8\x80\x8c', 'KR6q0157_001:0646a:18:2:376', {'STATUS': 'READY', 'TPUR': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe7\xad\x86\xe8\xaa\xaa', 'TITLE': '\xe7\xa6\xaa\xe6\x9e\x97\xe5\xaf\xb6\xe8\xa8\x93\xe7\xad\x86\xe8\xaa\xaa-\xe6\xb8\x85-\xe6\x99\xba\xe7\xa5\xa5', 'RESP': '\xe6\x99\xba\xe7\xa5\xa5', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0157'}), ('\xe9\x81\x93\xe6\x9c\xaa\xe9\x80\x9a\xe7\xe5\xbe\xb7\xe9\x9b\xa3\xe5\x85\xa5\xe5\xa6\x99\xe5\xb1\xa2\xe7\x82\xba\xe4\xba\xba\xe8\x80\x8c\xe9\x80\xa0', 'KR5a0328_002:012b:7:5:23', {'STATUS': 'READY', 'TPUR': '\xe5\xa4\xaa\xe4\xb8\x8a\xe6\xbf\x9f\xe5\xba\xa6\xe7\xab\xa0\xe8\xb5\xa6', 'TITLE': '\xe5\xa4\xaa\xe4\xb8\x8a\xe6\xbf\x9f\xe5\xba\xa6\xe7\xab\xa0\xe8\xb5\xa6--', 'ID': 'KR5a0328', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)'}), ('\xe7\xb2\xbe\xe4\xb8\x80\xe6\x96\xbc\xe7\xe5\xbe\xb7\xe9\x9d\x9e\xe7\x9b\xb8\xe4\xb9\x8b\xe7\x9b\xb8\xe9\xbe\x95\xe5\xbc\x98\xe5\x97\xa3\xe5\xbe\x8c', 'KR6q0235_001:0152c:7:15:102', {'STATUS': 'READY', 'TPUR': '\xe4\xb8\x80\xe8\xb2\xab\xe5\x88\xa5\xe5\x82\xb3', 'TITLE': '\xe4\xb8\x80\xe8\xb2\xab\xe5\x88\xa5\xe5\x82\xb3-\xe6\xb8\x85-\xe5\xbb\xa3\xe7\x9c\x9f', 'RESP': '\xe5\xbb\xa3\xe7\x9c\x9f', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0235'}), ('\xe5\xb1\xb1\xe7\x94\xb3\xe9\xa0\x8c\xe7\xe5\xbe\xb7\xe9\xa0\x8c\xe6\x9b\xb0\xe8\xa7\x80\xe5\x85\x83\xe5\x8c\x96\xe5\x85\xae\xe6\xb1\x82\xe5\x8f\xa4', 'KR5a0316_024:016a:6:1:32', {'STATUS': 'READY', 'TPUR': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c', 'TITLE': '\xe8\x8c\x85\xe5\xb1\xb1\xe8\xaa\x8c--\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'RESP': '\xe5\x8a\x89\xe5\xa4\xa7\xe5\xbd\xac', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0316'}), ('\xe3\x80\x80\xef\xbc\x88\xe5\xad\x97\xe7\xe5\xbe\xb7\xef\xbc\x89\xe3\x80\x80\xe3\x80\x80', 'KR5a0168_000:028b:8:4:28\tn\tCK-KZ YP-C', {'STATUS': 'READY', 'TPUR': '\xe6\xb4\x9e\xe7\x8e\x84\xe9\x9d\x88\xe5\xaf\xb6\xe7\x9c\x9f\xe9\x9d\x88\xe4\xbd\x8d\xe6\xa5\xad\xe5\x9c\x96', 'TITLE': '\xe6\xb4\x9e\xe7\x8e\x84\xe9\x9d\x88\xe5\xaf\xb6\xe7\x9c\x9f\xe9\x9d\x88\xe4\xbd\x8d\xe6\xa5\xad\xe5\x9c\x96--\xe9\x99\xb6\xe5\xbc\x98\xe6\x99\xaf', 'RESP': '\xe9\x99\xb6\xe5\xbc\x98\xe6\x99\xaf', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0168'})]
+>>> ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), r.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in x2]
+>>> x2[0]
+'\xe5\xbe\xb7\xe4\xb8\x89\xe5\x93\x81\xe6\xb0\xb4\xe5\xae\x98\xe7\xab\x8b\xe6\x96\xbc\xe5\xba\xa7\xe5\x8f\xb3,\xe5\x8c\x96\xe4\xb9\x9d\xe6\xb7\xb5\tKR5a0001_034:003a:10:13:69\tYP-C'
+>>> f="/Users/chris/Dropbox/temp/4e00.test.txt"
+>>> import codecs
+>>> x = codecs.open(f, "r", "utf-8").readlines()
+>>> x[0]
+u'\u7cbe\u7fa9\u7121\u4e8c\u5b89\u5f97\u4e0d\u7fe6\u5176\u7e41\u856a\u800c,\u81f3\u7576\u6b78\tKR1f0002_000:2a:5:13:1\n'
+>>> print x[0]
+精義無二安得不翦其繁蕪而,至當歸	KR1f0002_000:2a:5:13:1
+
+>>> print x2[0]
+德三品水官立於座右,化九淵	KR5a0001_034:003a:10:13:69	YP-C
+>>> x = [a[:-1] for a in codecs.open(f, "r", "utf-8").readlines()]
+>>> print x[0]
+精義無二安得不翦其繁蕪而,至當歸	KR1f0002_000:2a:5:13:1
+>>> ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), r.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in x]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xe7 in position 0: ordinal not in range(128)
+>>> import sys
+>>> reload(sys)
+sys.setdefaultencoding('utf-8')
+<module 'sys' (built-in)>
+>>> >>> ox = [("".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), r.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in x]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeDecodeError: 'utf8' codec can't decode byte 0xe7 in position 0: unexpected end of data
+>>> x[0]
+u'\u7cbe\u7fa9\u7121\u4e8c\u5b89\u5f97\u4e0d\u7fe6\u5176\u7e41\u856a\u800c,\u81f3\u7576\u6b78\tKR1f0002_000:2a:5:13:1'
+>>> ox = [(u"".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), r.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in x]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeDecodeError: 'utf8' codec can't decode byte 0xe7 in position 0: unexpected end of data
+>>> x = [a[:-1] for a in codecs.open(f, "r", "latin1").readlines()]
+>>> x[0]
+u'\xe7\xb2\xbe\xe7\xbe\xa9\xe7\x84\xa1\xe4\xba\x8c\xe5\xae\x89\xe5\xbe\x97\xe4\xb8\x8d\xe7\xbf\xa6\xe5'
+>>> ox = [(u"".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), r.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in x]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
+>>> ox = [(u"".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), r.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0]))) for k in x]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
+>>> key[0]
+'\xe7'
+>>> ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), " /".join(["".join([b[0][0] ]) for b in d2[a][1:][0]])) for a in x]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'd2' is not defined
+>>> ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), " /".join(["".join([b[0][0] ]) for b in x[a][1:][0]])) for a in x]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'd2' is not defined
+>>> ox = [(u"".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), r.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0]))) for k in x2]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+UnicodeDecodeError: 'utf8' codec can't decode byte 0xe7 in position 0: unexpected end of data
+>>> key.decode("utf-8")
+u'\u7384\u5fb7'
+>>> key = key.decode("utf-8")
+>>> ox = [(u"".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), r.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0]))) for k in x2]
+>>> ox[0]
+(u'\u5316\u4e5d\u6df5\u7384\u5fb7\u4e09\u54c1\u6c34\u5b98\u7acb\u65bc\u5ea7\u53f3', 'KR5a0001_034:003a:10:13:69\tYP-C', {})
+>>> ox = [(u"".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), r.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0]))) for k in x]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
+>>> k
+u'\xe7\xb2\xbe\xe7\xbe\xa9\xe7\x84\xa1\xe4\xba\x8c\xe5\xae\x89\xe5\xbe\x97\xe4\xb8\x8d\xe7\xbf\xa6\xe5'
+>>> k=x[0]
+>>> k
+u'\xe7\xb2\xbe\xe7\xbe\xa9\xe7\x84\xa1\xe4\xba\x8c\xe5\xae\x89\xe5\xbe\x97\xe4\xb8\x8d\xe7\xbf\xa6\xe5'
+>>> x = codecs.open(f, "r", "utf-8").readlines()
+>>> k=x[0]
+>>> 
+>>> k
+u'\u7cbe\u7fa9\u7121\u4e8c\u5b89\u5f97\u4e0d\u7fe6\u5176\u7e41\u856a\u800c,\u81f3\u7576\u6b78\tKR1f0002_000:2a:5:13:1\n'
+>>> k.split()
+[u'\u7cbe\u7fa9\u7121\u4e8c\u5b89\u5f97\u4e0d\u7fe6\u5176\u7e41\u856a\u800c,\u81f3\u7576\u6b78', u'KR1f0002_000:2a:5:13:1']
+>>> y=x[0]
+>>> ox = [(u"".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), r.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0]))) for k in x]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
+>>> y.split()
+[u'\u7cbe\u7fa9\u7121\u4e8c\u5b89\u5f97\u4e0d\u7fe6\u5176\u7e41\u856a\u800c,\u81f3\u7576\u6b78', u'KR1f0002_000:2a:5:13:1']
+>>> y.split()[1]
+u'KR1f0002_000:2a:5:13:1'
+>>> y.split()[1].split(':')[0]
+u'KR1f0002_000'
+>>> x2[0]
+'\xe5\xbe\xb7\xe4\xb8\x89\xe5\x93\x81\xe6\xb0\xb4\xe5\xae\x98\xe7\xab\x8b\xe6\x96\xbc\xe5\xba\xa7\xe5\x8f\xb3,\xe5\x8c\x96\xe4\xb9\x9d\xe6\xb7\xb5\tKR5a0001_034:003a:10:13:69\tYP-C'
+>>> y.split()[1].split(':')[0][0:8]
+u'KR1f0002'
+>>> "%s%s" % (zbmeta, y.split()[1].split(':')[0][0:8])
+u'kr:meta:KR1f0002'
+>>> r.hgetall("%s%s" % (zbmeta, y.split()[1].split(':')[0][0:8]))
+{'STATUS': 'READY', 'TPUR': '\xe5\xad\x9d\xe7\xb6\x93', 'TITLE': '\xe5\xad\x9d\xe7\xb6\x93-\xe5\x94\x90-', 'ID': 'KR1f0002', 'DYNASTY': '\xe5\x94\x90'}
+>>> b=r.hgetall("%s%s" % (zbmeta, y.split()[1].split(':')[0][0:8]))
+>>> k=y
+>>> k
+u'\u7cbe\u7fa9\u7121\u4e8c\u5b89\u5f97\u4e0d\u7fe6\u5176\u7e41\u856a\u800c,\u81f3\u7576\u6b78\tKR1f0002_000:2a:5:13:1\n'
+>>> u"".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]
+... )
+(u'\u81f3\u7576\u6b78\u7384\u7cbe\u7fa9\u7121\u4e8c\u5b89\u5f97\u4e0d\u7fe6\u5176\u7e41\u856a\u800c', u'KR1f0002_000:2a:5:13:1\n')
+>>> b1=(u"".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]))
+>>> b1
+(u'\u81f3\u7576\u6b78\u7384\u7cbe\u7fa9\u7121\u4e8c\u5b89\u5f97\u4e0d\u7fe6\u5176\u7e41\u856a\u800c', u'KR1f0002_000:2a:5:13:1\n')
+>>> print b1[0]
+至當歸玄精義無二安得不翦其繁蕪而
+>>> print k
+精義無二安得不翦其繁蕪而,至當歸	KR1f0002_000:2a:5:13:1
+
+>>> print key
+玄德
+>>> ox = [(u"".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), r.hgetall(u"%s%s" %( zbmeta, k.split()[1].split(':')[0]))) for k in x]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
+>>> k
+u'\u5247\u672a\u7232\u80fd\uff09\u3000\u3000,\u4e94\u8005\u95d5\tKR1f0002_001:9a:7:4:0\tn\n'
+>>> u"".join([k.split()[0].split(',')[1],key[0], k.split()[0].split(',')[0]])
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
+>>> key
+u'\u7384\u5fb7'
+>>> k.split()[0].split(',')[1]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
+>>> k.split()[0]
+u'\u5247\u672a\u7232\u80fd\uff09'
+>>> k.split("\t")[0].split(',')[1]
+u'\u4e94\u8005\u95d5'
+>>> print k
+則未爲能）　　,五者闕	KR1f0002_001:9a:7:4:0	n
+
+>>> sb="@S1a0005"
+>>> sb.insert(2, "K")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'str' object has no attribute 'insert'
+>>> sb[1:]
+'S1a0005'
+>>> l=u"   3575:KR4j0012 @SK4e3387 @SK4e3387a @ZB4e0011 姑溪詞-宋-李之儀"
+>>> import re
+>>> re.findall("@SK", l)
+[u'@SK', u'@SK']
+>>> len(re.findall("@SK", l))
+2
+>>> len(ox)
+78
+>>> ox[0]
+(u'\u5316\u4e5d\u6df5\u7384\u5fb7\u4e09\u54c1\u6c34\u5b98\u7acb\u65bc\u5ea7\u53f3', 'KR5a0001_034:003a:10:13:69\tYP-C', {})
+>>> len(x)
+964
+>>> x[0]
+u'\u7cbe\u7fa9\u7121\u4e8c\u5b89\u5f97\u4e0d\u7fe6\u5176\u7e41\u856a\u800c,\u81f3\u7576\u6b78\tKR1f0002_000:2a:5:13:1\n'
+>>> ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), " /".join(["".join([b[0][0] ]) for b in x[a][1:][0]])) for a in x]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'd2' is not defined
+>>> ks = redis_store.keys(zbmeta + "*")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'redis_store' is not defined
+>>> ks = r.keys(zbmeta + "*")
+>>> len(ks)
+31451
+>>> ks[0]
+'kr:meta:SB14n215'
+>>> r.hgetall(ks[0])
+{'STATUS': 'READY', 'TPUR': '\xe4\xba\x8e\xe6\xb9\x96\xe9\x9b\x86', 'TITLE': '\xe4\xba\x8e\xe6\xb9\x96\xe9\x9b\x86-\xe5\xae\x8b-\xe5\xbc\xb5\xe5\xad\x9d\xe7\xa5\xa5', 'RESP': '\xe5\xbc\xb5\xe5\xad\x9d\xe7\xa5\xa5', 'EXTRAID': 'SB14n215', 'DYNASTY': '\xe5\xae\x8b', 'ID': 'KR4d0216'}
+>>> r.hgetall(ks[0])['DYNASTY']
+'\xe5\xae\x8b'
+>>> r.hgetall(ks[0])['DYNASTY'].encode("utf-8")
+'\xe5\xae\x8b'
+>>> r.hgetall(ks[0])['DYNASTY'].decode("utf-8")
+u'\u5b8b'
+>>> print r.hgetall(ks[0])['DYNASTY'].decode("utf-8")
+宋
+>>> x = r.lrange("玄德", 1, r.llen("玄德"))
+>>> len(x)
+77
+>>> x[0]
+'\xe5\xbe\xb7\xe4\xb8\x8a\xe6\x99\xba\xe7\x94\x9f\xe8\x80\x8c\xe7\x9f\xa5\xe4\xb9\x8b\xe5\xb0\x87\xe8\x87\xaa,\xe4\xb9\x9f\xe5\x9b\xba\xe5\x85\xb6\tKR6q0083_001:0347c:12:8:14'
+>>> a = x[0]
+>>> a.split("\t")
+['\xe5\xbe\xb7\xe4\xb8\x8a\xe6\x99\xba\xe7\x94\x9f\xe8\x80\x8c\xe7\x9f\xa5\xe4\xb9\x8b\xe5\xb0\x87\xe8\x87\xaa,\xe4\xb9\x9f\xe5\x9b\xba\xe5\x85\xb6', 'KR6q0083_001:0347c:12:8:14']
+>>> a.split("\t")[1]
+'KR6q0083_001:0347c:12:8:14'
+>>> a.split("\t")[1].split(":")
+['KR6q0083_001', '0347c', '12', '8', '14']
+>>> a.split("\t")[1].split(":")[0]
+'KR6q0083_001'
+>>> a.split("\t")[1].split(":")[0][0:8]
+'KR6q0083'
+>>> a.split("\t")[1].split(":")[0].split("_")[0]
+'KR6q0083'
+>>> kr_user = "kr:user:"
+>>> r.keys(kr_user+"*")
+[]
+>>> r.keys(kr_user+"*")
+[]
+>>> r.keys(kr_user+"*")
+[]
+>>> k=r.keys("kr*")
+>>> len(k)
+31452
+>>> r.keys(kr_user+"*")
+[]
+>>> len(r.keys(kr_user+"*"))
+0
+>>> kr_user = "kr_user:"
+>>> r.key("kr_user:cwittern$Favorites")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'Redis' object has no attribute 'key'
+>>> r.keys("kr_user:cwittern$Favorites")
+[]
+>>> r.keys("kr_user:cwittern$Favorites")
+['kr_user:cwittern$Favorites']
+>>> r.type("kr_user:cwittern$Favorites")
+'list'
+>>> r.lrange("kr_user:cwittern$Favorites", 1, -1)
+[]
+>>> r.lrange("kr_user:cwittern$Favorites", 1)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: lrange() takes exactly 4 arguments (3 given)
+>>> r.lrange("kr_user:cwittern$Favorites", 1 , r.llen("kr_user:cwittern$Favorites"))
+[]
+>>> r.keys("kr_u*")
+['kr_user:cwittern$Favorites']
+>>> l=['KR6q0002', 'KR6q0003', 'KR6q0004', 'KR6q0005', 'KR6q0006', 'KR6q0007', 'KR6q0008', 'KR6q0009', 'KR6q0010', 'KR6q0011', 'KR6q0012', 'KR6q0013']
+>>> l
+['KR6q0002', 'KR6q0003', 'KR6q0004', 'KR6q0005', 'KR6q0006', 'KR6q0007', 'KR6q0008', 'KR6q0009', 'KR6q0010', 'KR6q0011', 'KR6q0012', 'KR6q0013']
+>>> r.lpush("test", l)
+1L
+>>> r.lrange("test", 1 , r.llen("test"))
+[]
+>>> r.lrange("test", 0 , r.llen("test"))
+["['KR6q0002', 'KR6q0003', 'KR6q0004', 'KR6q0005', 'KR6q0006', 'KR6q0007', 'KR6q0008', 'KR6q0009', 'KR6q0010', 'KR6q0011', 'KR6q0012', 'KR6q0013']"]
+>>> r.lpush("test", *l)
+13L
+>>> r.lrange(ks, 0 , r.llen(ks))
+['KR6q0013', 'KR6q0012', 'KR6q0011', 'KR6q0010', 'KR6q0009', 'KR6q0008', 'KR6q0007', 'KR6q0006', 'KR6q0005', 'KR6q0004', 'KR6q0003', 'KR6q0002', "['KR6q0002', 'KR6q0003', 'KR6q0004', 'KR6q0005', 'KR6q0006', 'KR6q0007', 'KR6q0008', 'KR6q0009', 'KR6q0010', 'KR6q0011', 'KR6q0012', 'KR6q0013']"]
+>>> r.keys("kr_u*")
+['kr_user:cwittern$Favorites']
+>>> r.del('kr_user:cwittern$Favorites')
+  File "<stdin>", line 1
+    r.del('kr_user:cwittern$Favorites')
+        ^
+SyntaxError: invalid syntax
+>>> r.delete('kr_user:cwittern$Favorites')
+1
+>>> r.keys("kr_u*")
+[]
+>>> r.keys("kr_u*")
+['kr_user:cwittern$Favorites']
+>>> ks=r.keys("kr_u*")[0]
+>>> r.lrange(ks, 0 , r.llen(ks))
+['KR6q0013', 'KR6q0012', 'KR6q0011', 'KR6q0010', 'KR6q0009', 'KR6q0008', 'KR6q0007', 'KR6q0006', 'KR6q0005', 'KR6q0004', 'KR6q0003', 'KR6q0002']
+>>> ks=r.lrange("景德傳", 1, r.llen("景德傳"))
+>>> len(ks)
+183
+>>> k=ks[0]
+>>> k.split("\t")[1].split(':')[0].split("_")
+['KR6q0028', '040']
+>>> k.split("\t")[1].split(':')[0].split("_")[0]
+'KR6q0028'
+>>> "".split()[0]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
+>>> from github import Github
+>>> token="c08903f8991849a6820564ba86940d12adcce9ba"
+>>> g=Github(token)
+>>> u=g.get_user()
+>>> u
+<github.AuthenticatedUser.AuthenticatedUser object at 0x108299b90>
+>>> dir(u)
+['CHECK_AFTER_INIT_FLAG', '_CompletableGithubObject__complete', '_CompletableGithubObject__completed', '_GithubObject__makeSimpleAttribute', '_GithubObject__makeSimpleListAttribute', '_GithubObject__makeTransformedAttribute', '__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_avatar_url', '_bio', '_blog', '_collaborators', '_company', '_completeIfNeeded', '_completeIfNotSet', '_created_at', '_disk_usage', '_email', '_events_url', '_followers', '_followers_url', '_following', '_following_url', '_gists_url', '_gravatar_id', '_headers', '_hireable', '_html_url', '_id', '_initAttributes', '_location', '_login', '_makeBoolAttribute', '_makeClassAttribute', '_makeDatetimeAttribute', '_makeDictAttribute', '_makeDictOfStringsToClassesAttribute', '_makeIntAttribute', '_makeListOfClassesAttribute', '_makeListOfIntsAttribute', '_makeListOfListOfStringsAttribute', '_makeListOfStringsAttribute', '_makeStringAttribute', '_makeTimestampAttribute', '_name', '_organizations_url', '_owned_private_repos', '_parentUrl', '_plan', '_private_gists', '_public_gists', '_public_repos', '_rawData', '_received_events_url', '_repos_url', '_requester', '_site_admin', '_starred_url', '_storeAndUseAttributes', '_subscriptions_url', '_total_private_repos', '_type', '_updated_at', '_url', '_useAttributes', 'add_to_emails', 'add_to_following', 'add_to_starred', 'add_to_subscriptions', 'add_to_watched', 'avatar_url', 'bio', 'blog', 'collaborators', 'company', 'create_authorization', 'create_fork', 'create_gist', 'create_key', 'create_repo', 'created_at', 'disk_usage', 'edit', 'email', 'etag', 'events_url', 'followers', 'followers_url', 'following', 'following_url', 'get_authorization', 'get_authorizations', 'get_emails', 'get_events', 'get_followers', 'get_following', 'get_gists', 'get_issues', 'get_key', 'get_keys', 'get_notification', 'get_notifications', 'get_organization_events', 'get_orgs', 'get_repo', 'get_repos', 'get_starred', 'get_starred_gists', 'get_subscriptions', 'get_teams', 'get_user_issues', 'get_watched', 'gists_url', 'gravatar_id', 'has_in_following', 'has_in_starred', 'has_in_subscriptions', 'has_in_watched', 'hireable', 'html_url', 'id', 'last_modified', 'location', 'login', 'name', 'organizations_url', 'owned_private_repos', 'plan', 'private_gists', 'public_gists', 'public_repos', 'raw_data', 'raw_headers', 'received_events_url', 'remove_from_emails', 'remove_from_following', 'remove_from_starred', 'remove_from_subscriptions', 'remove_from_watched', 'repos_url', 'setCheckAfterInitFlag', 'site_admin', 'starred_url', 'subscriptions_url', 'total_private_repos', 'type', 'update', 'updated_at', 'url']
+>>> u.public_repos
+43
+>>> ws=g.get_repo("cwittern/KR-Workspace")
+>>> dir(ws)
+['CHECK_AFTER_INIT_FLAG', '_CompletableGithubObject__complete', '_CompletableGithubObject__completed', '_GithubObject__makeSimpleAttribute', '_GithubObject__makeSimpleListAttribute', '_GithubObject__makeTransformedAttribute', '_Repository__create_pull', '_Repository__create_pull_1', '_Repository__create_pull_2', '__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_archive_url', '_assignees_url', '_blobs_url', '_branches_url', '_clone_url', '_collaborators_url', '_comments_url', '_commits_url', '_compare_url', '_completeIfNeeded', '_completeIfNotSet', '_contents_url', '_contributors_url', '_created_at', '_default_branch', '_description', '_downloads_url', '_events_url', '_fork', '_forks', '_forks_count', '_forks_url', '_full_name', '_git_commits_url', '_git_refs_url', '_git_tags_url', '_git_url', '_has_downloads', '_has_issues', '_has_wiki', '_headers', '_homepage', '_hooks_url', '_html_url', '_hub', '_id', '_identity', '_initAttributes', '_issue_comment_url', '_issue_events_url', '_issues_url', '_keys_url', '_labels_url', '_language', '_languages_url', '_makeBoolAttribute', '_makeClassAttribute', '_makeDatetimeAttribute', '_makeDictAttribute', '_makeDictOfStringsToClassesAttribute', '_makeIntAttribute', '_makeListOfClassesAttribute', '_makeListOfIntsAttribute', '_makeListOfListOfStringsAttribute', '_makeListOfStringsAttribute', '_makeStringAttribute', '_makeTimestampAttribute', '_master_branch', '_merges_url', '_milestones_url', '_mirror_url', '_name', '_network_count', '_notifications_url', '_open_issues', '_open_issues_count', '_organization', '_owner', '_parent', '_parentUrl', '_permissions', '_private', '_pulls_url', '_pushed_at', '_rawData', '_requester', '_size', '_source', '_ssh_url', '_stargazers_count', '_stargazers_url', '_statuses_url', '_storeAndUseAttributes', '_subscribers_url', '_subscription_url', '_svn_url', '_tags_url', '_teams_url', '_trees_url', '_updated_at', '_url', '_useAttributes', '_watchers', '_watchers_count', 'add_to_collaborators', 'archive_url', 'assignees_url', 'blobs_url', 'branches_url', 'clone_url', 'collaborators_url', 'comments_url', 'commits_url', 'compare', 'compare_url', 'contents_url', 'contributors_url', 'create_content', 'create_git_blob', 'create_git_commit', 'create_git_ref', 'create_git_release', 'create_git_tag', 'create_git_tag_and_release', 'create_git_tree', 'create_hook', 'create_issue', 'create_key', 'create_label', 'create_milestone', 'create_pull', 'created_at', 'default_branch', 'delete', 'description', 'downloads_url', 'edit', 'etag', 'events_url', 'fork', 'forks', 'forks_count', 'forks_url', 'full_name', 'get_archive_link', 'get_assignees', 'get_branch', 'get_branches', 'get_collaborators', 'get_comment', 'get_comments', 'get_commit', 'get_commits', 'get_contents', 'get_contributors', 'get_dir_contents', 'get_download', 'get_downloads', 'get_events', 'get_file_contents', 'get_forks', 'get_git_blob', 'get_git_commit', 'get_git_ref', 'get_git_refs', 'get_git_tag', 'get_git_tree', 'get_hook', 'get_hooks', 'get_issue', 'get_issues', 'get_issues_comments', 'get_issues_event', 'get_issues_events', 'get_key', 'get_keys', 'get_label', 'get_labels', 'get_languages', 'get_milestone', 'get_milestones', 'get_network_events', 'get_pull', 'get_pulls', 'get_pulls_comments', 'get_pulls_review_comments', 'get_readme', 'get_release', 'get_releases', 'get_stargazers', 'get_stats_code_frequency', 'get_stats_commit_activity', 'get_stats_contributors', 'get_stats_participation', 'get_stats_punch_card', 'get_subscribers', 'get_tags', 'get_teams', 'get_watchers', 'git_commits_url', 'git_refs_url', 'git_tags_url', 'git_url', 'has_downloads', 'has_in_assignees', 'has_in_collaborators', 'has_issues', 'has_wiki', 'homepage', 'hooks_url', 'html_url', 'id', 'issue_comment_url', 'issue_events_url', 'issues_url', 'keys_url', 'labels_url', 'language', 'languages_url', 'last_modified', 'legacy_search_issues', 'master_branch', 'merge', 'merges_url', 'milestones_url', 'mirror_url', 'name', 'network_count', 'notifications_url', 'open_issues', 'open_issues_count', 'organization', 'owner', 'parent', 'permissions', 'private', 'pulls_url', 'pushed_at', 'raw_data', 'raw_headers', 'remove_from_collaborators', 'setCheckAfterInitFlag', 'size', 'source', 'ssh_url', 'stargazers_count', 'stargazers_url', 'statuses_url', 'subscribe_to_hub', 'subscribers_url', 'subscription_url', 'svn_url', 'tags_url', 'teams_url', 'trees_url', 'unsubscribe_from_hub', 'update', 'update_content', 'updated_at', 'url', 'watchers', 'watchers_count']
+>>> ws.name
+u'KR-Workspace'
+>>> ws.raw_data
+{u'issues_url': u'https://api.github.com/repos/cwittern/KR-Workspace/issues{/number}', u'stargazers_count': 0, u'forks_url': u'https://api.github.com/repos/cwittern/KR-Workspace/forks', u'mirror_url': None, u'subscription_url': u'https://api.github.com/repos/cwittern/KR-Workspace/subscription', u'notifications_url': u'https://api.github.com/repos/cwittern/KR-Workspace/notifications{?since,all,participating}', u'collaborators_url': u'https://api.github.com/repos/cwittern/KR-Workspace/collaborators{/collaborator}', u'updated_at': u'2015-10-06T06:27:38Z', u'private': False, u'pulls_url': u'https://api.github.com/repos/cwittern/KR-Workspace/pulls{/number}', u'issue_comment_url': u'https://api.github.com/repos/cwittern/KR-Workspace/issues/comments{/number}', u'labels_url': u'https://api.github.com/repos/cwittern/KR-Workspace/labels{/name}', u'has_wiki': True, u'full_name': u'cwittern/KR-Workspace', u'owner': {u'following_url': u'https://api.github.com/users/cwittern/following{/other_user}', u'events_url': u'https://api.github.com/users/cwittern/events{/privacy}', u'organizations_url': u'https://api.github.com/users/cwittern/orgs', u'url': u'https://api.github.com/users/cwittern', u'gists_url': u'https://api.github.com/users/cwittern/gists{/gist_id}', u'html_url': u'https://github.com/cwittern', u'subscriptions_url': u'https://api.github.com/users/cwittern/subscriptions', u'avatar_url': u'https://avatars.githubusercontent.com/u/443376?v=3', u'repos_url': u'https://api.github.com/users/cwittern/repos', u'received_events_url': u'https://api.github.com/users/cwittern/received_events', u'gravatar_id': u'', u'starred_url': u'https://api.github.com/users/cwittern/starred{/owner}{/repo}', u'site_admin': False, u'login': u'cwittern', u'type': u'User', u'id': 443376, u'followers_url': u'https://api.github.com/users/cwittern/followers'}, u'statuses_url': u'https://api.github.com/repos/cwittern/KR-Workspace/statuses/{sha}', u'id': 43794874, u'keys_url': u'https://api.github.com/repos/cwittern/KR-Workspace/keys{/key_id}', u'description': u'Template for user workspace', u'subscribers_count': 1, u'tags_url': u'https://api.github.com/repos/cwittern/KR-Workspace/tags', u'network_count': 4, u'downloads_url': u'https://api.github.com/repos/cwittern/KR-Workspace/downloads', u'assignees_url': u'https://api.github.com/repos/cwittern/KR-Workspace/assignees{/user}', u'contents_url': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/{+path}', u'has_pages': False, u'git_refs_url': u'https://api.github.com/repos/cwittern/KR-Workspace/git/refs{/sha}', u'open_issues_count': 0, u'source': {u'issues_url': u'https://api.github.com/repos/kanripo/KR-Workspace/issues{/number}', u'stargazers_count': 0, u'forks_url': u'https://api.github.com/repos/kanripo/KR-Workspace/forks', u'mirror_url': None, u'subscription_url': u'https://api.github.com/repos/kanripo/KR-Workspace/subscription', u'notifications_url': u'https://api.github.com/repos/kanripo/KR-Workspace/notifications{?since,all,participating}', u'collaborators_url': u'https://api.github.com/repos/kanripo/KR-Workspace/collaborators{/collaborator}', u'updated_at': u'2015-10-06T06:27:38Z', u'private': False, u'pulls_url': u'https://api.github.com/repos/kanripo/KR-Workspace/pulls{/number}', u'issue_comment_url': u'https://api.github.com/repos/kanripo/KR-Workspace/issues/comments{/number}', u'labels_url': u'https://api.github.com/repos/kanripo/KR-Workspace/labels{/name}', u'has_wiki': True, u'full_name': u'kanripo/KR-Workspace', u'owner': {u'following_url': u'https://api.github.com/users/kanripo/following{/other_user}', u'events_url': u'https://api.github.com/users/kanripo/events{/privacy}', u'organizations_url': u'https://api.github.com/users/kanripo/orgs', u'url': u'https://api.github.com/users/kanripo', u'gists_url': u'https://api.github.com/users/kanripo/gists{/gist_id}', u'html_url': u'https://github.com/kanripo', u'subscriptions_url': u'https://api.github.com/users/kanripo/subscriptions', u'avatar_url': u'https://avatars.githubusercontent.com/u/10704762?v=3', u'repos_url': u'https://api.github.com/users/kanripo/repos', u'received_events_url': u'https://api.github.com/users/kanripo/received_events', u'gravatar_id': u'', u'starred_url': u'https://api.github.com/users/kanripo/starred{/owner}{/repo}', u'site_admin': False, u'login': u'kanripo', u'type': u'Organization', u'id': 10704762, u'followers_url': u'https://api.github.com/users/kanripo/followers'}, u'statuses_url': u'https://api.github.com/repos/kanripo/KR-Workspace/statuses/{sha}', u'id': 43733650, u'keys_url': u'https://api.github.com/repos/kanripo/KR-Workspace/keys{/key_id}', u'description': u'Template for user workspace', u'tags_url': u'https://api.github.com/repos/kanripo/KR-Workspace/tags', u'downloads_url': u'https://api.github.com/repos/kanripo/KR-Workspace/downloads', u'assignees_url': u'https://api.github.com/repos/kanripo/KR-Workspace/assignees{/user}', u'contents_url': u'https://api.github.com/repos/kanripo/KR-Workspace/contents/{+path}', u'has_pages': False, u'git_refs_url': u'https://api.github.com/repos/kanripo/KR-Workspace/git/refs{/sha}', u'open_issues_count': 0, u'clone_url': u'https://github.com/kanripo/KR-Workspace.git', u'watchers_count': 0, u'git_tags_url': u'https://api.github.com/repos/kanripo/KR-Workspace/git/tags{/sha}', u'milestones_url': u'https://api.github.com/repos/kanripo/KR-Workspace/milestones{/number}', u'languages_url': u'https://api.github.com/repos/kanripo/KR-Workspace/languages', u'size': 102, u'homepage': None, u'fork': False, u'commits_url': u'https://api.github.com/repos/kanripo/KR-Workspace/commits{/sha}', u'releases_url': u'https://api.github.com/repos/kanripo/KR-Workspace/releases{/id}', u'issue_events_url': u'https://api.github.com/repos/kanripo/KR-Workspace/issues/events{/number}', u'archive_url': u'https://api.github.com/repos/kanripo/KR-Workspace/{archive_format}{/ref}', u'comments_url': u'https://api.github.com/repos/kanripo/KR-Workspace/comments{/number}', u'events_url': u'https://api.github.com/repos/kanripo/KR-Workspace/events', u'contributors_url': u'https://api.github.com/repos/kanripo/KR-Workspace/contributors', u'html_url': u'https://github.com/kanripo/KR-Workspace', u'forks': 4, u'compare_url': u'https://api.github.com/repos/kanripo/KR-Workspace/compare/{base}...{head}', u'open_issues': 0, u'git_url': u'git://github.com/kanripo/KR-Workspace.git', u'svn_url': u'https://github.com/kanripo/KR-Workspace', u'merges_url': u'https://api.github.com/repos/kanripo/KR-Workspace/merges', u'has_issues': True, u'ssh_url': u'git@github.com:kanripo/KR-Workspace.git', u'blobs_url': u'https://api.github.com/repos/kanripo/KR-Workspace/git/blobs{/sha}', u'git_commits_url': u'https://api.github.com/repos/kanripo/KR-Workspace/git/commits{/sha}', u'hooks_url': u'https://api.github.com/repos/kanripo/KR-Workspace/hooks', u'has_downloads': True, u'watchers': 0, u'name': u'KR-Workspace', u'language': None, u'url': u'https://api.github.com/repos/kanripo/KR-Workspace', u'created_at': u'2015-10-06T06:27:38Z', u'pushed_at': u'2015-10-10T03:07:47Z', u'forks_count': 4, u'default_branch': u'master', u'teams_url': u'https://api.github.com/repos/kanripo/KR-Workspace/teams', u'trees_url': u'https://api.github.com/repos/kanripo/KR-Workspace/git/trees{/sha}', u'branches_url': u'https://api.github.com/repos/kanripo/KR-Workspace/branches{/branch}', u'subscribers_url': u'https://api.github.com/repos/kanripo/KR-Workspace/subscribers', u'stargazers_url': u'https://api.github.com/repos/kanripo/KR-Workspace/stargazers'}, u'clone_url': u'https://github.com/cwittern/KR-Workspace.git', u'watchers_count': 0, u'git_tags_url': u'https://api.github.com/repos/cwittern/KR-Workspace/git/tags{/sha}', u'milestones_url': u'https://api.github.com/repos/cwittern/KR-Workspace/milestones{/number}', u'languages_url': u'https://api.github.com/repos/cwittern/KR-Workspace/languages', u'size': 110, u'homepage': None, u'fork': True, u'commits_url': u'https://api.github.com/repos/cwittern/KR-Workspace/commits{/sha}', u'releases_url': u'https://api.github.com/repos/cwittern/KR-Workspace/releases{/id}', u'issue_events_url': u'https://api.github.com/repos/cwittern/KR-Workspace/issues/events{/number}', u'parent': {u'issues_url': u'https://api.github.com/repos/kanripo/KR-Workspace/issues{/number}', u'stargazers_count': 0, u'forks_url': u'https://api.github.com/repos/kanripo/KR-Workspace/forks', u'mirror_url': None, u'subscription_url': u'https://api.github.com/repos/kanripo/KR-Workspace/subscription', u'notifications_url': u'https://api.github.com/repos/kanripo/KR-Workspace/notifications{?since,all,participating}', u'collaborators_url': u'https://api.github.com/repos/kanripo/KR-Workspace/collaborators{/collaborator}', u'updated_at': u'2015-10-06T06:27:38Z', u'private': False, u'pulls_url': u'https://api.github.com/repos/kanripo/KR-Workspace/pulls{/number}', u'issue_comment_url': u'https://api.github.com/repos/kanripo/KR-Workspace/issues/comments{/number}', u'labels_url': u'https://api.github.com/repos/kanripo/KR-Workspace/labels{/name}', u'has_wiki': True, u'full_name': u'kanripo/KR-Workspace', u'owner': {u'following_url': u'https://api.github.com/users/kanripo/following{/other_user}', u'events_url': u'https://api.github.com/users/kanripo/events{/privacy}', u'organizations_url': u'https://api.github.com/users/kanripo/orgs', u'url': u'https://api.github.com/users/kanripo', u'gists_url': u'https://api.github.com/users/kanripo/gists{/gist_id}', u'html_url': u'https://github.com/kanripo', u'subscriptions_url': u'https://api.github.com/users/kanripo/subscriptions', u'avatar_url': u'https://avatars.githubusercontent.com/u/10704762?v=3', u'repos_url': u'https://api.github.com/users/kanripo/repos', u'received_events_url': u'https://api.github.com/users/kanripo/received_events', u'gravatar_id': u'', u'starred_url': u'https://api.github.com/users/kanripo/starred{/owner}{/repo}', u'site_admin': False, u'login': u'kanripo', u'type': u'Organization', u'id': 10704762, u'followers_url': u'https://api.github.com/users/kanripo/followers'}, u'statuses_url': u'https://api.github.com/repos/kanripo/KR-Workspace/statuses/{sha}', u'id': 43733650, u'keys_url': u'https://api.github.com/repos/kanripo/KR-Workspace/keys{/key_id}', u'description': u'Template for user workspace', u'tags_url': u'https://api.github.com/repos/kanripo/KR-Workspace/tags', u'downloads_url': u'https://api.github.com/repos/kanripo/KR-Workspace/downloads', u'assignees_url': u'https://api.github.com/repos/kanripo/KR-Workspace/assignees{/user}', u'contents_url': u'https://api.github.com/repos/kanripo/KR-Workspace/contents/{+path}', u'has_pages': False, u'git_refs_url': u'https://api.github.com/repos/kanripo/KR-Workspace/git/refs{/sha}', u'open_issues_count': 0, u'clone_url': u'https://github.com/kanripo/KR-Workspace.git', u'watchers_count': 0, u'git_tags_url': u'https://api.github.com/repos/kanripo/KR-Workspace/git/tags{/sha}', u'milestones_url': u'https://api.github.com/repos/kanripo/KR-Workspace/milestones{/number}', u'languages_url': u'https://api.github.com/repos/kanripo/KR-Workspace/languages', u'size': 102, u'homepage': None, u'fork': False, u'commits_url': u'https://api.github.com/repos/kanripo/KR-Workspace/commits{/sha}', u'releases_url': u'https://api.github.com/repos/kanripo/KR-Workspace/releases{/id}', u'issue_events_url': u'https://api.github.com/repos/kanripo/KR-Workspace/issues/events{/number}', u'archive_url': u'https://api.github.com/repos/kanripo/KR-Workspace/{archive_format}{/ref}', u'comments_url': u'https://api.github.com/repos/kanripo/KR-Workspace/comments{/number}', u'events_url': u'https://api.github.com/repos/kanripo/KR-Workspace/events', u'contributors_url': u'https://api.github.com/repos/kanripo/KR-Workspace/contributors', u'html_url': u'https://github.com/kanripo/KR-Workspace', u'forks': 4, u'compare_url': u'https://api.github.com/repos/kanripo/KR-Workspace/compare/{base}...{head}', u'open_issues': 0, u'git_url': u'git://github.com/kanripo/KR-Workspace.git', u'svn_url': u'https://github.com/kanripo/KR-Workspace', u'merges_url': u'https://api.github.com/repos/kanripo/KR-Workspace/merges', u'has_issues': True, u'ssh_url': u'git@github.com:kanripo/KR-Workspace.git', u'blobs_url': u'https://api.github.com/repos/kanripo/KR-Workspace/git/blobs{/sha}', u'git_commits_url': u'https://api.github.com/repos/kanripo/KR-Workspace/git/commits{/sha}', u'hooks_url': u'https://api.github.com/repos/kanripo/KR-Workspace/hooks', u'has_downloads': True, u'watchers': 0, u'name': u'KR-Workspace', u'language': None, u'url': u'https://api.github.com/repos/kanripo/KR-Workspace', u'created_at': u'2015-10-06T06:27:38Z', u'pushed_at': u'2015-10-10T03:07:47Z', u'forks_count': 4, u'default_branch': u'master', u'teams_url': u'https://api.github.com/repos/kanripo/KR-Workspace/teams', u'trees_url': u'https://api.github.com/repos/kanripo/KR-Workspace/git/trees{/sha}', u'branches_url': u'https://api.github.com/repos/kanripo/KR-Workspace/branches{/branch}', u'subscribers_url': u'https://api.github.com/repos/kanripo/KR-Workspace/subscribers', u'stargazers_url': u'https://api.github.com/repos/kanripo/KR-Workspace/stargazers'}, u'archive_url': u'https://api.github.com/repos/cwittern/KR-Workspace/{archive_format}{/ref}', u'comments_url': u'https://api.github.com/repos/cwittern/KR-Workspace/comments{/number}', u'events_url': u'https://api.github.com/repos/cwittern/KR-Workspace/events', u'contributors_url': u'https://api.github.com/repos/cwittern/KR-Workspace/contributors', u'html_url': u'https://github.com/cwittern/KR-Workspace', u'forks': 0, u'compare_url': u'https://api.github.com/repos/cwittern/KR-Workspace/compare/{base}...{head}', u'open_issues': 0, u'git_url': u'git://github.com/cwittern/KR-Workspace.git', u'svn_url': u'https://github.com/cwittern/KR-Workspace', u'merges_url': u'https://api.github.com/repos/cwittern/KR-Workspace/merges', u'has_issues': False, u'ssh_url': u'git@github.com:cwittern/KR-Workspace.git', u'blobs_url': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs{/sha}', u'git_commits_url': u'https://api.github.com/repos/cwittern/KR-Workspace/git/commits{/sha}', u'hooks_url': u'https://api.github.com/repos/cwittern/KR-Workspace/hooks', u'has_downloads': True, u'watchers': 0, u'name': u'KR-Workspace', u'language': None, u'url': u'https://api.github.com/repos/cwittern/KR-Workspace', u'created_at': u'2015-10-07T04:22:11Z', u'pushed_at': u'2015-10-17T03:01:54Z', u'forks_count': 0, u'default_branch': u'cwittern', u'teams_url': u'https://api.github.com/repos/cwittern/KR-Workspace/teams', u'trees_url': u'https://api.github.com/repos/cwittern/KR-Workspace/git/trees{/sha}', u'branches_url': u'https://api.github.com/repos/cwittern/KR-Workspace/branches{/branch}', u'subscribers_url': u'https://api.github.com/repos/cwittern/KR-Workspace/subscribers', u'permissions': {u'admin': True, u'push': True, u'pull': True}, u'stargazers_url': u'https://api.github.com/repos/cwittern/KR-Workspace/stargazers'}
+>>> ws.getcontents
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'Repository' object has no attribute 'getcontents'
+>>> ws.get_contents
+<bound method Repository.get_contents of <github.Repository.Repository object at 0x108360650>>
+>>> ws.get_contents()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: get_contents() takes at least 2 arguments (1 given)
+>>> dir(ws.get_contents)
+['__call__', '__class__', '__cmp__', '__delattr__', '__doc__', '__format__', '__func__', '__get__', '__getattribute__', '__hash__', '__init__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__self__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', 'im_class', 'im_func', 'im_self']
+>>> help(ws.get_contents)
+Help on method get_contents in module github.Repository:
+
+get_contents(self, path, ref=NotSet) method of github.Repository.Repository instance
+    :calls: `GET /repos/:owner/:repo/contents/:path <http://developer.github.com/v3/repos/contents>`_
+    :param path: string
+    :param ref: string
+    :rtype: :class:`github.ContentFile.ContentFile`
+
+>>> ws.get_contents("/")
+<github.ContentFile.ContentFile object at 0x1083ef8d0>
+>>> c=ws.get_contents("/")
+>>> dir(c)
+['CHECK_AFTER_INIT_FLAG', '_CompletableGithubObject__complete', '_CompletableGithubObject__completed', '_GithubObject__makeSimpleAttribute', '_GithubObject__makeSimpleListAttribute', '_GithubObject__makeTransformedAttribute', '__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_completeIfNeeded', '_completeIfNotSet', '_content', '_encoding', '_git_url', '_headers', '_html_url', '_initAttributes', '_makeBoolAttribute', '_makeClassAttribute', '_makeDatetimeAttribute', '_makeDictAttribute', '_makeDictOfStringsToClassesAttribute', '_makeIntAttribute', '_makeListOfClassesAttribute', '_makeListOfIntsAttribute', '_makeListOfListOfStringsAttribute', '_makeListOfStringsAttribute', '_makeStringAttribute', '_makeTimestampAttribute', '_name', '_parentUrl', '_path', '_rawData', '_repository', '_requester', '_sha', '_size', '_storeAndUseAttributes', '_type', '_useAttributes', 'content', 'decoded_content', 'encoding', 'etag', 'git_url', 'html_url', 'last_modified', 'name', 'path', 'raw_data', 'raw_headers', 'repository', 'setCheckAfterInitFlag', 'sha', 'size', 'type', 'update', 'url']
+>>> c.content
+>>> c.repository
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/chris/src/PyGithub/github/ContentFile.py", line 106, in repository
+    repo_url = "/".join(self.url.split("/")[:6])  # pragma no cover (Should be covered)
+  File "/Users/chris/src/PyGithub/github/ContentFile.py", line 139, in url
+    self._completeIfNotSet(self._url)
+AttributeError: 'ContentFile' object has no attribute '_url'
+>>> c=ws.get_contents("")
+>>> c.content
+>>> c=ws.get_contents("Texts", "cwittern")
+>>> c
+<github.ContentFile.ContentFile object at 0x10847df90>
+>>> c.content
+>>> dir(c)
+['CHECK_AFTER_INIT_FLAG', '_CompletableGithubObject__complete', '_CompletableGithubObject__completed', '_GithubObject__makeSimpleAttribute', '_GithubObject__makeSimpleListAttribute', '_GithubObject__makeTransformedAttribute', '__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_completeIfNeeded', '_completeIfNotSet', '_content', '_encoding', '_git_url', '_headers', '_html_url', '_initAttributes', '_makeBoolAttribute', '_makeClassAttribute', '_makeDatetimeAttribute', '_makeDictAttribute', '_makeDictOfStringsToClassesAttribute', '_makeIntAttribute', '_makeListOfClassesAttribute', '_makeListOfIntsAttribute', '_makeListOfListOfStringsAttribute', '_makeListOfStringsAttribute', '_makeStringAttribute', '_makeTimestampAttribute', '_name', '_parentUrl', '_path', '_rawData', '_repository', '_requester', '_sha', '_size', '_storeAndUseAttributes', '_type', '_useAttributes', 'content', 'decoded_content', 'encoding', 'etag', 'git_url', 'html_url', 'last_modified', 'name', 'path', 'raw_data', 'raw_headers', 'repository', 'setCheckAfterInitFlag', 'sha', 'size', 'type', 'update', 'url']
+>>> c.raw_data
+[{u'name': u'Favorites.txt', u'url': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/Favorites.txt?ref=cwittern', u'html_url': u'https://github.com/cwittern/KR-Workspace/blob/cwittern/Texts/Favorites.txt', u'download_url': u'https://raw.githubusercontent.com/cwittern/KR-Workspace/cwittern/Texts/Favorites.txt', u'sha': u'ae90b44fa7ecb938451660c5ec3b377d2560535f', u'_links': {u'self': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/Favorites.txt?ref=cwittern', u'git': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/ae90b44fa7ecb938451660c5ec3b377d2560535f', u'html': u'https://github.com/cwittern/KR-Workspace/blob/cwittern/Texts/Favorites.txt'}, u'git_url': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/ae90b44fa7ecb938451660c5ec3b377d2560535f', u'path': u'Texts/Favorites.txt', u'type': u'file', u'size': 470}, {u'name': u'README.org', u'url': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/README.org?ref=cwittern', u'html_url': u'https://github.com/cwittern/KR-Workspace/blob/cwittern/Texts/README.org', u'download_url': u'https://raw.githubusercontent.com/cwittern/KR-Workspace/cwittern/Texts/README.org', u'sha': u'8dbce4309395abb4fde14d994eda7758eafcde13', u'_links': {u'self': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/README.org?ref=cwittern', u'git': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/8dbce4309395abb4fde14d994eda7758eafcde13', u'html': u'https://github.com/cwittern/KR-Workspace/blob/cwittern/Texts/README.org'}, u'git_url': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/8dbce4309395abb4fde14d994eda7758eafcde13', u'path': u'Texts/README.org', u'type': u'file', u'size': 70}]
+>>> c.name
+>>> c['name']
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'ContentFile' object has no attribute '__Getitem__'
+>>> c.path
+>>> c.raw_data.json()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'list' object has no attribute 'json'
+>>> c1=c.raw_data[0]
+>>> c1
+{u'name': u'Favorites.txt', u'url': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/Favorites.txt?ref=cwittern', u'html_url': u'https://github.com/cwittern/KR-Workspace/blob/cwittern/Texts/Favorites.txt', u'download_url': u'https://raw.githubusercontent.com/cwittern/KR-Workspace/cwittern/Texts/Favorites.txt', u'sha': u'ae90b44fa7ecb938451660c5ec3b377d2560535f', u'_links': {u'self': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/Favorites.txt?ref=cwittern', u'git': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/ae90b44fa7ecb938451660c5ec3b377d2560535f', u'html': u'https://github.com/cwittern/KR-Workspace/blob/cwittern/Texts/Favorites.txt'}, u'git_url': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/ae90b44fa7ecb938451660c5ec3b377d2560535f', u'path': u'Texts/Favorites.txt', u'type': u'file', u'size': 470}
+>>> len(c.raw_data)
+2
+>>> c1['name']
+u'Favorites.txt'
+>>> c1.keys()
+[u'name', u'url', u'html_url', u'download_url', u'sha', u'_links', u'git_url', u'path', u'type', u'size']
+>>> c1['path']
+u'Texts/Favorites.txt'
+>>> c=ws.get_contents("Texts", "master")
+>>> c1=c.raw_data[0]
+>>> c1['name']
+u'Favorites.txt'
+>>> c=ws.get_contents("Texts", "master")
+>>> c1=c.raw_data[0]
+>>> c1['name']
+u'README.org'
+>>> c=ws.get_contents("Texts", "cwittern")
+>>> c1
+{u'name': u'README.org', u'url': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/README.org?ref=master', u'html_url': u'https://github.com/cwittern/KR-Workspace/blob/master/Texts/README.org', u'download_url': u'https://raw.githubusercontent.com/cwittern/KR-Workspace/master/Texts/README.org', u'sha': u'8dbce4309395abb4fde14d994eda7758eafcde13', u'_links': {u'self': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/README.org?ref=master', u'git': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/8dbce4309395abb4fde14d994eda7758eafcde13', u'html': u'https://github.com/cwittern/KR-Workspace/blob/master/Texts/README.org'}, u'git_url': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/8dbce4309395abb4fde14d994eda7758eafcde13', u'path': u'Texts/README.org', u'type': u'file', u'size': 70}
+>>> c1.keys()
+[u'name', u'url', u'html_url', u'download_url', u'sha', u'_links', u'git_url', u'path', u'type', u'size']
+>>> c1['url']
+u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/README.org?ref=master'
+>>> for a in c1:
+...   print a
+... 
+name
+url
+html_url
+download_url
+sha
+_links
+git_url
+path
+type
+size
+>>> for a in c1:
+...   print a, c1[a]
+... 
+name README.org
+url https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/README.org?ref=master
+html_url https://github.com/cwittern/KR-Workspace/blob/master/Texts/README.org
+download_url https://raw.githubusercontent.com/cwittern/KR-Workspace/master/Texts/README.org
+sha 8dbce4309395abb4fde14d994eda7758eafcde13
+_links {u'self': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/README.org?ref=master', u'git': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/8dbce4309395abb4fde14d994eda7758eafcde13', u'html': u'https://github.com/cwittern/KR-Workspace/blob/master/Texts/README.org'}
+git_url https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/8dbce4309395abb4fde14d994eda7758eafcde13
+path Texts/README.org
+type file
+size 70
+>>> c1
+{u'name': u'README.org', u'url': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/README.org?ref=master', u'html_url': u'https://github.com/cwittern/KR-Workspace/blob/master/Texts/README.org', u'download_url': u'https://raw.githubusercontent.com/cwittern/KR-Workspace/master/Texts/README.org', u'sha': u'8dbce4309395abb4fde14d994eda7758eafcde13', u'_links': {u'self': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/README.org?ref=master', u'git': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/8dbce4309395abb4fde14d994eda7758eafcde13', u'html': u'https://github.com/cwittern/KR-Workspace/blob/master/Texts/README.org'}, u'git_url': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/8dbce4309395abb4fde14d994eda7758eafcde13', u'path': u'Texts/README.org', u'type': u'file', u'size': 70}
+>>> dir(c1)
+['__class__', '__cmp__', '__contains__', '__delattr__', '__delitem__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__gt__', '__hash__', '__init__', '__iter__', '__le__', '__len__', '__lt__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setitem__', '__sizeof__', '__str__', '__subclasshook__', 'clear', 'copy', 'fromkeys', 'get', 'has_key', 'items', 'iteritems', 'iterkeys', 'itervalues', 'keys', 'pop', 'popitem', 'setdefault', 'update', 'values', 'viewitems', 'viewkeys', 'viewvalues']
+>>> c1.delete('name')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'dict' object has no attribute 'delete'
+>>> c1.del('name')
+  File "<stdin>", line 1
+    c1.del('name')
+         ^
+SyntaxError: invalid syntax
+>>> del(c1['name'])
+>>> c1
+{u'url': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/README.org?ref=master', u'html_url': u'https://github.com/cwittern/KR-Workspace/blob/master/Texts/README.org', u'download_url': u'https://raw.githubusercontent.com/cwittern/KR-Workspace/master/Texts/README.org', u'sha': u'8dbce4309395abb4fde14d994eda7758eafcde13', u'_links': {u'self': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/README.org?ref=master', u'git': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/8dbce4309395abb4fde14d994eda7758eafcde13', u'html': u'https://github.com/cwittern/KR-Workspace/blob/master/Texts/README.org'}, u'git_url': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/8dbce4309395abb4fde14d994eda7758eafcde13', u'path': u'Texts/README.org', u'type': u'file', u'size': 70}
+>>> del(c1['name'])
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+KeyError: 'name'
+>>> c1
+{u'url': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/README.org?ref=master', u'html_url': u'https://github.com/cwittern/KR-Workspace/blob/master/Texts/README.org', u'download_url': u'https://raw.githubusercontent.com/cwittern/KR-Workspace/master/Texts/README.org', u'sha': u'8dbce4309395abb4fde14d994eda7758eafcde13', u'_links': {u'self': u'https://api.github.com/repos/cwittern/KR-Workspace/contents/Texts/README.org?ref=master', u'git': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/8dbce4309395abb4fde14d994eda7758eafcde13', u'html': u'https://github.com/cwittern/KR-Workspace/blob/master/Texts/README.org'}, u'git_url': u'https://api.github.com/repos/cwittern/KR-Workspace/git/blobs/8dbce4309395abb4fde14d994eda7758eafcde13', u'path': u'Texts/README.org', u'type': u'file', u'size': 70}
+>>> dir(c1)
+['__class__', '__cmp__', '__contains__', '__delattr__', '__delitem__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__gt__', '__hash__', '__init__', '__iter__', '__le__', '__len__', '__lt__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setitem__', '__sizeof__', '__str__', '__subclasshook__', 'clear', 'copy', 'fromkeys', 'get', 'has_key', 'items', 'iteritems', 'iterkeys', 'itervalues', 'keys', 'pop', 'popitem', 'setdefault', 'update', 'values', 'viewitems', 'viewkeys', 'viewvalues']
+>>> from collections import defaultdict
+>>> d1 = defaultdict(int)
+>>> dir(d1)
+['__class__', '__cmp__', '__contains__', '__copy__', '__delattr__', '__delitem__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__gt__', '__hash__', '__init__', '__iter__', '__le__', '__len__', '__lt__', '__missing__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setitem__', '__sizeof__', '__str__', '__subclasshook__', 'clear', 'copy', 'default_factory', 'fromkeys', 'get', 'has_key', 'items', 'iteritems', 'iterkeys', 'itervalues', 'keys', 'pop', 'popitem', 'setdefault', 'update', 'values', 'viewitems', 'viewkeys', 'viewvalues']
+>>> d1.update("d")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: dictionary update sequence element #0 has length 1; 2 is required
+>>> d1 = defaultdict(list)
+>>> d1.update("d")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: dictionary update sequence element #0 has length 1; 2 is required
+>>> d1
+defaultdict(<type 'list'>, {})
+>>> d1["c"].append("1")
+>>> d1
+defaultdict(<type 'list'>, {'c': ['1']})
+>>> d1["c"].append(1)
+>>> d1
+defaultdict(<type 'list'>, {'c': ['1', 1]})
+>>> d1 = defaultdict(int)
+>>> d1["c"].append(1)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'int' object has no attribute 'append'
+>>> dir(int)
+['__abs__', '__add__', '__and__', '__class__', '__cmp__', '__coerce__', '__delattr__', '__div__', '__divmod__', '__doc__', '__float__', '__floordiv__', '__format__', '__getattribute__', '__getnewargs__', '__hash__', '__hex__', '__index__', '__init__', '__int__', '__invert__', '__long__', '__lshift__', '__mod__', '__mul__', '__neg__', '__new__', '__nonzero__', '__oct__', '__or__', '__pos__', '__pow__', '__radd__', '__rand__', '__rdiv__', '__rdivmod__', '__reduce__', '__reduce_ex__', '__repr__', '__rfloordiv__', '__rlshift__', '__rmod__', '__rmul__', '__ror__', '__rpow__', '__rrshift__', '__rshift__', '__rsub__', '__rtruediv__', '__rxor__', '__setattr__', '__sizeof__', '__str__', '__sub__', '__subclasshook__', '__truediv__', '__trunc__', '__xor__', 'bit_length', 'conjugate', 'denominator', 'imag', 'numerator', 'real']
+>>> d1["c"].add(1)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'int' object has no attribute 'add'
+>>> d1["c"].__add__(1)
+1
+>>> d1["c"].__add__(1)
+1
+>>> d1
+defaultdict(<type 'int'>, {'c': 0})
+>>> d1["c"].__add__(2)
+2
+>>> d1
+defaultdict(<type 'int'>, {'c': 0})
+>>> import base64
+>>> ec = base64.b64encode("Test\n")
+>>> ec
+'VGVzdAo='
+>>> import urllib2
+>>> import urllib
+>>> t=u"靈峰蕅"
+>>> t
+u'\u9748\u5cf0\u8545'
+>>> urllib.quote_plus(t)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/chris/.pyenv/versions/2.7.10/lib/python2.7/urllib.py", line 1310, in quote_plus
+    return quote(s, safe)
+  File "/Users/chris/.pyenv/versions/2.7.10/lib/python2.7/urllib.py", line 1303, in quote
+    return ''.join(map(quoter, s))
+KeyError: u'\u9748'
+>>> urllib.urlencode(t)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/chris/.pyenv/versions/2.7.10/lib/python2.7/urllib.py", line 1333, in urlencode
+    raise TypeError
+TypeError: not a valid non-string sequence or mapping object
+>>> urllib.urlquote(t)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'module' object has no attribute 'urlquote'
+>>> urllib.quote(t)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/chris/.pyenv/versions/2.7.10/lib/python2.7/urllib.py", line 1303, in quote
+    return ''.join(map(quoter, s))
+KeyError: u'\u9748'
+>>> urllib.pathname2url(t)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/chris/.pyenv/versions/2.7.10/lib/python2.7/urllib.py", line 61, in pathname2url
+    return quote(pathname)
+  File "/Users/chris/.pyenv/versions/2.7.10/lib/python2.7/urllib.py", line 1303, in quote
+    return ''.join(map(quoter, s))
+KeyError: u'\u9748'
+>>> urllib.pathname2url(t.decode("utf-8"))
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/chris/.pyenv/versions/2.7.10/lib/python2.7/urllib.py", line 61, in pathname2url
+    return quote(pathname)
+  File "/Users/chris/.pyenv/versions/2.7.10/lib/python2.7/urllib.py", line 1303, in quote
+    return ''.join(map(quoter, s))
+KeyError: u'\u9748'
+>>> urllib.pathname2url(t.encode("utf-8"))
+'%E9%9D%88%E5%B3%B0%E8%95%85'
+>>> urllib.urlencode(t.encode("utf-8"))
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/chris/.pyenv/versions/2.7.10/lib/python2.7/urllib.py", line 1333, in urlencode
+    raise TypeError
+TypeError: not a valid non-string sequence or mapping object
+>>> urllib.quote_plus(t.encode("utf-8"))
+'%E9%9D%88%E5%B3%B0%E8%95%85'
+>>> r.keys("kr_user:cwittern$Favorites")
+['kr_user:cwittern$Favorites']
+>>> r.keys("kr_user:cwittern*")
+['kr_user:cwittern$Favorites']
+>>> [a for a in r.keys("kr_user:cwittern*")]
+['kr_user:cwittern$Favorites']
+>>> [a.split("$")[-1] for a in r.keys("kr_user:cwittern*")]
+['Favorites']
+>>> [a.split("$")[-1] for a in r.keys("kr_user:cwittern$*")]
+['Favorites']
+>>> [a.split("$")[-1] for a in r.keys("kr_user:cwittern$*")]
+['Favorites']
+>>> [a.split("$")[-1] for a in r.keys("kr_user:cwittern$*")]
+['\xe4\xb8\x89\xe6\x89\x8d', 'Favorites']
+>>> [(a.split("$")[-1], r.llen(a)) for a in r.keys("kr_user:cwittern$*")]
+[('\xe4\xb8\x89\xe6\x89\x8d', 2), ('Favorites', 24)]
+>>> r.ssad("kr_user:cwittern:searchkeys", "as")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'Redis' object has no attribute 'ssad'
+>>> r.ssad("kr_user:cwittern:searchkeys", "as")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'Redis' object has no attribute 'ssad'
+>>> dir(r)
+['RESPONSE_CALLBACKS', '__class__', '__contains__', '__delattr__', '__delitem__', '__dict__', '__doc__', '__format__', '__getattribute__', '__getitem__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__setitem__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_use_lua_lock', '_zaggregate', 'append', 'bgrewriteaof', 'bgsave', 'bitcount', 'bitop', 'bitpos', 'blpop', 'brpop', 'brpoplpush', 'client_getname', 'client_kill', 'client_list', 'client_setname', 'config_get', 'config_resetstat', 'config_rewrite', 'config_set', 'connection_pool', 'dbsize', 'debug_object', 'decr', 'delete', 'dump', 'echo', 'eval', 'evalsha', 'execute_command', 'exists', 'expire', 'expireat', 'flushall', 'flushdb', 'from_url', 'get', 'getbit', 'getrange', 'getset', 'hdel', 'hexists', 'hget', 'hgetall', 'hincrby', 'hincrbyfloat', 'hkeys', 'hlen', 'hmget', 'hmset', 'hscan', 'hscan_iter', 'hset', 'hsetnx', 'hvals', 'incr', 'incrby', 'incrbyfloat', 'info', 'keys', 'lastsave', 'lindex', 'linsert', 'llen', 'lock', 'lpop', 'lpush', 'lpushx', 'lrange', 'lrem', 'lset', 'ltrim', 'mget', 'move', 'mset', 'msetnx', 'object', 'parse_response', 'persist', 'pexpire', 'pexpireat', 'pfadd', 'pfcount', 'pfmerge', 'ping', 'pipeline', 'psetex', 'pttl', 'publish', 'pubsub', 'randomkey', 'register_script', 'rename', 'renamenx', 'response_callbacks', 'restore', 'rpop', 'rpoplpush', 'rpush', 'rpushx', 'sadd', 'save', 'scan', 'scan_iter', 'scard', 'script_exists', 'script_flush', 'script_kill', 'script_load', 'sdiff', 'sdiffstore', 'sentinel', 'sentinel_get_master_addr_by_name', 'sentinel_master', 'sentinel_masters', 'sentinel_monitor', 'sentinel_remove', 'sentinel_sentinels', 'sentinel_set', 'sentinel_slaves', 'set', 'set_response_callback', 'setbit', 'setex', 'setnx', 'setrange', 'shutdown', 'sinter', 'sinterstore', 'sismember', 'slaveof', 'slowlog_get', 'slowlog_len', 'slowlog_reset', 'smembers', 'smove', 'sort', 'spop', 'srandmember', 'srem', 'sscan', 'sscan_iter', 'strlen', 'substr', 'sunion', 'sunionstore', 'time', 'transaction', 'ttl', 'type', 'unwatch', 'watch', 'zadd', 'zcard', 'zcount', 'zincrby', 'zinterstore', 'zlexcount', 'zrange', 'zrangebylex', 'zrangebyscore', 'zrank', 'zrem', 'zremrangebylex', 'zremrangebyrank', 'zremrangebyscore', 'zrevrange', 'zrevrangebyscore', 'zrevrank', 'zscan', 'zscan_iter', 'zscore', 'zunionstore']
+>>> r.sadd("kr_user:cwittern:searchkeys", "as")
+1
+>>> r.sadd("kr_user:cwittern:searchkeys", "as")
+0
+>>> r.sadd("kr_user:cwittern:searchkeys", "as1")
+1
+>>> r.llen("kr_user:cwittern:searchkeys")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/chris/.pyenv/versions/venv/lib/python2.7/site-packages/redis/client.py", line 1202, in llen
+    return self.execute_command('LLEN', name)
+  File "/Users/chris/.pyenv/versions/venv/lib/python2.7/site-packages/redis/client.py", line 565, in execute_command
+    return self.parse_response(connection, command_name, **options)
+  File "/Users/chris/.pyenv/versions/venv/lib/python2.7/site-packages/redis/client.py", line 577, in parse_response
+    response = connection.read_response()
+  File "/Users/chris/.pyenv/versions/venv/lib/python2.7/site-packages/redis/connection.py", line 574, in read_response
+    raise response
+redis.exceptions.ResponseError: WRONGTYPE Operation against a key holding the wrong kind of value
+>>> r.scard("kr_user:cwittern:searchkeys")
+2
+>>> r.scard("kr_user:cwittern:searchkeys")
+2
+>>> r.keys("kr_user*")
+['kr_user:cwittern$\xe4\xb8\x89\xe6\x89\x8d', 'kr_user:cwittern$Favorites', 'kr_user:cwittern:searchkeys', 'kr_usercwittern:searchkeys']
+>>> r.scard("kr_user:cwittern:searchkeys")
+3
+>>> r.delete("kr_user:cwittern:searchkeys")
+1
+>>> r.scard("kr_user:cwittern:searchkeys")
+0
+>>> f=u"/Users/Shared/krpdev/gh/KR1a/KR1a0002/Readme.org"
+>>> import codecs
+>>> fn=codecs.open(f, "r", "utf-8").read(-1)
+>>> lines=fn.split("\n")
+>>> len(lines)
+18
+>>> for l in lines:
+...   print l[:-1]
+... 
+#+TITLE: 子夏易傳 / WY
+#+DATE: 2015-08-24 21:53:12.26387
+* 版
+ |       WYG|【四庫全書・文淵閣】
+目
+ - [[file:KR1a0002_000.txt::000-1a][子夏易傳 提要]
+ - [[file:KR1a0002_001.txt::001-1a][子夏易傳 卷一]
+ - [[file:KR1a0002_002.txt::002-1a][子夏易傳 卷二]
+ - [[file:KR1a0002_003.txt::003-1a][子夏易傳 卷三]
+ - [[file:KR1a0002_004.txt::004-1a][子夏易傳 卷四]
+ - [[file:KR1a0002_005.txt::005-1a][子夏易傳 卷五]
+ - [[file:KR1a0002_006.txt::006-1a][子夏易傳 卷六]
+ - [[file:KR1a0002_007.txt::007-1a][子夏易傳 卷七]
+ - [[file:KR1a0002_008.txt::008-1a][子夏易傳 卷八]
+ - [[file:KR1a0002_009.txt::009-1a][子夏易傳 卷九]
+ - [[file:KR1a0002_010.txt::010-1a][子夏易傳 卷十]
+ - [[file:KR1a0002_011.txt::011-1a][子夏易傳 卷十一]
+
+>>> import re
+>>> l
+u''
+>>> l=u"[[file:KR1a0002_011.txt::011-1a][子夏易傳 卷十一]"
+>>> l
+u'[[file:KR1a0002_011.txt::011-1a][\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00]'
+>>> re.sub(r"\[\[([^]]+)\]\[([^]]+)\]", l)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: sub() takes at least 3 arguments (2 given)
+>>> re.sub(r"\[\[([^]]+)\]\[([^]]+)\]", "", l)
+u''
+>>> re.sub(r"\[\[([^]]+)\]\[([^]]+)\]", "x", l)
+u'x'
+>>> re.sub(r"\[\[([^]]+)\]\[([^]]+)\]", "\\1", l)
+u'file:KR1a0002_011.txt::011-1a'
+>>> re.sub(r"\[\[([^]]+)\]\[([^]]+)\]", "<a href='\\1'>\\2</a>", l)
+u"<a href='file:KR1a0002_011.txt::011-1a'>\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00</a>"
+>>> print re.sub(r"\[\[([^]]+)\]\[([^]]+)\]", "<a href='\\1'>\\2</a>", l)
+<a href='file:KR1a0002_011.txt::011-1a'>子夏易傳 卷十一</a>
+>>> print re.sub(r"\[\[file:([^]]+)\]\[([^]]+)\]", "<a href='text/\\1'>\\2</a>", l)
+<a href='KR1a0002_011.txt::011-1a'>子夏易傳 卷十一</a>
+>>> print re.sub(r"\[\[file:([^]]+)\]\[([^]]+)\]", "<a href='text/\\1'>\\2</a>", l)
+<a href='text/KR1a0002_011.txt::011-1a'>子夏易傳 卷十一</a>
+>>> r1= re.sub(r"\[\[file:([^]]+)\]\[([^]]+)\]", "<a href='text/\\1'>\\2</a>", l)
+>>> r1
+u"<a href='text/KR1a0002_011.txt::011-1a'>\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00</a>"
+>>> print re.sub(r"\[\[file:([^_]+)[^-]+-([^]]+)\]\[([^]]+)\]", "<a href='text/\\1'>\\2</a>", l)
+<a href='text/KR1a0002'>1a</a>
+>>> print re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", "<a href='text/\\1'>\\2</a>", l)
+<a href='text/KR1a0002'>011</a>
+>>> print re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", "<a href='text/\\1/\\2#\\3'>\\4</a>", l)
+<a href='text/KR1a0002/011#1a'>子夏易傳 卷十一</a>
+>>> r2=u" |     CBETA|【電子佛典集成】|"
+>>> r2.split("|")
+[u' ', u'     CBETA', u'\u3010\u96fb\u5b50\u4f5b\u5178\u96c6\u6210\u3011', u'']
+>>> r2.strip().split("|")
+[u'', u'     CBETA', u'\u3010\u96fb\u5b50\u4f5b\u5178\u96c6\u6210\u3011', u'']
+>>> r3=r2.strip().split("|")
+>>> len(r3)
+4
+>>> gh
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'gh' is not defined
+>>> gh=Github()
+>>> dir(gh)
+['FIX_REPO_GET_GIT_REF', '_Github__get_FIX_REPO_GET_GIT_REF', '_Github__get_per_page', '_Github__requester', '_Github__set_FIX_REPO_GET_GIT_REF', '_Github__set_per_page', '__class__', '__delattr__', '__dict__', '__doc__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'create_from_raw_data', 'dump', 'get_api_status', 'get_api_status_messages', 'get_emojis', 'get_gist', 'get_gists', 'get_gitignore_template', 'get_gitignore_templates', 'get_hook', 'get_hooks', 'get_last_api_status_message', 'get_organization', 'get_rate_limit', 'get_repo', 'get_repos', 'get_user', 'get_users', 'legacy_search_repos', 'legacy_search_user_by_email', 'legacy_search_users', 'load', 'oauth_scopes', 'per_page', 'rate_limiting', 'rate_limiting_resettime', 'render_markdown', 'search_code', 'search_issues', 'search_repositories', 'search_users']
+>>> gh.get_repo("kanripo/KR2a0005")
+<github.Repository.Repository object at 0x108094110>
+>>> k2=gh.get_repo("kanripo/KR2a0005")
+>>> dir(k2)
+['CHECK_AFTER_INIT_FLAG', '_CompletableGithubObject__complete', '_CompletableGithubObject__completed', '_GithubObject__makeSimpleAttribute', '_GithubObject__makeSimpleListAttribute', '_GithubObject__makeTransformedAttribute', '_Repository__create_pull', '_Repository__create_pull_1', '_Repository__create_pull_2', '__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_archive_url', '_assignees_url', '_blobs_url', '_branches_url', '_clone_url', '_collaborators_url', '_comments_url', '_commits_url', '_compare_url', '_completeIfNeeded', '_completeIfNotSet', '_contents_url', '_contributors_url', '_created_at', '_default_branch', '_description', '_downloads_url', '_events_url', '_fork', '_forks', '_forks_count', '_forks_url', '_full_name', '_git_commits_url', '_git_refs_url', '_git_tags_url', '_git_url', '_has_downloads', '_has_issues', '_has_wiki', '_headers', '_homepage', '_hooks_url', '_html_url', '_hub', '_id', '_identity', '_initAttributes', '_issue_comment_url', '_issue_events_url', '_issues_url', '_keys_url', '_labels_url', '_language', '_languages_url', '_makeBoolAttribute', '_makeClassAttribute', '_makeDatetimeAttribute', '_makeDictAttribute', '_makeDictOfStringsToClassesAttribute', '_makeIntAttribute', '_makeListOfClassesAttribute', '_makeListOfIntsAttribute', '_makeListOfListOfStringsAttribute', '_makeListOfStringsAttribute', '_makeStringAttribute', '_makeTimestampAttribute', '_master_branch', '_merges_url', '_milestones_url', '_mirror_url', '_name', '_network_count', '_notifications_url', '_open_issues', '_open_issues_count', '_organization', '_owner', '_parent', '_parentUrl', '_permissions', '_private', '_pulls_url', '_pushed_at', '_rawData', '_requester', '_size', '_source', '_ssh_url', '_stargazers_count', '_stargazers_url', '_statuses_url', '_storeAndUseAttributes', '_subscribers_url', '_subscription_url', '_svn_url', '_tags_url', '_teams_url', '_trees_url', '_updated_at', '_url', '_useAttributes', '_watchers', '_watchers_count', 'add_to_collaborators', 'archive_url', 'assignees_url', 'blobs_url', 'branches_url', 'clone_url', 'collaborators_url', 'comments_url', 'commits_url', 'compare', 'compare_url', 'contents_url', 'contributors_url', 'create_content', 'create_git_blob', 'create_git_commit', 'create_git_ref', 'create_git_release', 'create_git_tag', 'create_git_tag_and_release', 'create_git_tree', 'create_hook', 'create_issue', 'create_key', 'create_label', 'create_milestone', 'create_pull', 'created_at', 'default_branch', 'delete', 'description', 'downloads_url', 'edit', 'etag', 'events_url', 'fork', 'forks', 'forks_count', 'forks_url', 'full_name', 'get_archive_link', 'get_assignees', 'get_branch', 'get_branches', 'get_collaborators', 'get_comment', 'get_comments', 'get_commit', 'get_commits', 'get_contents', 'get_contributors', 'get_dir_contents', 'get_download', 'get_downloads', 'get_events', 'get_file_contents', 'get_forks', 'get_git_blob', 'get_git_commit', 'get_git_ref', 'get_git_refs', 'get_git_tag', 'get_git_tree', 'get_hook', 'get_hooks', 'get_issue', 'get_issues', 'get_issues_comments', 'get_issues_event', 'get_issues_events', 'get_key', 'get_keys', 'get_label', 'get_labels', 'get_languages', 'get_milestone', 'get_milestones', 'get_network_events', 'get_pull', 'get_pulls', 'get_pulls_comments', 'get_pulls_review_comments', 'get_readme', 'get_release', 'get_releases', 'get_stargazers', 'get_stats_code_frequency', 'get_stats_commit_activity', 'get_stats_contributors', 'get_stats_participation', 'get_stats_punch_card', 'get_subscribers', 'get_tags', 'get_teams', 'get_watchers', 'git_commits_url', 'git_refs_url', 'git_tags_url', 'git_url', 'has_downloads', 'has_in_assignees', 'has_in_collaborators', 'has_issues', 'has_wiki', 'homepage', 'hooks_url', 'html_url', 'id', 'issue_comment_url', 'issue_events_url', 'issues_url', 'keys_url', 'labels_url', 'language', 'languages_url', 'last_modified', 'legacy_search_issues', 'master_branch', 'merge', 'merges_url', 'milestones_url', 'mirror_url', 'name', 'network_count', 'notifications_url', 'open_issues', 'open_issues_count', 'organization', 'owner', 'parent', 'permissions', 'private', 'pulls_url', 'pushed_at', 'raw_data', 'raw_headers', 'remove_from_collaborators', 'setCheckAfterInitFlag', 'size', 'source', 'ssh_url', 'stargazers_count', 'stargazers_url', 'statuses_url', 'subscribe_to_hub', 'subscribers_url', 'subscription_url', 'svn_url', 'tags_url', 'teams_url', 'trees_url', 'unsubscribe_from_hub', 'update', 'update_content', 'updated_at', 'url', 'watchers', 'watchers_count']
+>>> k2.branches_url
+u'https://api.github.com/repos/kanripo/KR2a0005/branches{/branch}'
+>>> k2.get_branches()
+<github.PaginatedList.PaginatedList instance at 0x108471758>
+>>> [a for a in k2.get_branches()]
+[<github.Branch.Branch object at 0x108094b10>, <github.Branch.Branch object at 0x108094a50>, <github.Branch.Branch object at 0x1080947d0>]
+>>> [a.name for a in k2.get_branches()]
+[u'WYG', u'_data', u'master']
+>>> tockey="test1"
+>>> r.llen(tockey)
+13
+>>> tockey="test1"
+>>> r.llen(tockey)
+0
+>>> r.lrange(tockey, 0, r.llen(tockey) -1)
+[]
+>>> if r.lrange(tockey, 0, r.llen(tockey) -1):
+...   True
+... else:
+...   False
+... 
+False
+>>> url="https://raw.githubusercontent.com/kanripo/KR2a0005/master/KR2a0005_005.txt"
+>>> re.sub(r"KR[^/]+txt", "Readme.org", url)
+'https://raw.githubusercontent.com/kanripo/KR2a0005/master/Readme.org'
+>>> len(lines)
+18
+>>> from collections import defaultdict
+>>> d=defaultdict(list)
+>>> l
+u'[[file:KR1a0002_011.txt::011-1a][\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00]'
+>>> re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]\]", "<a href='\\2#\\3'>\\4</a>", l)
+u'[[file:KR1a0002_011.txt::011-1a][\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00]'
+>>> re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", "<a href='\\2#\\3'>\\4</a>", l)
+u"<a href='011#1a'>\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00</a>"
+>>> re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", d["\\2"].append("<a href='\\2#\\3'>\\4</a>"), l)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/chris/.pyenv/versions/venv/lib/python2.7/re.py", line 155, in sub
+    return _compile(pattern, flags).sub(repl, string, count)
+  File "/Users/chris/.pyenv/versions/venv/lib/python2.7/re.py", line 286, in _subx
+    template = _compile_repl(template, pattern)
+  File "/Users/chris/.pyenv/versions/venv/lib/python2.7/re.py", line 271, in _compile_repl
+    p = sre_parse.parse_template(repl, pattern)
+  File "/Users/chris/.pyenv/versions/venv/lib/python2.7/sre_parse.py", line 737, in parse_template
+    s = Tokenizer(source)
+  File "/Users/chris/.pyenv/versions/venv/lib/python2.7/sre_parse.py", line 192, in __init__
+    self.__next()
+  File "/Users/chris/.pyenv/versions/venv/lib/python2.7/sre_parse.py", line 194, in __next
+    if self.index >= len(self.string):
+TypeError: object of type 'NoneType' has no len()
+>>> re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : d[x.groups(2)].append("<a href='%s%s'>%s</a>" % (x.groups(1), x.groups(2), x.groups(4))), l)
+u''
+>>> d
+defaultdict(<type 'list'>, {(u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'): ["<a href='(u'KR1a0002', u'011', u'1a', u'\\u5b50\\u590f\\u6613\\u50b3 \\u5377\\u5341\\u4e00')(u'KR1a0002', u'011', u'1a', u'\\u5b50\\u590f\\u6613\\u50b3 \\u5377\\u5341\\u4e00')'>(u'KR1a0002', u'011', u'1a', u'\\u5b50\\u590f\\u6613\\u50b3 \\u5377\\u5341\\u4e00')</a>"], '\\2': ["<a href='\\2#\\3'>\\4</a>"]})
+>>> d=defaultdict(list)
+>>> re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : d[x.groups(2)].append("<a href='%s%s'>%s</a>" % (x.groups(1), x.groups(2), x.groups(4))), l)
+u''
+>>> d
+defaultdict(<type 'list'>, {(u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'): ["<a href='(u'KR1a0002', u'011', u'1a', u'\\u5b50\\u590f\\u6613\\u50b3 \\u5377\\u5341\\u4e00')(u'KR1a0002', u'011', u'1a', u'\\u5b50\\u590f\\u6613\\u50b3 \\u5377\\u5341\\u4e00')'>(u'KR1a0002', u'011', u'1a', u'\\u5b50\\u590f\\u6613\\u50b3 \\u5377\\u5341\\u4e00')</a>"]})
+>>> d.keys()
+[(u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]
+>>> x
+['\xe5\xbe\xb7\xe4\xb8\x8a\xe6\x99\xba\xe7\x94\x9f\xe8\x80\x8c\xe7\x9f\xa5\xe4\xb9\x8b\xe5\xb0\x87\xe8\x87\xaa,\xe4\xb9\x9f\xe5\x9b\xba\xe5\x85\xb6\tKR6q0083_001:0347c:12:8:14', '\xe5\xbe\xb7\xe4\xb9\x83\xe4\xba\x91\xe5\xad\xa4\xe4\xb9\x8b\xe6\x9c\x89\xe5\xad\x94\xe6\x98\x8e\xe7\x8c\xb6,\xe7\x9a\x86\xe4\xb8\x8d\xe6\x82\x85\tKR6q0153_001:0462a:1:18:866', '\xe5\xbe\xb7\xe4\xb9\x83\xe4\xba\x91\xe5\xad\xa4\xe4\xb9\x8b\xe6\x9c\x89\xe5\xad\x94\xe6\x98\x8e\xe7\x8c\xb6,\xe7\x9a\x86\xe4\xb8\x8d\xe6\x82\x85\tKR6q0154_004:0514a:20:18:27', '\xe5\xbe\xb7\xe4\xb9\x9f\xe9\x80\x9a\xe4\xba\x91\xe5\xb0\x8d\xe6\x9c\x95\xe8\x80\x85\xe4\xbd\x95\xe4\xb8\x8d,\xe6\x98\x8f\xe6\x98\x8f\xe6\x98\xaf\tKR6q0219_002:0039b:9:6:131', '\xe5\xbe\xb7\xe4\xba\x91\xe5\xad\xa4\xe4\xb9\x8b\xe6\x9c\x89\xe5\xad\x94\xe6\x98\x8e\xe7\x8c\xb6\xe9\xad\x9a,\xe7\x9a\x86\xe4\xb8\x8d\xe6\x82\x85\tKR6q0157_003:0702c:19:17:190', '\xe5\xbe\xb7\xe4\xba\x94\xe9\x9d\x88\xe5\xba\xa6\xe5\x91\xbd\xe5\x85\x83\xe4\xb8\x80\xe8\x83\x9e\xe7\xb2\xbe,\xe6\x96\x87\xe5\x91\xaa\xe6\x9b\xb0\tKR5a0221_006:010a:6:1:56', '\xe5\xbe\xb7\xe4\xba\x94\xe9\x9d\x88\xe7\x9c\x9e\xe5\x90\x9b\xe4\xb8\x96\xe4\xba\xba\xe6\x89\x80\xe8\xac\x82,\xe7\xac\xac\xe5\x9b\x9b\xe5\xae\xab\tKR5a0216_000:006b:4:8:10', '\xe5\xbe\xb7\xe5\x85\x85\xe8\x94\x9a\xe5\x9f\xba\xe4\xb9\x8b\xe6\x96\xbc\xe6\x80\xa7\xe4\xb9\x9f\xe6\x98\xad,\xe8\x99\x9a\xe5\x99\xa8\xe5\x86\xb2\tKR5a0316_024:011a:8:13:20', '\xe5\xbe\xb7\xe5\x8b\x95\xe5\xa4\xa9\xe6\x95\x85\xe5\xa4\xa9\xe7\x9c\x9e\xe8\xb3\x9c\xe8\x99\x9f\xe6\x9b\xb0,\xe5\x8a\x9f\xe6\xbf\x9f\xe7\x89\xa9\tKR5a0174_001:001b:4:1:3', '\xe5\xbe\xb7\xe5\x8b\x95\xe5\xa4\xa9\xe6\x95\x85\xe5\xa4\xa9\xe7\x9c\x9f\xe8\xb3\x9c\xe8\x99\x9f\xe6\x9b\xb0,\xe5\x8a\x9f\xe6\xbf\x9f\xe7\x89\xa9\tKR5a0174_001:001b:4:1:3\tCK-KZ YP-C', '\xe5\xbe\xb7\xe5\x8c\x96\xe6\x98\x8e\xe6\xbc\x82\xe6\xb5\x81\xe9\xac\xbc\xe8\xb3\x8a\xe9\xa6\x98\xe6\xbb\x85,\xe7\x81\xab\xe5\x86\x85\xe9\x81\x8b\tKR5a0221_006:010a:7:4:56', '\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe5\xa4\xa9\xe5\xb8\x9d\xe6\x8e\x88\xe6\x9b\xb8\xe7\x88\xb2\xe8\xa5\xbf,\xe6\x88\x90\xe9\x81\x93\xe5\x82\x99\tKR5a0308_009:012b:9:2:21', '\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe5\xad\x9d\xe5\xae\x9a\xe7\x9a\x87\xe5\xa4\xaa\xe5\x90\x8e\xe6\x95\xa6,\xe6\x9b\xbe\xe6\x9c\x89\xe4\xb9\x9f\tKR6q0214_025:0197a:20:16:11', '\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe5\xb8\xab\xe9\x8c\xab\xe4\xba\xb9\xe8\xa9\xa2\xe4\xba\x8b\xe8\x80\x83,\xe5\x8c\x96\xe7\x8e\x8b\xe5\xad\x90\tKR6q0221_012:0659b:25:4:66', '\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe6\x96\xbc\xe5\xa0\xaf\xe8\x80\x8c\xe7\x82\xba\xe5\xa4\xa9\xe5\xad\x90,\xe5\xad\x9d\xe4\xb9\x8b\xe9\x81\x93\tKR6q0226_004:0324c:27:1:31', '\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe6\x97\xa2\xe5\xa3\xbd\xe6\xb0\xb8\xe6\x98\x8c\xe6\x99\x82\xe4\xb9\x97,\xe5\x9e\x82\xe7\x99\xbe\xe7\xa5\xa5\tKR5a0316_024:009a:7:13:17', '\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe8\x80\x8c\xe5\x8d\x92\xe5\x8d\x94\xe5\xb8\x9d\xe4\xbd\xbf\xe5\xa4\xa9,\xe8\xb1\xab\xe4\xbb\xa5\xe7\x8d\xb2\tKR6q0221_019:0698b:5:20:5', '\xe5\xbe\xb7\xe5\x8d\x87\xe8\x81\x9e\xe9\x87\x8d\xe8\x8f\xaf\xe5\x8d\x94\xe5\xb8\x9d\xe6\xad\xa4\xe6\x89\x80,\xe5\x85\xb6\xe9\xab\x94\xe5\xa6\x82\tKR6q0221_010:0650c:9:3:9', '\xe5\xbe\xb7\xe5\xa0\x82\xe5\xa4\xa7\xe9\x81\x93\xe4\xb9\x8b\xe5\xa6\x99\xe6\x9c\x89\xe9\x9d\x9e\xe6\x96\x87,\xe5\xad\x90\xe6\x9b\xb8\xe4\xba\x8e\tKR5a0175_000:001a:10:1:0', '\xe5\xbe\xb7\xe5\xa4\xa7\xe6\x96\xb9\xe5\xa4\xa7\xe5\xbe\xb7\xe8\x87\xaa\xe7\x84\xb6\xe6\x99\xae\xe5\xbe\xb7,\xe5\xbe\xb7\xe6\x99\xae\xe6\x87\x89\tKR5a0104_008:014b:3:10:15', '\xe5\xbe\xb7\xe5\xa4\xaa\xe6\x96\xb9\xe5\xa4\xaa\xe5\xbe\xb7\xe8\x87\xaa\xe7\x84\xb6\xe6\x99\xae\xe5\xbe\xb7,\xe5\xbe\xb7\xe6\x99\xae\xe6\x87\x89\tKR5a0104_005:027b:2:16:28', '\xe5\xbe\xb7\xe5\xad\x97\xe8\x8b\xa5\xe6\x80\x9d\xe6\x99\x89\xe9\xa9\x83\xe9\xa8\x8e\xef\xbc\x89\xe3\x80\x80,\xe3\x80\x80\xef\xbc\x88\xe5\xad\x97\tKR5a0168_000:028b:8:4:28\tn', '\xe5\xbe\xb7\xe5\xb1\xaf\xe5\x85\xb5\xe6\x96\xbc\xe6\x96\xb0\xe9\x87\x8e\xe5\xba\xb6\xe8\xa6\x8b\xe4\xb9\x8b,\xe5\x8f\x8b\xe6\x99\x82\xe5\x8a\x89\tKR6q0153_001:0446b:21:12:357', '\xe5\xbe\xb7\xe5\xb1\xaf\xe5\x85\xb5\xe6\x96\xbc\xe6\x96\xb0\xe9\x87\x8e\xe5\xba\xb6\xe8\xa6\x8b\xe4\xb9\x8b,\xe5\x8f\x8b\xe6\x99\x82\xe5\x8a\x89\tKR6q0154_001:0484c:14:11:401', '\xe5\xbe\xb7\xe5\xb1\xaf\xe5\x85\xb5\xe6\x96\xbc\xe6\x96\xb0\xe9\x87\x8e\xe5\xba\xb6\xe8\xa6\x8b\xe4\xb9\x8b,\xe5\x8f\x8b\xe6\x99\x82\xe5\x8a\x89\tKR6q0157_001:0646a:16:3:376', '\xe5\xbe\xb7\xe5\xb1\xaf\xe5\x85\xb5\xe8\x96\xaa\xe9\x87\x8e\xe5\xbe\x90\xe5\xba\xb6\xe5\xbe\x80\xe8\xa6\x8b,\xe9\x99\xbd\xe6\x99\x82\xe5\x8a\x89\tKR6q0156_001:0552a:11:9:145', '\xe5\xbe\xb7\xe5\xb8\xab\xe6\x9b\xb0\xe6\x97\xa3\xe5\xb7\xb3\xe8\x90\xbd\xe4\xb8\x89\xe7\x81\xbd\xe5\xba\xa6,\xe9\x83\xbd\xe4\xbf\xb1\xe5\x8c\x96\tKR5a0221_020:013a:2:7:47', '\xe5\xbe\xb7\xe5\xbb\xa3\xe5\x8c\x96\xe7\x9c\x9e\xe4\xba\xba\xe7\xb8\xbd\xe6\x94\x9d\xe6\xb1\x9f\xe6\xb7\xae,\xe6\x96\x87\xe5\xbc\x98\xe9\x81\x93\tKR5a0316_004:018a:9:10:37', '\xe5\xbe\xb7\xe5\xbe\x97\xe6\xad\xa6\xe4\xbe\xaf\xe6\x99\x82\xe9\x9b\xb2\xe9\x95\xb7\xe7\xbf\xbc\xe5\xbe\xb7,\xe8\x80\x85\xe4\xb9\x83\xe5\x8a\x89\tKR6q0157_003:0702c:19:4:190', '\xe5\xbe\xb7\xe5\xbe\x97\xe6\xad\xa6\xe4\xbe\xaf\xe9\x9b\xb2\xe9\x95\xb7\xe7\xbf\xbc\xe5\xbe\xb7\xe7\x9a\x86,\xe6\x9c\x89\xe6\xb0\xb4\xe5\x8a\x89\tKR6q0153_001:0462a:1:6:866', '\xe5\xbe\xb7\xe5\xbe\x97\xe6\xad\xa6\xe4\xbe\xaf\xe9\x9b\xb2\xe9\x95\xb7\xe7\xbf\xbc\xe5\xbe\xb7\xe7\x9a\x86,\xe6\x9c\x89\xe6\xb0\xb4\xe5\x8a\x89\tKR6q0154_004:0514a:20:6:27', '\xe5\xbe\xb7\xe5\xbf\x85\xe4\xbf\xa1\xe7\x84\xb6\xe9\x9a\x82\xe5\xbe\xb7\xe7\xbd\xaa\xe8\x87\xb3\xe6\xb7\xb1,\xe6\x9c\x89\xe9\x87\x8d\xe5\xa0\xb1\tKR5a0326_002:002a:2:2:2', '\xe5\xbe\xb7\xe6\x81\xb1\xe7\x94\x9f\xe5\xa4\xa9\xe5\xb8\x9d\xe4\xbc\xaf\xe8\x8c\xb2\xe5\x91\xbd\xe6\xa3\xb2,\xe8\xac\xb9\xe8\xa7\x80\xe5\x85\x83\tKR5a0001_028:012a:6:1:16', '\xe5\xbe\xb7\xe6\x82\x85\xe7\x94\x9f\xe5\xa4\xa9\xe5\xb8\x9d\xe4\xbc\xaf\xe8\x8c\xb2\xe5\x91\xbd\xe6\xa3\xb2,\xe8\xac\xb9\xe8\xa7\x80\xe5\x85\x83\tKR5a0001_028:012a:6:1:5\tYP-C', '\xe5\xbe\xb7\xe6\x86\xbe\xe7\x8c\xb6\xe6\x9a\x8c\xe6\x9c\xab\xe5\xbe\x8c\xe6\x9c\xaa\xe6\x98\x8e\xe5\x8f\xa5,\xe6\xac\xa3\xe4\xb8\x8d\xe9\x81\xa0\tKR6q0226_010:0419a:2:6:106', '\xe5\xbe\xb7\xe6\x87\x89\xe4\xb8\x96\xe8\x82\x87\xe9\x96\x8b\xe6\x9c\xb1\xe9\x99\xbd\xe4\xb9\x8b\xe9\xa4\xa8,\xe7\x9c\x9e\xe4\xba\xba\xe4\xbb\xa5\tKR5a0316_024:006a:1:2:14', '\xe5\xbe\xb7\xe6\x88\x90\xe5\xb0\xb1\xe7\x88\xb2\xe4\xba\xba\xe6\x89\x80\xe5\xae\x97\xe7\x9a\x86\xe7\x95\xb6,\xe6\xb3\x95\xe6\xa5\xad\xe5\xbe\x8c\tKR5a0179_001:004b:8:12:6', '\xe5\xbe\xb7\xe6\x97\xa0\xe7\xa7\x81\xe6\x95\x85\xe8\x83\xbd\xe6\x88\x90\xe5\x85\xb6\xe7\xa7\x81\xe8\x80\x85,\xe5\x85\xac\xe5\xa4\xa9\xe4\xb9\x8b\tKR5a0124_000:007b:3:3:1', '\xe5\xbe\xb7\xe6\x9b\xb0\xe4\xb8\x96\xe7\x84\xa1\xe6\x9c\xac\xe9\xac\xbc\xe4\xbd\xbf\xe6\x9b\xb0\xe9\x89\xa2,\xe4\xbe\x86\xe7\x9b\xb8\xe5\xa0\xb1\tKR5a0011_003:022b:4:12:11\tCK-KZ YP-C', '\xe5\xbe\xb7\xe6\x9d\x8e\xe6\x9d\xb1\xe7\xab\xa5\xe5\x88\x9d\xe5\xba\x9c\xe8\x95\xad\xe9\x96\x91\xe5\xae\xab,\xe5\x81\x89\xe6\x83\xa0\xe5\xae\x8b\tKR5a0168_000:022b:8:2:23', '\xe5\xbe\xb7\xe6\x9d\x8e\xe6\x9d\xb1\xe7\xab\xa5\xe5\x88\x9d\xe5\xba\x9c\xe8\x95\xad\xe9\x96\x91\xe5\xae\xae,\xe5\x81\x89\xe6\x83\xa0\xe5\xae\x8b\tKR5a0168_000:022b:8:2:24\tCK-KZ YP-C', '\xe5\xbe\xb7\xe6\xad\xb8\xe5\x8e\x9f\xe7\xac\xac\xe4\xba\x94\xe5\x8d\x81\xe4\xba\x8c\xe7\xab\xa0\xe5\xa4\xa9,\xe5\xae\xb0\xe6\x98\xaf\xe8\xac\x82\tKR6q0227_002:0520c:23:11:41', '\xe5\xbe\xb7\xe6\xb7\xb1\xe7\x9f\xa3\xe9\x81\xa0\xe7\x9f\xa3\xe8\x88\x87\xe7\x89\xa9\xe5\x8f\x8d\xe7\x9f\xa3,\xe8\xac\x82\xe7\x8e\x84\xe5\xbe\xb7\tKR6q0227_002:0523a:13:13:83', '\xe5\xbe\xb7\xe7\x84\xa1\xe7\x94\xa8\xe5\x8d\x81\xe4\xb8\x80\xe7\xab\xa0\xe4\xb8\x89\xe5\x8d\x81\xe8\xbc\xbb,\xe5\xae\xb0\xe6\x98\xaf\xe8\xac\x82\tKR6q0227_001:0514b:20:8:34', '\xe5\xbe\xb7\xe7\x8e\x84\xe5\xbe\xb7\xe6\xb7\xb1\xe7\x9f\xa3\xe9\x81\xa0\xe7\x9f\xa3\xe8\x88\x87\xe7\x89\xa9,\xe5\xbc\x8f\xe6\x98\xaf\xe8\xac\x82\tKR6q0227_002:0523a:13:11:83', '\xe5\xbe\xb7\xe7\x8e\x84\xe8\x80\x85\xe5\x91\xa8\xe5\xae\xa3\xe6\x99\x82\xe4\xba\xba\xe6\x9c\x8d\xe6\xad\xa4,\xe5\xb6\xbd\xe5\xae\x8b\xe5\xbe\xb7\tKR5a0308_017:010a:1:15:30', '\xe5\xbe\xb7\xe7\x8e\x84\xe8\x80\x85\xe5\x91\xa8\xe5\xae\xa3\xe7\x8e\x8b\xe6\x99\x82\xe4\xba\xba\xe6\x9c\x8d,\xe5\xb6\xbd\xe5\xae\x8b\xe5\xbe\xb7\tKR5a0084_000:022b:1:7:81', '\xe5\xbe\xb7\xe7\x8e\x84\xe9\xa9\x9a\xe6\x80\x96\xe4\xb8\x8b\xe9\xa6\xac\xe6\x8b\x9c\xe6\x9b\xb0\xe6\x88\x91,\xe4\xbd\xbf\xe7\xab\x87\xe5\xbe\xb7\tKR5a0011_003:022b:2:2:39', '\xe5\xbe\xb7\xe7\x94\xb1\xe6\x98\xaf\xe4\xb8\x89\xe9\xa1\xa7\xe8\x8c\x85\xe5\xbb\xac\xe8\x80\x8c\xe8\x88\x89,\xe4\xbb\xa5\xe5\xb1\x88\xe6\xb1\x82\tKR6q0156_001:0552a:12:19:145', '\xe5\xbe\xb7\xe7\x9a\x86\xe8\xba\xac\xe8\x87\xa8\xe5\x8f\x83\xe7\xa6\xae\xe5\x82\xbe\xe7\x8f\x8d\xe4\xbe\x9b,\xe4\xba\xba\xe4\xbc\x81\xe6\x85\x95\tKR6q0206_001:0171a:4:3:346', '\xe5\xbe\xb7\xe7\x9b\xb8\xe5\x8d\x81\xe7\x8e\x84\xe8\x80\x85\xe4\xb8\x80\xe5\x90\x8c\xe6\x99\x82\xe5\x85\xb7,\xe5\x90\x84\xe6\x9c\x89\xe5\x8d\x81\tKR6q0092_028:0579c:29:13:10\tCBETA T T@LI T@MING T@QISHA T@SONG T@YUAN', '\xe5\xbe\xb7\xe7\x9b\xb8\xe5\x8d\x81\xe8\x80\x85\xe4\xb8\x80\xe5\x90\x8c\xe6\x99\x82\xe5\x85\xb7\xe8\xb6\xb3,\xe5\x90\x84\xe6\x9c\x89\xe5\x8d\x81\tKR6q0092_028:0579c:29:13:5', '\xe5\xbe\xb7\xe7\x9c\x9e\xe4\xba\xba\xe5\x90\xb4\xe5\x85\xa8\xe7\xaf\x80\xe6\x81\xad\xe5\xa5\x89\xe9\xa6\x99,\xe6\x96\x87\xe5\xbc\x98\xe9\x81\x93\tKR5a0316_004:016a:6:12:32', '\xe5\xbe\xb7\xe7\x9c\x9e\xe4\xba\xba\xe5\x90\xb4\xe5\x85\xa8\xe7\xaf\x80\xe8\xa9\xa3\xe5\x85\x83\xe7\xac\xa6,\xe6\x96\x87\xe5\xbc\x98\xe9\x81\x93\tKR5a0316_004:016b:10:3:34', '\xe5\xbe\xb7\xe7\x9c\x9e\xe5\xa4\xa9\xe5\xb0\x8a\xe5\xaf\xb6\xe6\x98\x8e\xe5\xa4\xa7\xe5\xba\xa6\xe5\xa4\xa9,\xe5\xa4\xa9\xe5\xb0\x8a\xe9\x87\x8d\tKR5a0190_004:010b:7:2:2\tCK-KZ YP-C', '\xe5\xbe\xb7\xe7\x9c\x9e\xe5\xa4\xa9\xe5\xb0\x8a\xe5\xbf\x97\xe5\xbf\x83\xe6\x9c\x9d\xe7\xa6\xae\xe6\xb5\x81,\xe6\x9c\x9d\xe7\xa6\xae\xe9\x87\x8d\tKR5a0190_004:010b:7:6:87', '\xe5\xbe\xb7\xe7\xa5\x9e\xe7\x8e\x8b\xe9\x95\xb7\xe7\x94\x9f\xe5\xa4\xa7\xe8\x81\x96\xe6\x97\xa0\xe9\x87\x8f,\xe6\x96\xb9\xe6\x97\xa0\xe6\xa5\xb5\tKR5a0001_007:007b:3:5:8', '\xe5\xbe\xb7\xe7\xa8\xae\xe5\x9c\x83\xe6\x9b\xb0\xe5\xa6\x82\xe4\xbd\x95\xe6\x98\xaf\xe9\x9b\xb2\xe9\x96\x80,\xe5\xb8\xab\xe6\x9b\xb0\xe5\x8a\x89\tKR6q0019_024:0300b:2:13:6', '\xe5\xbe\xb7\xe7\xac\x91\xe8\xa3\x8f\xe7\x9e\x9e\xe5\xbe\x92\xe9\x80\xa0\xe5\xad\x90\xe5\xb0\x87\xe6\xbc\xa2,\xe9\xab\xaf\xe7\xab\x9f\xe5\xbe\x9e\tKR6q0193_011:0625c:1:20:81\tCBETA J', '\xe5\xbe\xb7\xe7\xac\xac\xe4\xba\x94\xe5\x8d\x81\xe5\x85\xad\xe7\xab\xa0\xe7\x9f\xa5\xe8\x80\x85\xe4\xb8\x8d,\xe9\x81\x93\xe6\x97\xa9\xe5\xb7\xb2\tKR6q0227_002:0521c:6:1:55', '\xe5\xbe\xb7\xe7\xac\xac\xe5\x85\xad\xe7\xa7\x91\xe6\x9b\xb0\xe9\xbd\x8b\xe8\xae\x80\xe7\xb6\x93\xe6\x88\x92,\xe6\x9c\x9f\xe5\x8f\x97\xe8\x99\x9f\tKR5a0130_000:008b:2:1:7', '\xe5\xbe\xb7\xe7\xb6\x93\xe6\x95\x99\xe4\xbb\xa5\xe8\xac\x99\xe9\x81\x9c\xe4\xb9\x8b\xe9\x81\x93\xe4\xb8\x80,\xe5\xb0\x84\xe5\xb1\xb1\xe8\xaa\xaa\tKR5a0308_002:004a:3:14:15', '\xe5\xbe\xb7\xe8\x80\x81\xe5\xad\x90\xe6\x9b\xb0\xe5\x85\xb6\xe9\x81\x93\xe4\xba\xa6\xe6\x9c\x89\xe8\xa1\x93,\xe5\x89\x87\xe6\x98\xaf\xe8\xac\x82\tKR5a0310_001:005a:1:13:5', '\xe5\xbe\xb7\xe8\x80\x85\xe7\x8d\xa8\xe8\xb3\x8a\xe4\xb9\x8b\xe9\xa0\x88\xe5\x8f\x8d\xe4\xba\x8e\xe7\x89\xa9,\xe6\x99\xba\xe8\x80\x8c\xe6\x9c\x89\tKR6q0227_002:0523a:15:30:84\tn', '\xe5\xbe\xb7\xe8\x81\x9e\xe6\x96\xbc\xe6\xb3\x95\xe7\x95\x8c\xe5\xbf\x85\xe6\x88\x90\xe7\x84\xa1\xe4\xb8\x8a,\xe5\xad\x9d\xe4\xb9\x8b\xe9\x81\x93\tKR6q0226_004:0324c:28:2:31', '\xe5\xbe\xb7\xe8\x8f\xb4\xe5\x85\xa8\xe7\x9c\x9e\xe8\x8f\xb4\xe9\xbb\x84\xe5\xaf\xa7\xe8\x8f\xb4\xe5\x86\xb2,\xe6\xb4\xaa\xe7\xa6\x8f\xe8\x8f\xb4\tKR5a0316_018:005b:5:1:10', '\xe5\xbe\xb7\xe8\xa2\xab\xe7\xbe\xa3\xe6\x9c\x89\xe7\xa8\xbd\xe9\xa6\x96\xe7\xa5\x9e\xe9\x9c\x84\xe6\x96\x87,\xe5\x8f\xaf\xe7\x9b\xb8\xe5\x82\xb3\tKR5a0001_005:014b:3:1:41\tYP-C', '\xe5\xbe\xb7\xe8\xa2\xab\xe7\xbe\xa4\xe6\x9c\x89\xe7\xa8\xbd\xe9\xa6\x96\xe7\xa5\x9e\xe9\x9c\x84\xe6\x96\x87,\xe5\x8f\xaf\xe7\x9b\xb8\xe5\x82\xb3\tKR5a0001_005:014b:3:1:55', '\xe5\xbe\xb7\xe8\xab\xb8\xe5\x90\x9b\xe4\xb8\x88\xe4\xba\xba\xe7\x8e\x89\xe8\x99\x9a\xe4\xb8\x8a\xe5\xb8\x9d,\xe8\xa1\x86\xe8\x87\xb3\xe7\x9c\x9e\tKR5a0217_000:004a:8:9:21', '\xe5\xbe\xb7\xe8\xb1\x88\xe5\x81\x87\xe6\x81\xa9\xe6\x80\x9c\xe5\xa5\x91\xe6\x9c\xac\xe7\x9c\x9f\xe8\x8e\xab,\xe9\xa4\x8a\xe8\x82\xb2\xe5\xbd\xb0\tKR6q0252_005:0361b:6:2:29', '\xe5\xbe\xb7\xe9\x81\x82\xe8\xa9\xa3\xe4\xba\xae\xe6\x89\x80\xe5\x87\xa1\xe4\xb8\x89\xe5\xbe\x80\xe8\x80\x8c,\xe5\xb1\x88\xe7\x94\xb1\xe6\x98\xaf\tKR6q0153_001:0446b:23:11:357', '\xe5\xbe\xb7\xe9\x81\x82\xe8\xa9\xa3\xe4\xba\xae\xe6\x89\x80\xe5\x87\xa1\xe4\xb8\x89\xe5\xbe\x80\xe8\x80\x8c,\xe5\xb1\x88\xe7\x94\xb1\xe6\x98\xaf\tKR6q0154_001:0484c:16:10:401', '\xe5\xbe\xb7\xe9\x81\x82\xe8\xa9\xa3\xe4\xba\xae\xe6\x89\x80\xe5\x87\xa1\xe4\xb8\x89\xe5\xbe\x80\xe8\x80\x8c,\xe5\xb1\x88\xe7\x94\xb1\xe6\x98\xaf\tKR6q0157_001:0646a:18:2:376', '\xe5\xbe\xb7\xe9\x9b\xa3\xe5\x85\xa5\xe5\xa6\x99\xe5\xb1\xa2\xe7\x82\xba\xe4\xba\xba\xe8\x80\x8c\xe9\x80\xa0,\xe9\x81\x93\xe6\x9c\xaa\xe9\x80\x9a\tKR5a0328_002:012b:7:5:23', '\xe5\xbe\xb7\xe9\x9d\x9e\xe7\x9b\xb8\xe4\xb9\x8b\xe7\x9b\xb8\xe9\xbe\x95\xe5\xbc\x98\xe5\x97\xa3\xe5\xbe\x8c,\xe7\xb2\xbe\xe4\xb8\x80\xe6\x96\xbc\tKR6q0235_001:0152c:7:15:102', '\xe5\xbe\xb7\xe9\xa0\x8c\xe6\x9b\xb0\xe8\xa7\x80\xe5\x85\x83\xe5\x8c\x96\xe5\x85\xae\xe6\xb1\x82\xe5\x8f\xa4,\xe5\xb1\xb1\xe7\x94\xb3\xe9\xa0\x8c\tKR5a0316_024:016a:6:1:32', '\xe5\xbe\xb7\xef\xbc\x89\xe3\x80\x80\xe3\x80\x80,\xe3\x80\x80\xef\xbc\x88\xe5\xad\x97\tKR5a0168_000:028b:8:4:28\tn\tCK-KZ YP-C']
+>>> d.keys()
+[(u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]
+>>> d=defaultdict(list)
+>>> re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : d[x.group(2)].append("<a href='%s%s'>%s</a>" % (x.group(1), x.group(2), x.group(4))), l)
+u''
+>>> d.keys()
+[u'011']
+>>> d
+defaultdict(<type 'list'>, {u'011': [u"<a href='KR1a0002011'>\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00</a>"]})
+>>> d=defaultdict(list)
+>>> [re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : d[x.group(2)].append("<a href='%s%s'>%s</a>" % (x.group(1), x.group(2), x.group(4))), l) for l in lines if "file" in l]
+[u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]']
+>>> d
+defaultdict(<type 'list'>, {u'010': [u"<a href='KR1a0002010'>\u5b50\u590f\u6613\u50b3 \u5377\u5341</a>"], u'011': [u"<a href='KR1a0002011'>\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00</a>"], u'003': [u"<a href='KR1a0002003'>\u5b50\u590f\u6613\u50b3 \u5377\u4e09</a>"], u'002': [u"<a href='KR1a0002002'>\u5b50\u590f\u6613\u50b3 \u5377\u4e8c</a>"], u'001': [u"<a href='KR1a0002001'>\u5b50\u590f\u6613\u50b3 \u5377\u4e00</a>"], u'000': [u"<a href='KR1a0002000'>\u5b50\u590f\u6613\u50b3 \u63d0\u8981</a>"], u'007': [u"<a href='KR1a0002007'>\u5b50\u590f\u6613\u50b3 \u5377\u4e03</a>"], u'006': [u"<a href='KR1a0002006'>\u5b50\u590f\u6613\u50b3 \u5377\u516d</a>"], u'005': [u"<a href='KR1a0002005'>\u5b50\u590f\u6613\u50b3 \u5377\u4e94</a>"], u'004': [u"<a href='KR1a0002004'>\u5b50\u590f\u6613\u50b3 \u5377\u56db</a>"], u'009': [u"<a href='KR1a0002009'>\u5b50\u590f\u6613\u50b3 \u5377\u4e5d</a>"], u'008': [u"<a href='KR1a0002008'>\u5b50\u590f\u6613\u50b3 \u5377\u516b</a>"]})
+>>> d.keys()
+[u'010', u'011', u'003', u'002', u'001', u'000', u'007', u'006', u'005', u'004', u'009', u'008']
+>>> d['000']
+[u"<a href='KR1a0002000'>\u5b50\u590f\u6613\u50b3 \u63d0\u8981</a>"]
+>>> d=defaultdict(list)
+>>> [re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : d[x.group(2)].append(x.groups()), l) for l in lines if "file" in l]
+[u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]']
+>>> d
+defaultdict(<type 'list'>, {u'010': [(u'KR1a0002', u'010', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341')], u'011': [(u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')], u'003': [(u'KR1a0002', u'003', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e09')], u'002': [(u'KR1a0002', u'002', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e8c')], u'001': [(u'KR1a0002', u'001', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e00')], u'000': [(u'KR1a0002', u'000', u'1a', u'\u5b50\u590f\u6613\u50b3 \u63d0\u8981')], u'007': [(u'KR1a0002', u'007', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e03')], u'006': [(u'KR1a0002', u'006', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516d')], u'005': [(u'KR1a0002', u'005', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e94')], u'004': [(u'KR1a0002', u'004', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u56db')], u'009': [(u'KR1a0002', u'009', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e5d')], u'008': [(u'KR1a0002', u'008', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b')]})
+>>> d["008"]
+[(u'KR1a0002', u'008', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b')]
+>>> d["008"][0]
+(u'KR1a0002', u'008', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b')
+>>> d["008"][0][1]
+u'008'
+>>> d["008"][0]
+(u'KR1a0002', u'008', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b')
+>>> tk=d.keys()
+>>> tk.sort()
+>>> tk
+[u'000', u'001', u'002', u'003', u'004', u'005', u'006', u'007', u'008', u'009', u'010', u'011']
+>>> [(a, d[a][2]) for a in tk]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: list index out of range
+>>> [(a, d[a]) for a in tk]
+[(u'000', [(u'KR1a0002', u'000', u'1a', u'\u5b50\u590f\u6613\u50b3 \u63d0\u8981')]), (u'001', [(u'KR1a0002', u'001', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e00')]), (u'002', [(u'KR1a0002', u'002', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e8c')]), (u'003', [(u'KR1a0002', u'003', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e09')]), (u'004', [(u'KR1a0002', u'004', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u56db')]), (u'005', [(u'KR1a0002', u'005', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e94')]), (u'006', [(u'KR1a0002', u'006', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516d')]), (u'007', [(u'KR1a0002', u'007', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e03')]), (u'008', [(u'KR1a0002', u'008', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b')]), (u'009', [(u'KR1a0002', u'009', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e5d')]), (u'010', [(u'KR1a0002', u'010', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341')]), (u'011', [(u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')])]
+>>> a
+u'011'
+>>> d[a]
+[(u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]
+>>> d[a][0]
+(u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')
+>>> [(a, b) for b in d[a]  for a in tk]
+[(u'000', (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')), (u'001', (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')), (u'002', (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')), (u'003', (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')), (u'004', (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')), (u'005', (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')), (u'006', (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')), (u'007', (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')), (u'008', (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')), (u'009', (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')), (u'010', (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')), (u'011', (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'))]
+>>> [(a, b[2]) for b in d[a]  for a in tk]
+[(u'000', u'1a'), (u'001', u'1a'), (u'002', u'1a'), (u'003', u'1a'), (u'004', u'1a'), (u'005', u'1a'), (u'006', u'1a'), (u'007', u'1a'), (u'008', u'1a'), (u'009', u'1a'), (u'010', u'1a'), (u'011', u'1a')]
+>>> [(a, b[3]) for b in d[a]  for a in tk]
+[(u'000', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'001', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'002', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'003', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'004', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'005', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'006', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'007', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'008', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'009', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'010', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'011', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]
+>>> [(a, b[2], b[3]) for b in d[a]  for a in tk]
+[(u'000', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'001', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'002', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'003', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'004', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'005', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'006', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'007', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'008', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'009', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'010', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]
+>>> [(a, b[3]) for b in d[a]  for a in tk]
+[(u'000', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'001', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'002', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'003', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'004', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'005', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'006', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'007', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'008', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'009', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'010', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'011', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]
+>>> del(a)
+>>> [(a, b[3]) for b in d[a]  for a in tk]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'a' is not defined
+>>> [(b[3]) for b in d[a]  for a in tk]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'a' is not defined
+>>> [(a, b[3]) for a in tk for b in d[a]]
+[(u'000', u'\u5b50\u590f\u6613\u50b3 \u63d0\u8981'), (u'001', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e00'), (u'002', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e8c'), (u'003', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e09'), (u'004', u'\u5b50\u590f\u6613\u50b3 \u5377\u56db'), (u'005', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e94'), (u'006', u'\u5b50\u590f\u6613\u50b3 \u5377\u516d'), (u'007', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e03'), (u'008', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b'), (u'009', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e5d'), (u'010', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341'), (u'011', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]
+>>> del(a)
+>>> [(a, b[3]) for a in tk for b in d[a]]
+[(u'000', u'\u5b50\u590f\u6613\u50b3 \u63d0\u8981'), (u'001', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e00'), (u'002', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e8c'), (u'003', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e09'), (u'004', u'\u5b50\u590f\u6613\u50b3 \u5377\u56db'), (u'005', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e94'), (u'006', u'\u5b50\u590f\u6613\u50b3 \u5377\u516d'), (u'007', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e03'), (u'008', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b'), (u'009', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e5d'), (u'010', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341'), (u'011', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]
+>>> del(a)
+>>> del(b)
+>>> [(a, b[3]) for a in tk for b in d[a]]
+[(u'000', u'\u5b50\u590f\u6613\u50b3 \u63d0\u8981'), (u'001', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e00'), (u'002', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e8c'), (u'003', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e09'), (u'004', u'\u5b50\u590f\u6613\u50b3 \u5377\u56db'), (u'005', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e94'), (u'006', u'\u5b50\u590f\u6613\u50b3 \u5377\u516d'), (u'007', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e03'), (u'008', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b'), (u'009', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e5d'), (u'010', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341'), (u'011', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]
+>>> [a for a in tk for b in d[a]]
+[u'000', u'001', u'002', u'003', u'004', u'005', u'006', u'007', u'008', u'009', u'010', u'011']
+>>> [b for a in tk for b in d[a]]
+[(u'KR1a0002', u'000', u'1a', u'\u5b50\u590f\u6613\u50b3 \u63d0\u8981'), (u'KR1a0002', u'001', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e00'), (u'KR1a0002', u'002', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e8c'), (u'KR1a0002', u'003', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e09'), (u'KR1a0002', u'004', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u56db'), (u'KR1a0002', u'005', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e94'), (u'KR1a0002', u'006', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516d'), (u'KR1a0002', u'007', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e03'), (u'KR1a0002', u'008', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b'), (u'KR1a0002', u'009', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e5d'), (u'KR1a0002', u'010', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]
+>>> [[b for a in tk] for b in d[a]]
+[[(u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]]
+>>> [b for a in tk]
+[(u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]
+>>> [a for a in tk]
+[u'000', u'001', u'002', u'003', u'004', u'005', u'006', u'007', u'008', u'009', u'010', u'011']
+>>> [d[a] for a in tk]
+[[(u'KR1a0002', u'000', u'1a', u'\u5b50\u590f\u6613\u50b3 \u63d0\u8981')], [(u'KR1a0002', u'001', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e00')], [(u'KR1a0002', u'002', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e8c')], [(u'KR1a0002', u'003', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e09')], [(u'KR1a0002', u'004', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u56db')], [(u'KR1a0002', u'005', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e94')], [(u'KR1a0002', u'006', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516d')], [(u'KR1a0002', u'007', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e03')], [(u'KR1a0002', u'008', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b')], [(u'KR1a0002', u'009', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e5d')], [(u'KR1a0002', u'010', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341')], [(u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]]
+>>> [d[a][0] for a in tk]
+[(u'KR1a0002', u'000', u'1a', u'\u5b50\u590f\u6613\u50b3 \u63d0\u8981'), (u'KR1a0002', u'001', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e00'), (u'KR1a0002', u'002', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e8c'), (u'KR1a0002', u'003', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e09'), (u'KR1a0002', u'004', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u56db'), (u'KR1a0002', u'005', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e94'), (u'KR1a0002', u'006', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516d'), (u'KR1a0002', u'007', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e03'), (u'KR1a0002', u'008', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b'), (u'KR1a0002', u'009', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e5d'), (u'KR1a0002', u'010', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341'), (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]
+>>> [(a, d[a][0]) for a in tk]
+[(u'000', (u'KR1a0002', u'000', u'1a', u'\u5b50\u590f\u6613\u50b3 \u63d0\u8981')), (u'001', (u'KR1a0002', u'001', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e00')), (u'002', (u'KR1a0002', u'002', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e8c')), (u'003', (u'KR1a0002', u'003', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e09')), (u'004', (u'KR1a0002', u'004', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u56db')), (u'005', (u'KR1a0002', u'005', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e94')), (u'006', (u'KR1a0002', u'006', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516d')), (u'007', (u'KR1a0002', u'007', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e03')), (u'008', (u'KR1a0002', u'008', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b')), (u'009', (u'KR1a0002', u'009', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e5d')), (u'010', (u'KR1a0002', u'010', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341')), (u'011', (u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00'))]
+>>> [(a, d[a][0][3]) for a in tk]
+[(u'000', u'\u5b50\u590f\u6613\u50b3 \u63d0\u8981'), (u'001', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e00'), (u'002', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e8c'), (u'003', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e09'), (u'004', u'\u5b50\u590f\u6613\u50b3 \u5377\u56db'), (u'005', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e94'), (u'006', u'\u5b50\u590f\u6613\u50b3 \u5377\u516d'), (u'007', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e03'), (u'008', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b'), (u'009', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e5d'), (u'010', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341'), (u'011', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')]
+>>> r.keys("kr_user*")
+['kr_user:cwittern$\xe4\xb8\x89\xe6\x89\x8d', 'kr_user:cwittern$Favorites', 'kr_user:cwittern:searchkeys', 'kr_usercwittern:searchkeys', 'kr_user:cwittern:toc:master:KR2a0005']
+>>> tockey='kr_user:cwittern:toc:master:KR2a0005'
+>>> toc=r.hgetall(tockey)
+>>> toc
+{'003': "[(u'KR2a0005', u'003', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e09')]", '010': "[(u'KR2a0005', u'010', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u5341')]", '002': "[(u'KR2a0005', u'002', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e8c')]", '001': "[(u'KR2a0005', u'001', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e00')]", '000': "[(u'KR2a0005', u'000', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u63d0\\u8981'), (u'KR2a0005', u'000', u'3a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u7e3d\\u8ad6')]", '007': "[(u'KR2a0005', u'007', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e03')]", '006': "[(u'KR2a0005', u'006', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u516d')]", '005': "[(u'KR2a0005', u'005', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e94')]", '004': "[(u'KR2a0005', u'004', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u56db')]", '009': "[(u'KR2a0005', u'009', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e5d')]", '008': "[(u'KR2a0005', u'008', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u516b')]"}
+>>> toc['003']
+"[(u'KR2a0005', u'003', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e09')]"
+>>> toc['003'][0]
+'['
+>>> eval(toc['003'])
+[(u'KR2a0005', u'003', u'1a', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e09')]
+>>> eval(toc['003'])[0]
+(u'KR2a0005', u'003', u'1a', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e09')
+>>> [eval(toc[a])[0] for a in tk]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+KeyError: u'011'
+>>> tk=toc.keys()
+>>> [eval(toc[a])[0] for a in tk]
+[(u'KR2a0005', u'003', u'1a', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e09'), (u'KR2a0005', u'010', u'1a', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u5341'), (u'KR2a0005', u'002', u'1a', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e8c'), (u'KR2a0005', u'001', u'1a', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e00'), (u'KR2a0005', u'000', u'1a', u'\u8b80\u53f2\u8a18\u5341\u8868 \u63d0\u8981'), (u'KR2a0005', u'007', u'1a', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e03'), (u'KR2a0005', u'006', u'1a', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516d'), (u'KR2a0005', u'005', u'1a', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e94'), (u'KR2a0005', u'004', u'1a', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u56db'), (u'KR2a0005', u'009', u'1a', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e5d'), (u'KR2a0005', u'008', u'1a', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b')]
+>>> [eval(toc[a])[0][3] for a in tk]
+[u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e09', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u5341', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e8c', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e00', u'\u8b80\u53f2\u8a18\u5341\u8868 \u63d0\u8981', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e03', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516d', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e94', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u56db', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e5d', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b']
+>>> [eval(toc[a])[0][3] for a in tk]
+[u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e09', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u5341', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e8c', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e00', u'\u8b80\u53f2\u8a18\u5341\u8868 \u63d0\u8981', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e03', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516d', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e94', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u56db', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e5d', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b']
+>>> toc
+{'003': "[(u'KR2a0005', u'003', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e09')]", '010': "[(u'KR2a0005', u'010', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u5341')]", '002': "[(u'KR2a0005', u'002', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e8c')]", '001': "[(u'KR2a0005', u'001', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e00')]", '000': "[(u'KR2a0005', u'000', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u63d0\\u8981'), (u'KR2a0005', u'000', u'3a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u7e3d\\u8ad6')]", '007': "[(u'KR2a0005', u'007', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e03')]", '006': "[(u'KR2a0005', u'006', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u516d')]", '005': "[(u'KR2a0005', u'005', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e94')]", '004': "[(u'KR2a0005', u'004', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u56db')]", '009': "[(u'KR2a0005', u'009', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e5d')]", '008': "[(u'KR2a0005', u'008', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u516b')]"}
+>>> [[b[3] for b in eval(toc[a])] for a in tk]
+[[u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e09'], [u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u5341'], [u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e8c'], [u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e00'], [u'\u8b80\u53f2\u8a18\u5341\u8868 \u63d0\u8981', u'\u8b80\u53f2\u8a18\u5341\u8868 \u7e3d\u8ad6'], [u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e03'], [u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516d'], [u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e94'], [u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u56db'], [u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e5d'], [u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b']]
+>>> [[(a, b[3]) for b in eval(toc[a])] for a in tk]
+[[('003', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e09')], [('010', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u5341')], [('002', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e8c')], [('001', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e00')], [('000', u'\u8b80\u53f2\u8a18\u5341\u8868 \u63d0\u8981'), ('000', u'\u8b80\u53f2\u8a18\u5341\u8868 \u7e3d\u8ad6')], [('007', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e03')], [('006', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516d')], [('005', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e94')], [('004', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u56db')], [('009', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e5d')], [('008', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b')]]
+>>> [(a, b[3]) for b in eval(toc[a]) for a in tk]
+[('003', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b'), ('010', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b'), ('002', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b'), ('001', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b'), ('000', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b'), ('007', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b'), ('006', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b'), ('005', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b'), ('004', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b'), ('009', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b'), ('008', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b')]
+>>> len([(a, b[3]) for b in eval(toc[a]) for a in tk])
+11
+>>> len([[(a, b[3]) for b in eval(toc[a])] for a in tk])
+11
+>>> rx = [[(a, b[3]) for b in eval(toc[a])] for a in tk]
+>>> rx
+[[('003', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e09')], [('010', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u5341')], [('002', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e8c')], [('001', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e00')], [('000', u'\u8b80\u53f2\u8a18\u5341\u8868 \u63d0\u8981'), ('000', u'\u8b80\u53f2\u8a18\u5341\u8868 \u7e3d\u8ad6')], [('007', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e03')], [('006', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516d')], [('005', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e94')], [('004', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u56db')], [('009', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e5d')], [('008', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b')]]
+>>> tk.sort()
+>>> rx
+[[('003', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e09')], [('010', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u5341')], [('002', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e8c')], [('001', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e00')], [('000', u'\u8b80\u53f2\u8a18\u5341\u8868 \u63d0\u8981'), ('000', u'\u8b80\u53f2\u8a18\u5341\u8868 \u7e3d\u8ad6')], [('007', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e03')], [('006', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516d')], [('005', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e94')], [('004', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u56db')], [('009', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e5d')], [('008', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b')]]
+>>> rx = [[(a, b[3]) for b in eval(toc[a])] for a in tk]
+>>> rx
+[[('000', u'\u8b80\u53f2\u8a18\u5341\u8868 \u63d0\u8981'), ('000', u'\u8b80\u53f2\u8a18\u5341\u8868 \u7e3d\u8ad6')], [('001', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e00')], [('002', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e8c')], [('003', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e09')], [('004', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u56db')], [('005', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e94')], [('006', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516d')], [('007', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e03')], [('008', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u516b')], [('009', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u4e5d')], [('010', u'\u8b80\u53f2\u8a18\u5341\u8868 \u5377\u5341')]]
+>>> toc
+{'003': "[(u'KR2a0005', u'003', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e09')]", '010': "[(u'KR2a0005', u'010', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u5341')]", '002': "[(u'KR2a0005', u'002', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e8c')]", '001': "[(u'KR2a0005', u'001', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e00')]", '000': "[(u'KR2a0005', u'000', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u63d0\\u8981'), (u'KR2a0005', u'000', u'3a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u7e3d\\u8ad6')]", '007': "[(u'KR2a0005', u'007', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e03')]", '006': "[(u'KR2a0005', u'006', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u516d')]", '005': "[(u'KR2a0005', u'005', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e94')]", '004': "[(u'KR2a0005', u'004', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u56db')]", '009': "[(u'KR2a0005', u'009', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u4e5d')]", '008': "[(u'KR2a0005', u'008', u'1a', u'\\u8b80\\u53f2\\u8a18\\u5341\\u8868 \\u5377\\u516b')]"}
+>>> xc=u" [[file:KR6q0019_001.txt][明覺聰禪師語錄 1]]"
+>>> [re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : d[x.group(2)].append(x.groups()), l) for xc in lines if "file" in xc]
+[u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'']
+>>> d=defaultdict(list)
+>>> [re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : d[x.group(2)].append(x.groups()), l) for xc in lines if "file" in xc]
+[u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'', u'']
+>>> d
+defaultdict(<type 'list'>, {})
+>>> [re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : d[x.group(2)].append(x.groups()), xc) for xc in lines if "file" in xc]
+[u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]', u' - ]']
+>>> d
+defaultdict(<type 'list'>, {u'010': [(u'KR1a0002', u'010', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341')], u'011': [(u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')], u'003': [(u'KR1a0002', u'003', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e09')], u'002': [(u'KR1a0002', u'002', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e8c')], u'001': [(u'KR1a0002', u'001', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e00')], u'000': [(u'KR1a0002', u'000', u'1a', u'\u5b50\u590f\u6613\u50b3 \u63d0\u8981')], u'007': [(u'KR1a0002', u'007', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e03')], u'006': [(u'KR1a0002', u'006', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516d')], u'005': [(u'KR1a0002', u'005', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e94')], u'004': [(u'KR1a0002', u'004', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u56db')], u'009': [(u'KR1a0002', u'009', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e5d')], u'008': [(u'KR1a0002', u'008', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b')]})
+>>> xc
+u''
+>>> xc=u" [[file:KR6q0019_001.txt][明覺聰禪師語錄 1]]"
+>>> [re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : d[x.group(2)].append(x.groups()), l) for l in xc if "file" in l]
+[]
+>>> d
+defaultdict(<type 'list'>, {u'010': [(u'KR1a0002', u'010', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341')], u'011': [(u'KR1a0002', u'011', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u5341\u4e00')], u'003': [(u'KR1a0002', u'003', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e09')], u'002': [(u'KR1a0002', u'002', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e8c')], u'001': [(u'KR1a0002', u'001', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e00')], u'000': [(u'KR1a0002', u'000', u'1a', u'\u5b50\u590f\u6613\u50b3 \u63d0\u8981')], u'007': [(u'KR1a0002', u'007', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e03')], u'006': [(u'KR1a0002', u'006', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516d')], u'005': [(u'KR1a0002', u'005', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e94')], u'004': [(u'KR1a0002', u'004', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u56db')], u'009': [(u'KR1a0002', u'009', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u4e5d')], u'008': [(u'KR1a0002', u'008', u'1a', u'\u5b50\u590f\u6613\u50b3 \u5377\u516b')]})
+>>> d=defaultdict(list)
+>>> [re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : d[x.group(2)].append(x.groups()), l) for l in xc if "file" in l]
+[]
+>>> d
+defaultdict(<type 'list'>, {})
+>>> l
+u']'
+>>> re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : d[x.group(2)].append(x.groups()), xc) 
+u' [[file:KR6q0019_001.txt][\u660e\u89ba\u8070\u79aa\u5e2b\u8a9e\u9304 1]]'
+>>> re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", "\\
+  File "<stdin>", line 1
+    re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", "\\
+                                                                     ^
+SyntaxError: EOL while scanning string literal
+>>> re.sub(r"\[\[file:([^_]+)[^:]+:?:?([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : d[x.group(2)].append(x.groups()), xc) 
+u' [[file:KR6q0019_001.txt][\u660e\u89ba\u8070\u79aa\u5e2b\u8a9e\u9304 1]]'
+>>> re.sub(r"\[\[file:([^_]+)[^:]+([^]]+)\]\[([^]]+)\]\]", lambda x : d[x.group(2)].append(x.groups()), xc) 
+u' '
+>>> d
+defaultdict(<type 'list'>, {u't': [(u'KR6q0019', u't', u'\u660e\u89ba\u8070\u79aa\u5e2b\u8a9e\u9304 1')]})
+>>> re.sub(r"\[\[file:([^_]+)([^\.]+)\.([^]]+)\]\[([^]]+)\]", lambda x : d[x.group(2)].append(x.groups()), xc) 
+u' ]'
+>>> d
+defaultdict(<type 'list'>, {u'_001': [(u'KR6q0019', u'_001', u'txt', u'\u660e\u89ba\u8070\u79aa\u5e2b\u8a9e\u9304 1')], u't': [(u'KR6q0019', u't', u'\u660e\u89ba\u8070\u79aa\u5e2b\u8a9e\u9304 1')]})
+>>> d=defaultdict(list)
+>>> re.sub(r"\[\[file:([^_]+)_([^\.]+)\.([^]]+)\]\[([^]]+)\]", lambda x : d[x.group(2)].append(x.groups()), xc) 
+u' ]'
+>>> d=defaultdict(list)
+>>> re.sub(r"\[\[file:([^_]+)_([^\.]+)\.([^]]+)\]\[([^]]+)\]", lambda x : d[x.group(2)].append(x.groups()), xc) 
+u' ]'
+>>> d
+defaultdict(<type 'list'>, {u'001': [(u'KR6q0019', u'001', u'txt', u'\u660e\u89ba\u8070\u79aa\u5e2b\u8a9e\u9304 1')]})
+>>> key=u"七經"
+>>> r.llen(key)
+36
+>>> ld = defaultdict(list)
+>>> redis_store=r
+>>> [ld[(a.split('\t')[1].split(':')[0].split("_")[0])].append(1) for a in redis_store.lrange(key, 0, total-1) if len(a) > 0]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'total' is not defined
+>>> total = redis_store.llen(key)
+>>> [ld[(a.split('\t')[1].split(':')[0].split("_")[0])].append(1) for a in redis_store.lrange(key, 0, total-1) if len(a) > 0]
+[None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+>>> ld
+defaultdict(<type 'list'>, {'KR6q0222': [1, 1, 1, 1], 'KR5a0042': [1], 'KR1a0135': [1], 'KR1a0071': [1, 1, 1], 'KR1a0007': [1], 'KR1a0006': [1], 'KR5a0185': [1, 1], 'KR5a0296': [1, 1], 'KR5a0160': [1], 'KR6q0218': [1], 'KR1a0163': [1], 'KR5a0308': [1], 'KR5a0326': [1], 'KR1a0138': [1], 'KR1a0070': [1], 'KR6q0212': [1], 'KR1a0046': [1, 1, 1, 1], 'KR5a0001': [1, 1], 'KR1a0080': [1], 'KR1a0164': [1, 1], 'KR5a0220': [1, 1, 1, 1]})
+>>> zbmeta
+'kr:meta:'
+>>> ids = [(redis_store.hgetall("%s%s" % (zbmeta, a[0])), a[1]) for a in ox]
+>>> ids
+[({}, 'KR5a0001_034:003a:10:13:69\tYP-C'), ({}, 'KR6q0083_001:0347c:12:8:14'), ({}, 'KR6q0153_001:0462a:1:18:866'), ({}, 'KR6q0154_004:0514a:20:18:27'), ({}, 'KR6q0219_002:0039b:9:6:131'), ({}, 'KR6q0157_003:0702c:19:17:190'), ({}, 'KR5a0221_006:010a:6:1:56'), ({}, 'KR5a0216_000:006b:4:8:10'), ({}, 'KR5a0316_024:011a:8:13:20'), ({}, 'KR5a0174_001:001b:4:1:3'), ({}, 'KR5a0174_001:001b:4:1:3\tCK-KZ YP-C'), ({}, 'KR5a0221_006:010a:7:4:56'), ({}, 'KR5a0308_009:012b:9:2:21'), ({}, 'KR6q0214_025:0197a:20:16:11'), ({}, 'KR6q0221_012:0659b:25:4:66'), ({}, 'KR6q0226_004:0324c:27:1:31'), ({}, 'KR5a0316_024:009a:7:13:17'), ({}, 'KR6q0221_019:0698b:5:20:5'), ({}, 'KR6q0221_010:0650c:9:3:9'), ({}, 'KR5a0175_000:001a:10:1:0'), ({}, 'KR5a0104_008:014b:3:10:15'), ({}, 'KR5a0104_005:027b:2:16:28'), ({}, 'KR5a0168_000:028b:8:4:28\tn'), ({}, 'KR6q0153_001:0446b:21:12:357'), ({}, 'KR6q0154_001:0484c:14:11:401'), ({}, 'KR6q0157_001:0646a:16:3:376'), ({}, 'KR6q0156_001:0552a:11:9:145'), ({}, 'KR5a0221_020:013a:2:7:47'), ({}, 'KR5a0316_004:018a:9:10:37'), ({}, 'KR6q0157_003:0702c:19:4:190'), ({}, 'KR6q0153_001:0462a:1:6:866'), ({}, 'KR6q0154_004:0514a:20:6:27'), ({}, 'KR5a0326_002:002a:2:2:2'), ({}, 'KR5a0001_028:012a:6:1:16'), ({}, 'KR5a0001_028:012a:6:1:5\tYP-C'), ({}, 'KR6q0226_010:0419a:2:6:106'), ({}, 'KR5a0316_024:006a:1:2:14'), ({}, 'KR5a0179_001:004b:8:12:6'), ({}, 'KR5a0124_000:007b:3:3:1'), ({}, 'KR5a0011_003:022b:4:12:11\tCK-KZ YP-C'), ({}, 'KR5a0168_000:022b:8:2:23'), ({}, 'KR5a0168_000:022b:8:2:24\tCK-KZ YP-C'), ({}, 'KR6q0227_002:0520c:23:11:41'), ({}, 'KR6q0227_002:0523a:13:13:83'), ({}, 'KR6q0227_001:0514b:20:8:34'), ({}, 'KR6q0227_002:0523a:13:11:83'), ({}, 'KR5a0308_017:010a:1:15:30'), ({}, 'KR5a0084_000:022b:1:7:81'), ({}, 'KR5a0011_003:022b:2:2:39'), ({}, 'KR6q0156_001:0552a:12:19:145'), ({}, 'KR6q0206_001:0171a:4:3:346'), ({}, 'KR6q0092_028:0579c:29:13:10\tCBETA T T@LI T@MING T@QISHA T@SONG T@YUAN'), ({}, 'KR6q0092_028:0579c:29:13:5'), ({}, 'KR5a0316_004:016a:6:12:32'), ({}, 'KR5a0316_004:016b:10:3:34'), ({}, 'KR5a0190_004:010b:7:2:2\tCK-KZ YP-C'), ({}, 'KR5a0190_004:010b:7:6:87'), ({}, 'KR5a0001_007:007b:3:5:8'), ({}, 'KR6q0019_024:0300b:2:13:6'), ({}, 'KR6q0193_011:0625c:1:20:81\tCBETA J'), ({}, 'KR6q0227_002:0521c:6:1:55'), ({}, 'KR5a0130_000:008b:2:1:7'), ({}, 'KR5a0308_002:004a:3:14:15'), ({}, 'KR5a0310_001:005a:1:13:5'), ({}, 'KR6q0227_002:0523a:15:30:84\tn'), ({}, 'KR6q0226_004:0324c:28:2:31'), ({}, 'KR5a0316_018:005b:5:1:10'), ({}, 'KR5a0001_005:014b:3:1:41\tYP-C'), ({}, 'KR5a0001_005:014b:3:1:55'), ({}, 'KR5a0217_000:004a:8:9:21'), ({}, 'KR6q0252_005:0361b:6:2:29'), ({}, 'KR6q0153_001:0446b:23:11:357'), ({}, 'KR6q0154_001:0484c:16:10:401'), ({}, 'KR6q0157_001:0646a:18:2:376'), ({}, 'KR5a0328_002:012b:7:5:23'), ({}, 'KR6q0235_001:0152c:7:15:102'), ({}, 'KR5a0316_024:016a:6:1:32'), ({}, 'KR5a0168_000:028b:8:4:28\tn\tCK-KZ YP-C')]
+>>> ld = defaultdict(list)
+>>> [ld[(a.split('\t')[1].split(':')[0].split("_")[0])].append(1) for a in redis_store.lrange(key, 0, total-1) if len(a) > 0]
+[None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+>>> ox = [(a, len(ld[a])) for a in ld]
+>>> ids = [(redis_store.hgetall("%s%s" % (zbmeta, a[0])), a[1]) for a in ox]
+>>> ids
+[({'STATUS': 'READY', 'TPUR': '\xe8\xa7\xa3\xe6\x83\x91\xe7\xaf\x87', 'TITLE': '\xe8\xa7\xa3\xe6\x83\x91\xe7\xaf\x87-\xe6\xb8\x85-\xe5\xbc\x98\xe8\xb4\x8a', 'RESP': '\xe5\xbc\x98\xe8\xb4\x8a', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0222'}, 4), ({'STATUS': 'READY', 'TPUR': '\xe7\x8e\x89\xe6\xb8\x85\xe5\x85\x83\xe5\xa7\x8b\xe7\x8e\x84\xe9\xbb\x83\xe4\xb9\x9d\xe5\x85\x89\xe7\x9c\x9f\xe7\xb6\x93', 'TITLE': '\xe7\x8e\x89\xe6\xb8\x85\xe5\x85\x83\xe5\xa7\x8b\xe7\x8e\x84\xe9\xbb\x83\xe4\xb9\x9d\xe5\x85\x89\xe7\x9c\x9f\xe7\xb6\x93-\xe6\x98\x8e-', 'ID': 'KR5a0042', 'DYNASTY': '\xe6\x98\x8e'}, 1), ({'STATUS': 'READY', 'TPUR': '\xe6\x98\x93\xe5\x8e\x9f\xe5\xb0\xb1\xe6\xad\xa3', 'TITLE': '\xe6\x98\x93\xe5\x8e\x9f\xe5\xb0\xb1\xe6\xad\xa3-\xe6\xb8\x85-\xe5\x8c\x85\xe5\x84\x80', 'RESP': '\xe5\x8c\x85\xe5\x84\x80', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR1a0135'}, 1), ({'STATUS': 'READY', 'TPUR': '\xe6\x98\x93\xe7\xba\x82\xe8\xa8\x80', 'TITLE': '\xe6\x98\x93\xe7\xba\x82\xe8\xa8\x80-\xe5\x85\x83-\xe5\x90\xb3\xe6\xbe\x84', 'RESP': '\xe5\x90\xb3\xe6\xbe\x84', 'DYNASTY': '\xe5\x85\x83', 'ID': 'KR1a0071'}, 3), ({'STATUS': 'READY', 'TPUR': '\xe5\x91\xa8\xe6\x98\x93\xe8\xa8\xbb\xe7\x96\x8f', 'TITLE': '\xe5\x91\xa8\xe6\x98\x93\xe8\xa8\xbb\xe7\x96\x8f-\xe9\xad\x8f-\xe7\x8e\x8b\xe5\xbc\xbc', 'RESP': '\xe7\x8e\x8b\xe5\xbc\xbc', 'DYNASTY': '\xe9\xad\x8f', 'ID': 'KR1a0007'}, 1), ({'STATUS': 'READY', 'TPUR': '\xe5\x91\xa8\xe6\x98\x93\xe8\xa8\xbb', 'TITLE': '\xe5\x91\xa8\xe6\x98\x93\xe8\xa8\xbb-\xe9\xad\x8f-\xe7\x8e\x8b\xe5\xbc\xbc', 'RESP': '\xe7\x8e\x8b\xe5\xbc\xbc', 'DYNASTY': '\xe9\xad\x8f', 'ID': 'KR1a0006'}, 1), ({'STATUS': 'READY', 'TPUR': '\xe5\xa4\xaa\xe7\x9c\x9f\xe7\x8e\x89\xe5\xb8\x9d\xe5\x9b\x9b\xe6\xa5\xb5\xe6\x98\x8e\xe7\xa7\x91\xe7\xb6\x93', 'TITLE': '\xe5\xa4\xaa\xe7\x9c\x9f\xe7\x8e\x89\xe5\xb8\x9d\xe5\x9b\x9b\xe6\xa5\xb5\xe6\x98\x8e\xe7\xa7\x91\xe7\xb6\x93-\xe5\x85\xad\xe6\x9c\x9d-', 'ID': 'KR5a0185', 'DYNASTY': '\xe5\x85\xad\xe6\x9c\x9d'}, 2), ({'STATUS': 'READY', 'TPUR': '\xe9\xbb\x83\xe5\xb8\x9d\xe9\x87\x91\xe5\x8c\xb1\xe7\x8e\x89\xe8\xa1\xa1\xe7\xb6\x93', 'TITLE': '\xe9\xbb\x83\xe5\xb8\x9d\xe9\x87\x91\xe5\x8c\xb1\xe7\x8e\x89\xe8\xa1\xa1\xe7\xb6\x93-\xe5\x85\xad\xe6\x9c\x9d-', 'ID': 'KR5a0296', 'DYNASTY': '\xe5\x85\xad\xe6\x9c\x9d'}, 2), ({'STATUS': 'READY', 'TPUR': '\xe6\x98\x93\xe6\x95\xb8\xe9\x89\xa4\xe9\x9a\xb1\xe5\x9c\x96', 'TITLE': '\xe6\x98\x93\xe6\x95\xb8\xe9\x89\xa4\xe9\x9a\xb1\xe5\x9c\x96--\xe5\x8a\x89\xe7\x89\xa7', 'RESP': '\xe5\x8a\x89\xe7\x89\xa7', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0160'}, 1), ({'STATUS': 'READY', 'TPUR': '\xe5\xad\xb8\xe4\xbd\x9b\xe8\x80\x83\xe8\xa8\x93', 'TITLE': '\xe5\xad\xb8\xe4\xbd\x9b\xe8\x80\x83\xe8\xa8\x93-\xe6\xb8\x85-\xe6\xb7\xa8\xe6\x8c\xba', 'RESP': '\xe6\xb7\xa8\xe6\x8c\xba', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0218'}, 1), ({'STATUS': 'READY', 'TPUR': '\xe4\xb9\xbe\xe5\x9d\xa4\xe9\x91\xbf\xe5\xba\xa6', 'TITLE': '\xe4\xb9\xbe\xe5\x9d\xa4\xe9\x91\xbf\xe5\xba\xa6-\xe6\xbc\xa2-\xe9\x84\xad\xe7\x8e\x84', 'RESP': '\xe9\x84\xad\xe7\x8e\x84', 'DYNASTY': '\xe6\xbc\xa2', 'ID': 'KR1a0163'}, 1), ({'STATUS': 'READY', 'TPUR': '\xe6\xad\xb7\xe4\xb8\x96\xe7\x9c\x9f\xe4\xbb\x99\xe9\xab\x94\xe9\x81\x93\xe9\x80\x9a\xe9\x91\x91', 'TITLE': '\xe6\xad\xb7\xe4\xb8\x96\xe7\x9c\x9f\xe4\xbb\x99\xe9\xab\x94\xe9\x81\x93\xe9\x80\x9a\xe9\x91\x91--\xe8\xb6\x99\xe9\x81\x93\xe4\xb8\x80', 'RESP': '\xe8\xb6\x99\xe9\x81\x93\xe4\xb8\x80', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)', 'ID': 'KR5a0308'}, 1), ({'STATUS': 'READY', 'TPUR': '\xe4\xb8\x89\xe6\xb4\x9e\xe8\xae\x9a\xe9\xa0\x8c\xe9\x9d\x88\xe7\xab\xa0', 'TITLE': '\xe4\xb8\x89\xe6\xb4\x9e\xe8\xae\x9a\xe9\xa0\x8c\xe9\x9d\x88\xe7\xab\xa0-\xe5\x85\x83-', 'ID': 'KR5a0326', 'DYNASTY': '\xe5\x85\x83'}, 1), ({'STATUS': 'READY', 'TPUR': '\xe6\x98\x93\xe5\x9c\x96\xe6\x98\x8e\xe8\xbe\xa8', 'TITLE': '\xe6\x98\x93\xe5\x9c\x96\xe6\x98\x8e\xe8\xbe\xa8-\xe6\xb8\x85-\xe8\x83\xa1\xe6\xb8\xad', 'RESP': '\xe8\x83\xa1\xe6\xb8\xad', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR1a0138'}, 1), ({'STATUS': 'READY', 'TPUR': '\xe5\x91\xa8\xe6\x98\x93\xe5\x95\x9f\xe8\x92\x99\xe7\xbf\xbc\xe5\x82\xb3', 'TITLE': '\xe5\x91\xa8\xe6\x98\x93\xe5\x95\x9f\xe8\x92\x99\xe7\xbf\xbc\xe5\x82\xb3-\xe5\x85\x83-\xe8\x83\xa1\xe4\xb8\x80\xe6\xa1\x82', 'RESP': '\xe8\x83\xa1\xe4\xb8\x80\xe6\xa1\x82', 'DYNASTY': '\xe5\x85\x83', 'ID': 'KR1a0070'}, 1), ({'STATUS': 'READY', 'TPUR': '\xe7\x89\xa7\xe9\x9b\xb2\xe5\x92\x8c\xe5\xb0\x9a\xe5\xac\xbe\xe9\xbd\x8b\xe5\x88\xa5\xe9\x9b\x86', 'TITLE': '\xe7\x89\xa7\xe9\x9b\xb2\xe5\x92\x8c\xe5\xb0\x9a\xe5\xac\xbe\xe9\xbd\x8b\xe5\x88\xa5\xe9\x9b\x86-\xe6\x98\x8e-\xe9\x80\x9a\xe6\x98\x8e', 'RESP': '\xe9\x80\x9a\xe6\x98\x8e', 'DYNASTY': '\xe6\x98\x8e', 'ID': 'KR6q0212'}, 1), ({'STATUS': 'READY', 'TPUR': '\xe5\x8e\x9a\xe9\xbd\x8b\xe6\x98\x93\xe5\xad\xb8', 'TITLE': '\xe5\x8e\x9a\xe9\xbd\x8b\xe6\x98\x93\xe5\xad\xb8-\xe5\xae\x8b-\xe9\xa6\xae\xe6\xa4\x85', 'RESP': '\xe9\xa6\xae\xe6\xa4\x85', 'DYNASTY': '\xe5\xae\x8b', 'ID': 'KR1a0046'}, 4), ({'STATUS': 'READY', 'TPUR': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93', 'TITLE': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe5\x93\x81\xe5\xa6\x99\xe7\xb6\x93--', 'ID': 'KR5a0001', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)'}, 2), ({'STATUS': 'READY', 'TPUR': '\xe5\xa4\xa7\xe6\x98\x93\xe8\xb1\xa1\xe6\x95\xb8\xe9\x88\x8e\xe6\xb7\xb1\xe5\x9c\x96', 'TITLE': '\xe5\xa4\xa7\xe6\x98\x93\xe8\xb1\xa1\xe6\x95\xb8\xe9\x88\x8e\xe6\xb7\xb1\xe5\x9c\x96-\xe5\x85\x83-\xe5\xbc\xb5\xe7\x90\x86', 'RESP': '\xe5\xbc\xb5\xe7\x90\x86', 'DYNASTY': '\xe5\x85\x83', 'ID': 'KR1a0080'}, 1), ({'STATUS': 'READY', 'TPUR': '\xe6\x98\x93\xe7\xb7\xaf\xe7\xa8\xbd\xe8\xa6\xbd\xe5\x9c\x96', 'TITLE': '\xe6\x98\x93\xe7\xb7\xaf\xe7\xa8\xbd\xe8\xa6\xbd\xe5\x9c\x96-\xe6\xbc\xa2-\xe9\x84\xad\xe7\x8e\x84', 'RESP': '\xe9\x84\xad\xe7\x8e\x84', 'DYNASTY': '\xe6\xbc\xa2', 'ID': 'KR1a0164'}, 2), ({'STATUS': 'READY', 'TPUR': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe7\xb6\x93\xe5\xa4\xa7\xe6\xb3\x95', 'TITLE': '\xe9\x9d\x88\xe5\xaf\xb6\xe7\x84\xa1\xe9\x87\x8f\xe5\xba\xa6\xe4\xba\xba\xe4\xb8\x8a\xe7\xb6\x93\xe5\xa4\xa7\xe6\xb3\x95--', 'ID': 'KR5a0220', 'DYNASTY': '(\xe4\xb8\x8d\xe8\xa9\xb3)'}, 4)]
+>>> a=ids[0]
+>>> a
+({'STATUS': 'READY', 'TPUR': '\xe8\xa7\xa3\xe6\x83\x91\xe7\xaf\x87', 'TITLE': '\xe8\xa7\xa3\xe6\x83\x91\xe7\xaf\x87-\xe6\xb8\x85-\xe5\xbc\x98\xe8\xb4\x8a', 'RESP': '\xe5\xbc\x98\xe8\xb4\x8a', 'DYNASTY': '\xe6\xb8\x85', 'ID': 'KR6q0222'}, 4)
+>>> a['TITLE']
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: tuple indices must be integers, not str
+>>> a[0]['TITLE']
+'\xe8\xa7\xa3\xe6\x83\x91\xe7\xaf\x87-\xe6\xb8\x85-\xe5\xbc\x98\xe8\xb4\x8a'
+>>> r.keys("kr_*")
+['kr_user:cwittern$\xe7\x8e\x8b\xe5\xbc\xbc', 'kr_user:cwittern$\xe4\xb8\x89\xe6\x89\x8d', 'kr_user:cwittern:toc:master:KR2a0031', 'kr_user:cwittern:toc:master:KR2a0024', 'kr_user:cwittern:toc:master:KR6q0019', 'kr_user:cwittern:toc:WYG:KR2a0005', 'kr_user:cwittern$Favorites', 'kr_user:cwittern:searchkeys', 'kr_usercwittern:searchkeys', 'kr_user:cwittern:toc:master:KR2a0005']
+>>> kr_user="kr_user:"
+>>> user="cwittern"
+>>> tf = redis_store.keys("%s%s$*")
+>>> tf
+[]
+>>> tf = redis_store.keys("%s%s$*" % (kr_user, user))
+>>> tf
+['kr_user:cwittern$\xe7\x8e\x8b\xe5\xbc\xbc', 'kr_user:cwittern$\xe4\xb8\x89\xe6\x89\x8d', 'kr_user:cwittern$Favorites']
+>>> 

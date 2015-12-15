@@ -1,0 +1,16 @@
+Flask==0.10.1
+GitPython==0.3.2.RC1
+Jinja2==2.7.1
+MarkupSafe==0.18
+Werkzeug==0.9.4
+async==0.6.1
+gitdb==0.5.4
+hiredis==0.1.1
+ipython==1.2.1
+itsdangerous==0.23
+python-gitlab==0.4
+redis==2.8.0
+requests==2.0.0
+sh==1.09
+smmap==0.8.2
+wsgiref==0.1.2
