@@ -14,7 +14,7 @@
 
 <div class="row">
   <div id="txtcont" class="span9">
-    <h2>Profile for user <u>{{user}}</u>　　<a class="btn-danger" href="{{url_for('main.signout')}}">{{_("Logout")}}</a></h2>
+    <h2>{{_('Profile for user <u>%(user)s</u>', user=user)}}　　<a class="btn-danger" href="{{url_for('main.signout')}}">{{_("Logout")}}</a></h2>
     {% for d in ret %}
     <h3>{{d[0]}}</h3>
     <table>
@@ -22,39 +22,37 @@
       {% set tl = t[0][0:-4] %}
     <tr>
       <td  class="text-left"><b>{{tl}}</b>:</td>
-      <td> view</td>
-      <td><a target="github" href="{{t[1]}}"> edit (GitHub)</a></td>
+      <td><a target="github" href="{{t[1]}}"> {{_('edit (GitHub)')}}</a> &nbsp; &nbsp;</td>
 	  {% if tl in loaded %}
       <td><a href="{{url_for('main.unloadtextlist', ffile=tl, next='profile/'+user)}}">
-	  {{_("unload")}}
+	  {{_("unload")}}</a> &nbsp;&nbsp;
 	  {% else %}
       <td><a href="{{url_for('main.loadtextlist', ffile=tl, next='profile/'+user)}}">
-	  {{_("load")}}
+	  {{_("load")}} </a>
 	  {% endif %}
-    </a></td></tr>
+    </td></tr>
       <tr><td><div id="{{tl}}"</div></td></tr>
-		   {% endfor %}
-		   </table>
+		   {% endfor %}</table>
 {% endfor %}
-<h3>Settings</h3>
+<h3>{{_('Settings')}}</h3>
 <form id="userdata" action="{{url_for('main.saveuserdata', uid=session['user'])}}" method="POST">
   
-  <p>Sort by:
+  <p>{{_('Preferred sort method')}}
     <select name="sort">
-      <option value="-txtid" {% if userdata['sort'] == "+txtid" %} selected {% endif %}>By text number</option>
-      <option value="+txtid" {% if userdata['sort'] == "-txtid" %} selected {% endif %}>By text number (reversed)</option>
-      <option value="+date" {% if userdata['sort'] == "+date" %} selected {% endif %}>By date</option>
-      <option value="-date" {% if userdata['sort'] == "-date" %} selected {% endif %}>By date (reversed)</option>
-      <option value="+term" {% if userdata['sort'] == "+term" %} selected {% endif %}>By term</option>
-      <option value="-term" {% if userdata['sort'] == "-term" %} selected {% endif %}>By term (reversed)</option>
-      <option value="+pre" {% if userdata['sort'] == "+pre" %} selected {% endif %}>By preceding characters</option>
+      <option value="-txtid" {% if userdata['sort'] == "+txtid" %} selected {% endif %}>{{_('By text number')}}</option>
+      <option value="+txtid" {% if userdata['sort'] == "-txtid" %} selected {% endif %}>{{_('By text number (reversed)')}}</option>
+      <option value="+date" {% if userdata['sort'] == "+date" %} selected {% endif %}>{{_('By date')}}</option>
+      <option value="-date" {% if userdata['sort'] == "-date" %} selected {% endif %}>{{_('By date (reversed)')}}</option>
+      <option value="+term" {% if userdata['sort'] == "+term" %} selected {% endif %}>{{_('By term')}}</option>
+      <option value="-term" {% if userdata['sort'] == "-term" %} selected {% endif %}>{{_('By term (reversed)')}}</option>
+      <option value="+pre" {% if userdata['sort'] == "+pre" %} selected {% endif %}>{{_('By preceding characters')}}</option>
      </select>
     </p>
     <input type="hidden" name="next" value="{{url_for('main.profile', uid=session['user'])}}"/>
-    <input style="margin-bottom:5px" type="submit" value="Save"/>　
+    <input style="margin-bottom:5px" type="submit" value="{{_('Save')}}"/>　
 </form>
-<p>Advanced: <a target="github" href="https://github.com/{{session['user']}}/KR-Workspace/edit/{{session['user']}}/Settings/kanripo.cfg"> edit settings on GitHub</a></p>
-<h3>Recent searches</h3>
+<p>{{_('Advanced:')}} <a target="github" href="https://github.com/{{session['user']}}/KR-Workspace/edit/{{session['user']}}/Settings/kanripo.cfg"> {{_('edit settings on GitHub')}}</a></p>
+<h3>{{_('Recent searches')}}</h3>
 <ul>
 {% for s in searches %}
 <li><a href="{{url_for('main.searchtext', query=s)}}">{{s}}</a></li>

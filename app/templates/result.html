@@ -9,16 +9,13 @@
   <div class="container">
     <h1>{{sr.head}}</h1>
     <p>
-    {{_('Searched for')}}
-    {{key}}.
+    {{_('Searched for %(value)s. ', value=key)}}
     {% if filter %}
     {{_('Filtered by: ')}}
     {{filter}}
     {% endif %}
-    {{_('Found')}} 
-    {{sr.total}},
-    {{_('showing %d to %d.' % (start+1, n))}}
-    <span  class="pull-right">　<a href="bytext?query={{key}}">by text</a></span>
+    {{_('Found %(total)d, showing %(start)d to %(end)d.', total=sr.total, start=start+1, end=n)}} 
+    <span  class="pull-right">　<a href="bytext?query={{key}}">{{_('Show results by text')}}</a></span>
     {% if filter %}
     <span  class="pull-right">　
     <a href="search?query={{key}}">
@@ -75,12 +72,12 @@
 {% endblock %}
 
 {% block sidebar %}
-<div id="sort"><h4>Sort</h4></div>
+<div id="sort"><h4>{{('Sort')}}</h4></div>
 <ul>
-  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=+txtid">By text number</a></li>
-  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=-date">By text date</a></li>
-  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=+term">By search term</a></li>
-  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=+pre">By preceding characters</a></li>
+  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=+txtid">{{_('By text number')}}</a></li>
+  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=-date">{{_('By text date')}}</a></li>
+  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=+term">{{_('By search term')}}</a></li>
+  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=+pre">{{_('By preceding characters')}}</a></li>
 </ul>  
 {% if session['user'] %}
 <div id="filter"><h4>特別 (Filter)</h4></div>

@@ -2,7 +2,8 @@
 from __future__ import unicode_literals
 from flask import Response, session, render_template, redirect, url_for, abort, flash, Markup, request,\
     current_app, make_response, send_from_directory, g
-from flask.ext.login import login_required, current_user
+from flask.ext.login import current_user
+from flask.ext.babel import gettext, ngettext
 #from flask.ext.sqlalchemy import get_debug_queries
 ## github authentication [2015-10-03T17:08:15+0900]
 from werkzeug.contrib.fixers import ProxyFix
@@ -17,6 +18,7 @@ from . import main
 from .. import db
 from .. import redis_store
 from .. import lib
+from .. import babel
 #from ..models import Permission, Role, User, Post, Comment
 #from ..decorators import admin_required, permission_required
 from collections import Counter
@@ -41,7 +43,11 @@ link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
 hd = re.compile(r"^(\*+) (.*)$")
 env = Environment(loader=PackageLoader('__main__', 'templates'))
     
-
+@babel.localeselector
+def get_locale():
+    lg=request.accept_languages.best_match(current_app.config['LANGUAGES'].keys())
+    print lg
+    return lg
 
 @main.route('/robots.txt')
 @main.route('/googled78ca805afaa95df.html')
@@ -53,7 +59,7 @@ def unloadtextlist():
     tl=request.values.get("ffile")
     user=session['user']
     redis_store.delete("%s%s$%s" % (kr_user, user, tl))
-    flash("File %s removed from internal database." % (tl))
+    flash(gettext("File %(value)s removed from internal database.", value=tl))
     return redirect(request.values.get('next') or '/')
 @main.route('/textlist/load', methods=['GET',])
 def loadtextlist():
@@ -61,9 +67,9 @@ def loadtextlist():
     user=session['user']
     lib.ghfilterfile2redis("%s$%s" % (user, tl))
     try:
-        flash("Loaded %s into the internal database." % (tl))
+        flash(gettext("Loaded %(value)s into the internal database.", value=tl))
     except:
-        flash("Could not load %s." % (tl))
+        flash(gettext("Could not load %(value)s." , value=tl))
     return redirect(request.values.get('next') or '/')
     
         
@@ -80,15 +86,15 @@ def savetextlist():
     lines = ["%s\t%s"% (a['ID'], a['TITLE']) for a in fx]
     try:
         lib.ghsave(u"Texts/%s.txt" % (urllib.quote_plus(fn.encode("utf-8"))), "\n".join(lines), ws, new=True)
-        flash("Saved text list for %s with %d texts" % (fn, len(lines)))
+        flash(gettext("Saved text list for %(value)s with %(len)d texts", value=fn, len=len(lines)))
     except:
-        flash("There was a problem saving the text list.")
+        flash(gettext("There was a problem saving the text list."))
     if len(load) > 0:
         try:
             lib.ghfilterfile2redis("%s$%s" % (user, fn))
-            flash("Loaded the text list for %s with %d texts into the internal database." % (fn, len(lines)))
+            flash(gettext("Loaded the text list for %(value)s with %(len)d texts into the internal database.", value=fn, len=len(lines)))
         except:
-            flash("There was a problem loading the text list.")
+            flash(gettext("There was a problem loading the text list."))
     return redirect(request.form.get('next') or '/')
 
 @main.route('/bytext', methods=['GET',])
@@ -636,7 +642,8 @@ def login():
     ret = lib.ghclone(session['user'], session['token'])
     if len(ret) > 0:
         flash(ret)
-    flash("Welcome to the Kanseki Repository, user %s! " % (session['user']))
+    else:
+        flash(gettext("Welcome to the Kanseki Repository, user %(value)s! ", value= (session['user'])))
     return redirect(request.values.get('next') or '/')
 
 
@@ -647,7 +654,7 @@ def signout():
         del(session['token'])
     except:
         pass
-    flash("You have been logged out.")
+    flash(gettext("You have been logged out."))
     return redirect(request.values.get('next') or '/')
 
 @main.route('/profile/<uid>/settings/reload')
@@ -655,9 +662,9 @@ def reloadsettings(uid):
     redis_store.delete("%s%s:settings" % (kr_user, uid))
     ret=lib.ghuserdata(uid)
     if ret == 1:
-        flash("loaded user data")
+        flash(gettext("User data have been loaded into internal database."))
     else:
-        flash("could not load user data")
+        flash(gettext("Could not load user data."))
     userdata=redis_store.hgetall("%s%s:settings" % (kr_user,uid))
     return redirect(request.values.get('next') or '/')
 
@@ -677,9 +684,9 @@ def saveuserdata(uid):
     ws=gh.get_repo("%s/%s" % (uid, "KR-Workspace"))
     try:
         lib.ghsave(u"Settings/kanripo.cfg", "\n".join(ol), ws)
-        flash("Saved settings.")
+        flash(gettext("The settings have been saved."))
     except:
-        flash("There was a problem saving the settings.")
+        flash(gettext("There was a problem saving the settings."))
     return redirect(request.form.get('next') or '/')
 
 
@@ -703,9 +710,9 @@ def profile(uid):
     except:
         searchkeys=[]
     if ret == 1:
-        flash("loaded user data")
+        flash(gettext("User data have been loaded into internal database."))
     elif ret == -1:
-        flash("could not load user data")
+        flash(gettext("Could not load user data."))
     userdata=redis_store.hgetall("%s%s:settings" % (kr_user,uid))
     return render_template('profile.html', user=uid, ret=r, loaded=loaded, searches=searchkeys, userdata=userdata)
     

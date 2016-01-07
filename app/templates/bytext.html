@@ -8,17 +8,12 @@
 <header class="jumbotron subhead" id="overview">
   <div class="container">
     <p>
-    {{_('Textlist for')}}
-    {{key}}.
+    {{_('Textlist for %(value)s. ', value=key )}}
     {% if filter %}
-    {{_('Filtered by: ')}}
-    {{filter}}
+    {{_('Filtered by: %(value)s. ', value=filter)}}
     {% endif %}
-    {{_('found')}} 
-    {{total}},
-    {{_('unique texts')}} 
-    {{uniq}}
-    <span  class="pull-right"><a href="search?query={{key}}">by content</a></span>
+    {{_('Found %(value)d unique texts, %(uv)d of them unique.', value = total, uv=uniq)}} 
+    <span  class="pull-right"><a href="search?query={{key}}">{{_('Show results by content')}}</a></span>
     </p>
   </div>
 </header>
@@ -37,19 +32,19 @@
     <span style="background-color:linen;margin-top:2px;border: 3px solid blue;padding:8px 5px 5px 5px;">
     　{{_('Filename:')}} 
     <input style="padding:1px;margin-top:3px" type="text" name="filename" value="{{key}}"/>　
-    <input style="margin-bottom:5px" type="submit" value="Save"/>　
-     <input style="padding:1px;margin-top:3px" type="checkbox" name="load" value=""/>Load
+    <input style="margin-bottom:5px" type="submit" value="{{_('Save text list')}}"/>　
+    <input style="padding:1px;margin-top:3px" type="checkbox" name="load" value=""/>{{('Immediately load the text list')}}</input>
     <input type="hidden" name="next" value="{{url_for('main.bytext', query=key)}}"/>
     </span>
 {% endif %}    
   <table class="table-striped">
     <tr>
 {% if session['user'] %}
-      <td>select</td>
+      <td>{{_('Select')}}</td>
 {% endif %}
-      <td>id</td>
-      <td>title</td>
-      <td>count</td>
+      <td>{{_('Text No.')}}</td>
+      <td>{{_('Title')}}</td>
+      <td>{{_('Number of matches')}}</td>
 <!--      <td></td> -->
     </tr>
       {% for item in ret %}
@@ -77,15 +72,15 @@
 
 {% block sidebar %}
 <div>
-  <h2>Actions</h2>
+  <h2>{{_('Actions')}}</h2>
 {% if session['user'] %}
   <p id="select-all" onclick="toggle()">Toggle selection</p>
 {% endif %} 
-  <p>Order
+  <p>{{_('Order')}}
     <ul>
-    <li><a href="{{url_for('main.bytext', query=key, sort='+count' )}}">by number of matches</a></li>
-    <li><a href="{{url_for('main.bytext', query=key, sort='+txtid' )}}">by text number</a></li>
-    <li><a href="{{url_for('main.bytext', query=key, sort='+title' )}}">by text title</a></li>
+    <li><a href="{{url_for('main.bytext', query=key, sort='+count' )}}">{{_('by number of matches')}}</a></li>
+    <li><a href="{{url_for('main.bytext', query=key, sort='+txtid' )}}">{{_('by text number')}}</a></li>
+    <li><a href="{{url_for('main.bytext', query=key, sort='+title' )}}">{{_('by text title')}}</a></li>
   </ul></p>
 </div>
 {% endblock sidebar %}

@@ -16,7 +16,7 @@ moment = Moment()
 db = SQLAlchemy()
 pagedown = PageDown()
 redis_store = Redis()
-mybabel = Babel()
+babel = Babel()
 #login_manager = LoginManager()
 #login_manager.session_protection = 'strong'
 #login_manager.login_view = 'auth.login'
@@ -37,7 +37,7 @@ def create_app(config_name):
     pagedown.init_app(app)
     
     redis_store.init_app(app)
-    mybabel.__init__(app)
+    babel.__init__(app)
     
     if not app.debug and not app.testing and not app.config['SSL_DISABLE']:
         from flask.ext.sslify import SSLify

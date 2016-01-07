@@ -8,11 +8,8 @@
 <header class="jumbotron subhead" id="overview">
   <div class="container">
     <p>
-    {{_('Searched for')}}
-    {{key}}
-    {{_('in text titles.  Found')}} 
-    {{sr.total}},
-    {{_('showing %d to %d.' % (start+1, n))}}
+    {{_('Searched for %(value)s in text titles.', value=key)}}
+    {{_('Found %(total)d, showing %(start)d to %(end)d.', total=sr.total, start=start+1, end=n)}} 
     </p>
   </div>
 </header>
@@ -31,7 +28,7 @@
     <span style="background-color:linen;margin-top:2px;border: 3px solid blue;padding:8px 5px 5px 5px;">{{_('Filename:')}} 
     <input style="padding:1px;margin-top:3px" type="text" name="filename" value="{{key}}"/>　
     <input style="margin-bottom:5px" type="submit" value="{{_('Save text list')}}"/>　
-    <input style="padding:1px;margin-top:3px" type="checkbox" name="load" value=""/>Load
+    <input style="padding:1px;margin-top:3px" type="checkbox" name="load" value=""/>{{('Immediately load the text list')}}</input>
     <input type="hidden" name="next" value="{{url_for('main.titlesearch', query=key)}}"/>
     </span>
 {% endif %}    
@@ -65,16 +62,16 @@
 
 {% block sidebar %}
 <div>
+  <h2>{{_('Actions')}}</h2>
 {% if session['user'] %}
-  <h2>Actions</h2>
-  <p id="select-all" onclick="toggle()">Select all</p>
-  <p>Order
-    <ul>
-    <li><a href="{{url_for('main.titlesearch', query=key, sort='+count' )}}">by number of matches</a></li>
-    <li><a href="{{url_for('main.titlesearch', query=key, sort='+txtid' )}}">by text number</a></li>
-    <li><a href="{{url_for('main.titlesearch', query=key, sort='+title' )}}">by text title</a></li>
-  </ul></p>
+  <p id="select-all" onclick="toggle()">Toggle selection</p>
 {% endif %} 
+  <p>{{_('Order')}}
+    <ul>
+    <li><a href="{{url_for('main.titlesearch', query=key, sort='+count' )}}">{{_('by number of matches')}}</a></li>
+    <li><a href="{{url_for('main.titlesearch', query=key, sort='+txtid' )}}">{{_('by text number')}}</a></li>
+    <li><a href="{{url_for('main.titlesearch', query=key, sort='+title' )}}">{{_('by text title')}}</a></li>
+  </ul></p>
 </div>
 {% endblock sidebar %}
 

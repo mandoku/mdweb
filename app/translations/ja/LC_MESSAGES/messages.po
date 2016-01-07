@@ -1,12 +1,14 @@
 # Japanese translations for PROJECT.
-# Copyright (C) 2014 ORGANIZATION
+# Copyright (C) 2016 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
-
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+msgid ""
+msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-09-05 18:00+0900\n"
-"PO-Revision-Date: 2014-09-05 18:03+0900\n"
+"POT-Creation-Date: 2016-01-07 16:39+0900\n"
+"PO-Revision-Date: 2016-01-07 13:10+0900\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ja <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -15,20 +17,366 @@
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: app/templates/laybase.html:25
+#: main/views.py:62
+#, python-format
+msgid "File %(value)s removed from internal database."
+msgstr "ファイル%(value)sは内部データベースから削除された。"
+
+#: main/views.py:70
+#, python-format
+msgid "Loaded %(value)s into the internal database."
+msgstr "%(value)sは内部データベースに読み込まれた。"
+
+#: main/views.py:72
+#, python-format
+msgid "Could not load %(value)s."
+msgstr "%(value)sの読み込みが失敗した。"
+
+#: main/views.py:89
+#, python-format
+msgid "Saved text list for %(value)s with %(len)d texts"
+msgstr "%(value)sのテキストリスト(%(len)dテキスト)を保存された。"
+
+#: main/views.py:91
+msgid "There was a problem saving the text list."
+msgstr "テキストリストの保存が失敗した。"
+
+#: main/views.py:95
+#, python-format
+msgid ""
+"Loaded the text list for %(value)s with %(len)d texts into the internal "
+"database."
+msgstr "%(value)sのテキストリスト(%(len)dテキスト)が読み込まれた。"
+
+#: main/views.py:97
+msgid "There was a problem loading the text list."
+msgstr "テキストリストの読み込みが失敗した。"
+
+#: main/views.py:646
+#, python-format
+msgid "Welcome to the Kanseki Repository, user %(value)s! "
+msgstr "ユーザー%(value)s、漢籍リポジトリへようこそ！"
+
+#: main/views.py:657
+msgid "You have been logged out."
+msgstr "サインアウトされた。"
+
+#: main/views.py:665 main/views.py:713
+msgid "User data have been loaded into internal database."
+msgstr "ユーザーの基本データは内部データベースに読み込まれた。"
+
+#: main/views.py:667 main/views.py:715
+msgid "Could not load user data."
+msgstr "ユーザーデータの読み込みが失敗した。"
+
+#: main/views.py:687
+msgid "The settings have been saved."
+msgstr "ユーザーの基本データは保存された。"
+
+#: main/views.py:689
+msgid "There was a problem saving the settings."
+msgstr "ユーザーデータの保存が失敗した。"
+
+#: templates/base.html:76 templates/laybase.html:80
+msgid "News"
+msgstr "ニュース"
+
+#: templates/bytext.html:11
+#, python-format
+msgid "Textlist for %(value)s. "
+msgstr "検索語「%(value)s」のテキストリスト。"
+
+#: templates/bytext.html:13
+#, python-format
+msgid "Filtered by: %(value)s. "
+msgstr "%(value)sのフィルターで絞り、"
+
+#: templates/bytext.html:15
+#, python-format
+msgid "Found %(value)d unique texts, %(uv)d of them unique."
+msgstr "%(uv)dのテキストで合計%(value)dのヒット。"
+
+#: templates/bytext.html:16
+msgid "Show results by content"
+msgstr "検索結果検索語毎で表示。"
+
+#: templates/bytext.html:33 templates/titles.html:28
+msgid "Filename:"
+msgstr "ファイル名："
+
+#: templates/bytext.html:35 templates/titles.html:30
+msgid "Save text list"
+msgstr "テキストリスト保存"
+
+#: templates/bytext.html:43
+msgid "Select"
+msgstr "選択"
+
+#: templates/bytext.html:45
+msgid "Text No."
+msgstr "テキスト番号"
+
+#: templates/bytext.html:46
+msgid "Title"
+msgstr "テキスト題名"
+
+#: templates/bytext.html:47
+msgid "Number of matches"
+msgstr "ヒットの多い順"
+
+#: templates/bytext.html:75 templates/titles.html:65
+msgid "Actions"
+msgstr "動作"
+
+#: templates/bytext.html:79 templates/titles.html:69
+msgid "Order"
+msgstr "並び順"
+
+#: templates/bytext.html:81 templates/titles.html:71
+msgid "by number of matches"
+msgstr "ヒットの多い順"
+
+#: templates/bytext.html:82 templates/titles.html:72
+msgid "by text number"
+msgstr "テキスト番号順"
+
+#: templates/bytext.html:83 templates/titles.html:73
+msgid "by text title"
+msgstr "題名順順"
+
+#: templates/catalog.html:6 templates/contact.html:8 templates/index.html:8
+#: templates/laybase.html:31 templates/profile.html:8 templates/read.html:12
+#: templates/showtext.html:12
+msgid "Catalog"
+msgstr "目録"
+
+#: templates/catalog.html:14
+msgid "Kanseki Repository Catalog"
+msgstr "漢籍リポジトリ目録"
+
+#: templates/catalog.html:71
+msgid "目錄"
+msgstr "目録"
+
+#: templates/laybase.html:26
 msgid "Kanseki Repository"
 msgstr "漢籍リポジトリ"
 
-
-#: app/templates/laybase.html:28
+#: templates/laybase.html:29
 msgid "Collections"
-msgstr "コレクション"
+msgstr "叢書"
 
-#: app/templates/laybase.html:35
-msgid "Test Version"
-msgstr "テスト　バーション"
+#: templates/laybase.html:36
+msgid "Contact"
+msgstr "連絡先"
 
-#: app/templates/laybase.html:64
-msgid "News"
-msgstr "ニュース"
+#: templates/laybase.html:40
+msgid "Login"
+msgstr "サインイン"
+
+#: templates/laybase.html:44
+msgid "Text Search"
+msgstr "テキスト検索"
+
+#: templates/laybase.html:47
+msgid "Title Search"
+msgstr "題名検索"
+
+#: templates/laybase.html:61
+msgid "漢リポ  Kanseki Repository"
+msgstr "漢籍リポジトリ"
+
+#: templates/laybase.html:62
+msgid "Electronic texts for researchers from researchers."
+msgstr "研究者から研究者への電子テキスト"
+
+#: templates/laybase.html:111
+msgid "Close"
+msgstr "閉じる"
+
+#: templates/laybase.html:111
+msgid "X"
+msgstr "X"
+
+#: templates/laybase.html:112
+msgid "Enlarge"
+msgstr "拡大"
+
+#: templates/laybase.html:112
+msgid "+"
+msgstr "＋"
+
+#: templates/laybase.html:113
+msgid "Shrink"
+msgstr "縮小"
+
+#: templates/laybase.html:113
+msgid "-"
+msgstr "−"
+
+#: templates/laybase.html:115
+msgid "Reset"
+msgstr "リセット"
+
+#: templates/laybase.html:115
+msgid "⟲"
+msgstr "⟲"
+
+#: templates/laybase.html:116
+msgid "Previous page"
+msgstr "前のページへ"
+
+#: templates/laybase.html:118
+msgid "Next page"
+msgstr "次のページへ"
+
+#: templates/laybase.html:140
+msgid ""
+"(c) Kanseki Repository. All content created by us is licensed under a <a "
+"rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/4.0/\" "
+"title=\"Creative Commons Attribution-ShareAlike 4.0 International "
+"License\">CC BY SA</a> license. "
+msgstr ""
+"(c) Kanseki Repository. 作成されたコンテンツは <a rel=\"license\" "
+"href=\"http://creativecommons.org/licenses/by-sa/4.0/\" title=\"Creative "
+"Commons Attribution-ShareAlike 4.0 International License\">CC BY SA</a> "
+"のライセンスで提供する。"
+
+#: templates/profile.html:17
+#, python-format
+msgid "Profile for user <u>%(user)s</u>"
+msgstr "<u>%(user)s</u>さんのプロファイル"
+
+#: templates/profile.html:17
+msgid "Logout"
+msgstr "サインアウト"
+
+#: templates/profile.html:25
+msgid "edit (GitHub)"
+msgstr "ギットハブで編集"
+
+#: templates/profile.html:28
+msgid "unload"
+msgstr "外す"
+
+#: templates/profile.html:31
+msgid "load"
+msgstr "読み込む"
+
+#: templates/profile.html:37
+msgid "Settings"
+msgstr "設定"
+
+#: templates/profile.html:40
+msgid "Preferred sort method"
+msgstr "並び方"
+
+#: templates/profile.html:42 templates/result.html:77
+msgid "By text number"
+msgstr "テキスト番号順"
+
+#: templates/profile.html:43
+msgid "By text number (reversed)"
+msgstr "テキスト番号順(逆)"
+
+#: templates/profile.html:44
+msgid "By date"
+msgstr "日付順"
+
+#: templates/profile.html:45
+msgid "By date (reversed)"
+msgstr "日付順(逆)"
+
+#: templates/profile.html:46
+msgid "By term"
+msgstr "検索語順"
+
+#: templates/profile.html:47
+msgid "By term (reversed)"
+msgstr "検索語順(逆)"
+
+#: templates/profile.html:48 templates/result.html:80
+msgid "By preceding characters"
+msgstr "検索語の前の字で"
+
+#: templates/profile.html:52
+msgid "Save"
+msgstr "保存"
+
+#: templates/profile.html:54
+msgid "Advanced:"
+msgstr "上級："
+
+#: templates/profile.html:54
+msgid "edit settings on GitHub"
+msgstr "ギットハブで設定ファイルの編集"
+
+#: templates/profile.html:55
+msgid "Recent searches"
+msgstr "最近の検索"
+
+#: templates/read.html:26 templates/showtext.html:31
+msgid "Versions"
+msgstr "版本"
+
+#: templates/read.html:38 templates/showtext.html:41
+msgid "Contents"
+msgstr "目次"
+
+#: templates/result.html:12
+#, python-format
+msgid "Searched for %(value)s. "
+msgstr "「%(value)s」を検索した。"
+
+#: templates/result.html:14
+msgid "Filtered by: "
+msgstr "フィルター："
+
+#: templates/result.html:17 templates/titles.html:12
+#, python-format
+msgid "Found %(total)d, showing %(start)d to %(end)d."
+msgstr "合計%(total)d内%(start)dから%(end)dの表。."
+
+#: templates/result.html:18
+msgid "Show results by text"
+msgstr "テキスト毎まとめて表示"
+
+#: templates/result.html:22
+msgid "release filter"
+msgstr "フィルターを外す"
+
+#: templates/result.html:78
+msgid "By text date"
+msgstr "日付順"
+
+#: templates/result.html:79
+msgid "By search term"
+msgstr "検索語順"
+
+#: templates/showtext.html:8 templates/showtext.html:10
+msgid "GitHub"
+msgstr "ギットハブ"
+
+#: templates/titles.html:11
+#, python-format
+msgid "Searched for %(value)s in text titles."
+msgstr ""
+
+#~ msgid "Texts"
+#~ msgstr "テキスト"
+
+#~ msgid "Notes"
+#~ msgstr "ノート"
+
+#~ msgid "Recent searches"
+#~ msgstr "最近の検索語"
+
+#~ msgid "Searched for"
+#~ msgstr ""
+
+#~ msgid "Found"
+#~ msgstr ""
+
+#~ msgid "in text titles.  Found"
+#~ msgstr ""
 

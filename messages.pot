@@ -1,14 +1,14 @@
 # Translations template for PROJECT.
-# Copyright (C) 2014 ORGANIZATION
+# Copyright (C) 2016 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-09-05 18:00+0900\n"
+"POT-Creation-Date: 2016-01-07 12:04+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,1109 +17,106 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: app/templates/laybase.html:25
-msgid "Kanseki Repository"
-msgstr ""
-
-#: app/templates/laybase.html:28
-msgid "Collections"
-msgstr ""
-
-#: app/templates/laybase.html:35
-msgid "Test Version"
-msgstr ""
-
-#: app/templates/laybase.html:64
+#: app/templates/base.html:76 app/templates/laybase.html:80
 msgid "News"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/flask_wtf/form.py:109
-#: venv/lib/python2.7/site-packages/wtforms/ext/csrf/session.py:57
-msgid "CSRF token missing"
+#: app/templates/bytext.html:11
+msgid "Textlist for"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/flask_wtf/recaptcha/widgets.py:73
-msgid "Get a visual challenge"
+#: app/templates/bytext.html:14 app/templates/result.html:15
+msgid "Filtered by: "
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/flask_wtf/recaptcha/widgets.py:74
-msgid "Get an audio challenge"
+#: app/templates/bytext.html:17
+msgid "found"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/flask_wtf/recaptcha/widgets.py:75
-msgid "Get a new challenge"
+#: app/templates/bytext.html:19
+msgid "unique texts"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/flask_wtf/recaptcha/widgets.py:76
-msgid "Type the two words:"
+#: app/templates/bytext.html:38 app/templates/titles.html:31
+msgid "Filename:"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/flask_wtf/recaptcha/widgets.py:77
-msgid "Type what you hear:"
+#: app/templates/catalog.html:6 app/templates/contact.html:8
+#: app/templates/index.html:8 app/templates/laybase.html:31
+#: app/templates/profile.html:8 app/templates/read.html:12
+#: app/templates/showtext.html:12
+msgid "Catalog"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/flask_wtf/recaptcha/widgets.py:78
-msgid "Help"
+#: app/templates/catalog.html:14
+msgid "Kanseki Repository Catalog"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/flask_wtf/recaptcha/widgets.py:79
-msgid "Play sound again"
+#: app/templates/catalog.html:71
+msgid "目錄"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/flask_wtf/recaptcha/widgets.py:80
-msgid "Download sound as MP3"
+#: app/templates/laybase.html:26
+msgid "Kanseki Repository"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/flask_wtf/recaptcha/widgets.py:81
-msgid "Incorrect. Try again."
+#: app/templates/laybase.html:29
+msgid "Collections"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:11
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:11
-msgid "Null character in input stream, replaced with U+FFFD."
+#: app/templates/laybase.html:36
+msgid "Contact"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:13
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:13
-msgid "Invalid codepoint in stream."
+#: app/templates/laybase.html:40
+msgid "Login"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:15
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:15
-msgid "Solidus (/) incorrectly placed in tag."
+#: app/templates/laybase.html:44
+msgid "Text Search"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:17
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:17
-msgid "Incorrect CR newline entity, replaced with LF."
+#: app/templates/laybase.html:47
+msgid "Title Search"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:19
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:19
-msgid "Entity used with illegal number (windows-1252 reference)."
+#: app/templates/profile.html:17
+msgid "Logout"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:21
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:21
-#, python-format
-msgid ""
-"Numeric entity couldn't be converted to character (codepoint "
-"U+%(charAsInt)08x)."
+#: app/templates/profile.html:29
+msgid "unload"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:24
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:24
-#, python-format
-msgid "Numeric entity represents an illegal codepoint: U+%(charAsInt)08x."
+#: app/templates/profile.html:32
+msgid "load"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:27
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:27
-msgid "Numeric entity didn't end with ';'."
+#: app/templates/read.html:26 app/templates/showtext.html:31
+msgid "Versions"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:29
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:29
-msgid "Numeric entity expected. Got end of file instead."
+#: app/templates/read.html:38 app/templates/showtext.html:41
+msgid "Contents"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:31
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:31
-msgid "Numeric entity expected but none found."
+#: app/templates/result.html:12 app/templates/titles.html:11
+msgid "Searched for"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:33
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:33
-msgid "Named entity didn't end with ';'."
+#: app/templates/result.html:18
+msgid "Found"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:35
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:35
-msgid "Named entity expected. Got none."
+#: app/templates/result.html:25
+msgid "release filter"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:37
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:37
-msgid "End tag contains unexpected attributes."
+#: app/templates/titles.html:13
+msgid "in text titles.  Found"
 msgstr ""
 
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:39
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:39
-msgid "End tag contains unexpected self-closing flag."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:41
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:41
-msgid "Expected tag name. Got '>' instead."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:43
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:43
-msgid ""
-"Expected tag name. Got '?' instead. (HTML doesn't support processing "
-"instructions.)"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:46
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:46
-msgid "Expected tag name. Got something else instead"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:48
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:48
-msgid "Expected closing tag. Got '>' instead. Ignoring '</>'."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:50
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:50
-msgid "Expected closing tag. Unexpected end of file."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:52
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:52
-#, python-format
-msgid "Expected closing tag. Unexpected character '%(data)s' found."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:54
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:54
-msgid "Unexpected end of file in the tag name."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:56
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:56
-msgid "Unexpected end of file. Expected attribute name instead."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:58
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:58
-msgid "Unexpected end of file in attribute name."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:60
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:60
-msgid "Invalid character in attribute name"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:62
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:62
-msgid "Dropped duplicate attribute on tag."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:64
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:64
-msgid "Unexpected end of file. Expected = or end of tag."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:66
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:66
-msgid "Unexpected end of file. Expected attribute value."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:68
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:68
-msgid "Expected attribute value. Got '>' instead."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:70
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:70
-msgid "Unexpected = in unquoted attribute"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:72
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:72
-msgid "Unexpected character in unquoted attribute"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:74
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:74
-msgid "Unexpected character after attribute name."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:76
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:76
-msgid "Unexpected character after attribute value."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:78
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:78
-msgid "Unexpected end of file in attribute value (\")."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:80
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:80
-msgid "Unexpected end of file in attribute value (')."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:82
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:82
-msgid "Unexpected end of file in attribute value."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:84
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:84
-msgid "Unexpected end of file in tag. Expected >"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:86
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:86
-msgid "Unexpected character after / in tag. Expected >"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:88
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:88
-msgid "Expected '--' or 'DOCTYPE'. Not found."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:90
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:90
-msgid "Unexpected ! after -- in comment"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:92
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:92
-msgid "Unexpected space after -- in comment"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:94
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:94
-msgid "Incorrect comment."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:96
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:104
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:106
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:96
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:104
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:106
-msgid "Unexpected end of file in comment."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:98
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:98
-msgid "Unexpected end of file in comment (-)"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:100
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:100
-msgid "Unexpected '-' after '--' found in comment."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:102
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:102
-msgid "Unexpected end of file in comment (--)."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:108
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:108
-msgid "Unexpected character in comment found."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:110
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:110
-msgid "No space after literal string 'DOCTYPE'."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:112
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:112
-msgid "Unexpected > character. Expected DOCTYPE name."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:114
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:114
-msgid "Unexpected end of file. Expected DOCTYPE name."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:116
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:116
-msgid "Unexpected end of file in DOCTYPE name."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:118
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:118
-msgid "Unexpected end of file in DOCTYPE."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:120
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:120
-#, python-format
-msgid "Expected space or '>'. Got '%(data)s'"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:122
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:122
-msgid "Unexpected end of DOCTYPE."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:124
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:124
-msgid "Unexpected character in DOCTYPE."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:126
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:126
-msgid "XXX innerHTML EOF"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:128
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:128
-msgid "Unexpected DOCTYPE. Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:130
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:130
-msgid "html needs to be the first start tag."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:132
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:132
-msgid "Unexpected End of file. Expected DOCTYPE."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:134
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:134
-msgid "Erroneous DOCTYPE."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:136
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:136
-msgid "Unexpected non-space characters. Expected DOCTYPE."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:138
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:138
-#, python-format
-msgid "Unexpected start tag (%(name)s). Expected DOCTYPE."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:140
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:140
-#, python-format
-msgid "Unexpected end tag (%(name)s). Expected DOCTYPE."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:142
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:142
-#, python-format
-msgid "Unexpected end tag (%(name)s) after the (implied) root element."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:144
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:144
-#, python-format
-msgid "Unexpected end of file. Expected end tag (%(name)s)."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:146
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:146
-msgid "Unexpected start tag head in existing head. Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:148
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:148
-#, python-format
-msgid "Unexpected end tag (%(name)s). Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:150
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:150
-#, python-format
-msgid "Unexpected start tag (%(name)s) that can be in head. Moved."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:152
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:152
-#, python-format
-msgid "Unexpected start tag (%(name)s)."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:154
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:154
-#, python-format
-msgid "Missing end tag (%(name)s)."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:156
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:156
-#, python-format
-msgid "Missing end tags (%(name)s)."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:158
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:158
-#, python-format
-msgid "Unexpected start tag (%(startName)s) implies end tag (%(endName)s)."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:161
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:161
-#, python-format
-msgid "Unexpected start tag (%(originalName)s). Treated as %(newName)s."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:163
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:163
-#, python-format
-msgid "Unexpected start tag %(name)s. Don't use it!"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:165
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:165
-#, python-format
-msgid "Unexpected start tag %(name)s. Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:167
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:167
-#, python-format
-msgid "Unexpected end tag (%(gotName)s). Missing end tag (%(expectedName)s)."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:170
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:170
-#, python-format
-msgid "End tag (%(name)s) seen too early. Expected other end tag."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:172
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:172
-#, python-format
-msgid "Unexpected end tag (%(gotName)s). Expected end tag (%(expectedName)s)."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:174
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:174
-#, python-format
-msgid "End tag (%(name)s) seen too early. Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:176
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:176
-#, python-format
-msgid ""
-"End tag (%(name)s) violates step 1, paragraph 1 of the adoption agency "
-"algorithm."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:179
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:179
-#, python-format
-msgid ""
-"End tag (%(name)s) violates step 1, paragraph 2 of the adoption agency "
-"algorithm."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:182
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:182
-#, python-format
-msgid ""
-"End tag (%(name)s) violates step 1, paragraph 3 of the adoption agency "
-"algorithm."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:185
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:185
-#, python-format
-msgid ""
-"End tag (%(name)s) violates step 4, paragraph 4 of the adoption agency "
-"algorithm."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:188
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:188
-#, python-format
-msgid "Unexpected end tag (%(originalName)s). Treated as %(newName)s."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:190
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:190
-#, python-format
-msgid "This element (%(name)s) has no end tag."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:192
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:192
-#, python-format
-msgid "Unexpected implied end tag (%(name)s) in the table phase."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:194
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:194
-#, python-format
-msgid "Unexpected implied end tag (%(name)s) in the table body phase."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:196
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:196
-msgid "Unexpected non-space characters in table context caused voodoo mode."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:199
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:199
-msgid "Unexpected input with type hidden in table context."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:201
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:201
-msgid "Unexpected form in table context."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:203
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:203
-#, python-format
-msgid "Unexpected start tag (%(name)s) in table context caused voodoo mode."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:206
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:206
-#, python-format
-msgid "Unexpected end tag (%(name)s) in table context caused voodoo mode."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:209
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:209
-#, python-format
-msgid "Unexpected table cell start tag (%(name)s) in the table body phase."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:212
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:212
-#, python-format
-msgid "Got table cell end tag (%(name)s) while required end tags are missing."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:215
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:215
-#, python-format
-msgid "Unexpected end tag (%(name)s) in the table body phase. Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:217
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:217
-#, python-format
-msgid "Unexpected implied end tag (%(name)s) in the table row phase."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:219
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:219
-#, python-format
-msgid "Unexpected end tag (%(name)s) in the table row phase. Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:221
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:221
-msgid "Unexpected select start tag in the select phase treated as select end tag."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:224
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:224
-msgid "Unexpected input start tag in the select phase."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:226
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:226
-#, python-format
-msgid "Unexpected start tag token (%(name)s in the select phase. Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:229
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:229
-#, python-format
-msgid "Unexpected end tag (%(name)s) in the select phase. Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:231
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:231
-#, python-format
-msgid ""
-"Unexpected table element start tag (%(name)s) in the select in table "
-"phase."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:233
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:233
-#, python-format
-msgid "Unexpected table element end tag (%(name)s) in the select in table phase."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:235
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:235
-msgid "Unexpected non-space characters in the after body phase."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:237
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:237
-#, python-format
-msgid "Unexpected start tag token (%(name)s) in the after body phase."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:240
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:240
-#, python-format
-msgid "Unexpected end tag token (%(name)s) in the after body phase."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:243
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:243
-msgid "Unexpected characters in the frameset phase. Characters ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:245
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:245
-#, python-format
-msgid "Unexpected start tag token (%(name)s) in the frameset phase. Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:248
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:248
-msgid "Unexpected end tag token (frameset) in the frameset phase (innerHTML)."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:251
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:251
-#, python-format
-msgid "Unexpected end tag token (%(name)s) in the frameset phase. Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:254
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:254
-msgid "Unexpected non-space characters in the after frameset phase. Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:257
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:257
-#, python-format
-msgid "Unexpected start tag (%(name)s) in the after frameset phase. Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:260
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:260
-#, python-format
-msgid "Unexpected end tag (%(name)s) in the after frameset phase. Ignored."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:263
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:263
-msgid "Unexpected end tag after body(innerHtml)"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:265
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:265
-msgid "Unexpected non-space characters. Expected end of file."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:267
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:267
-#, python-format
-msgid "Unexpected start tag (%(name)s). Expected end of file."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:270
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:270
-#, python-format
-msgid "Unexpected end tag (%(name)s). Expected end of file."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:273
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:273
-msgid "Unexpected end of file. Expected table content."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:275
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:275
-msgid "Unexpected end of file. Expected select content."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:277
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:277
-msgid "Unexpected end of file. Expected frameset content."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:279
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:279
-msgid "Unexpected end of file. Expected script content."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:281
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:281
-msgid "Unexpected end of file. Expected foreign content"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:283
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:283
-#, python-format
-msgid "Trailing solidus not allowed on element %(name)s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:285
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:285
-#, python-format
-msgid "Element %(name)s not allowed in a non-html context"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:287
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:287
-#, python-format
-msgid "Unexpected end tag (%(name)s) before html."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/constants.py:289
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/constants.py:289
-msgid "Undefined error (this sucks and should be fixed)"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:26
-#, python-format
-msgid "StartTag not in PCDATA content model flag: %(tag)s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:28
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:54
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:84
-#, python-format
-msgid "Tag name is not a string: %(tag)r"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:30
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:56
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:30
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:56
-msgid "Empty tag name"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:32
-#, python-format
-msgid "Void element reported as StartTag token: %(tag)s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:34
-#, python-format
-msgid "Non-void element reported as EmptyTag token: %(tag)s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:39
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:71
-#, python-format
-msgid "Attribute name is not a string: %(name)r"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:41
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:41
-msgid "Empty attribute name"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:43
-#, python-format
-msgid "Attribute value is not a string: %(value)r"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:58
-#, python-format
-msgid "Void element reported as EndTag token: %(tag)s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:61
-#, python-format
-msgid "EndTag (%(end)s) does not match StartTag (%(start)s)"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:66
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:66
-msgid "Comment not in PCDATA content model flag"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:73
-#, python-format
-msgid "%(type)s token with empty data"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:77
-#, python-format
-msgid "Non-space character(s) found in SpaceCharacters token: %(token)r"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:82
-#, python-format
-msgid "Doctype not in PCDATA content model flag: %(name)s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/filters/lint.py:91
-#, python-format
-msgid "Unknown token type: %(type)s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/serializer/htmlserializer.py:211
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/serializer/htmlserializer.py:200
-msgid "System identifer contains both single and double quote characters"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/serializer/htmlserializer.py:223
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/serializer/htmlserializer.py:212
-msgid "Unexpected </ in CDATA"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/serializer/htmlserializer.py:234
-#: venv/lib/python2.7/site-packages/html5lib/serializer/htmlserializer.py:282
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/serializer/htmlserializer.py:223
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/serializer/htmlserializer.py:271
-msgid "Unexpected child element of a CDATA element"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/serializer/htmlserializer.py:288
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/serializer/htmlserializer.py:277
-msgid "Comment contains --"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/serializer/htmlserializer.py:295
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/serializer/htmlserializer.py:284
-#, python-format
-msgid "Entity %s not recognized"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/treewalkers/_base.py:61
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/treewalkers/_base.py:33
-msgid "Void element has children"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/treewalkers/_base.py:125
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/treewalkers/_base.py:95
-msgid "Unknown node type: "
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/treewalkers/lxmletree.py:137
-#: venv/lib/python2.7/site-packages/html5lib/treewalkers/lxmletree.py:187
-#: venv/lib/python2.7/site-packages/html5lib/treewalkers/lxmletree.py:203
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/treewalkers/lxmletree.py:137
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/treewalkers/lxmletree.py:187
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/treewalkers/lxmletree.py:203
-#, python-format
-msgid "Text nodes are text or tail, found %s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/html5lib/treewalkers/lxmletree.py:176
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/treewalkers/lxmletree.py:176
-msgid "Text nodes have no children"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:26
-#, python-format
-msgid "StartTag not in PCDATA content model flag: %s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:28
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:54
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:84
-#, python-format
-msgid "Tag name is not a string: %r"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:32
-#, python-format
-msgid "Void element reported as StartTag token: %s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:34
-#, python-format
-msgid "Non-void element reported as EmptyTag token: %s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:39
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:71
-#, python-format
-msgid "Attribute name is not a string: %r"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:43
-#, python-format
-msgid "Attribute value is not a string: %r"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:58
-#, python-format
-msgid "Void element reported as EndTag token: %s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:61
-#, python-format
-msgid "EndTag (%s) does not match StartTag (%s)"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:73
-#, python-format
-msgid "%s token with empty data"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:77
-msgid "Non-space character(s) found in SpaceCharacters token: "
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:82
-#, python-format
-msgid "Doctype not in PCDATA content model flag: %s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/pip/vendor/html5lib/filters/lint.py:91
-#, python-format
-msgid "Unknown token type: %s"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:55
-#, python-format
-msgid "Invalid field name '%s'."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:63
-#, python-format
-msgid "Field must be equal to %(other_name)s."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:96
-#, python-format
-msgid "Field must be at least %(min)d character long."
-msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:99
-#, python-format
-msgid "Field cannot be longer than %(max)d character."
-msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:102
-#, python-format
-msgid "Field must be between %(min)d and %(max)d characters long."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:138
-#, python-format
-msgid "Number must be at least %(min)s."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:140
-#, python-format
-msgid "Number must be at most %(max)s."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:142
-#, python-format
-msgid "Number must be between %(min)s and %(max)s."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:198
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:233
-msgid "This field is required."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:264
-msgid "Invalid input."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:286
-msgid "Invalid email address."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:318
-msgid "Invalid IP address."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:367
-msgid "Invalid Mac address."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:393
-msgid "Invalid URL."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:412
-msgid "Invalid UUID."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:440
-#, python-format
-msgid "Invalid value, must be one of: %(values)s."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/validators.py:472
-#, python-format
-msgid "Invalid value, can't be any of: %(values)s."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/ext/appengine/fields.py:91
-#: venv/lib/python2.7/site-packages/wtforms/ext/appengine/fields.py:168
-#: venv/lib/python2.7/site-packages/wtforms/ext/appengine/fields.py:170
-#: venv/lib/python2.7/site-packages/wtforms/ext/django/fields.py:89
-#: venv/lib/python2.7/site-packages/wtforms/ext/sqlalchemy/fields.py:126
-#: venv/lib/python2.7/site-packages/wtforms/ext/sqlalchemy/fields.py:128
-#: venv/lib/python2.7/site-packages/wtforms/ext/sqlalchemy/fields.py:178
-#: venv/lib/python2.7/site-packages/wtforms/ext/sqlalchemy/fields.py:183
-#: venv/lib/python2.7/site-packages/wtforms/fields/core.py:435
-msgid "Not a valid choice"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/ext/appengine/fields.py:189
-msgid "Not a valid list"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/ext/appengine/fields.py:208
-msgid "Not a valid integer list"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/ext/csrf/form.py:47
-msgid "Invalid CSRF Token"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/ext/csrf/session.py:65
-msgid "CSRF failed"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/ext/csrf/session.py:70
-msgid "CSRF token expired"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/ext/dateutil/fields.py:50
-msgid "Please input a date/time value"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/ext/dateutil/fields.py:62
-msgid "Invalid date/time input"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/ext/sqlalchemy/validators.py:34
-msgid "Already exists."
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/fields/core.py:428
-msgid "Invalid Choice: could not coerce"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/fields/core.py:461
-msgid "Invalid choice(s): one or more data inputs could not be coerced"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/fields/core.py:468
-#, python-format
-msgid "'%(value)s' is not a valid choice for this field"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/fields/core.py:523
-msgid "Not a valid integer value"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/fields/core.py:573
-msgid "Not a valid decimal value"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/fields/core.py:600
-msgid "Not a valid float value"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/fields/core.py:659
-msgid "Not a valid datetime value"
-msgstr ""
-
-#: venv/lib/python2.7/site-packages/wtforms/fields/core.py:676
-msgid "Not a valid date value"
+#: app/templates/titles.html:33
+msgid "Save text list"
 msgstr ""
 

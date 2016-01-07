@@ -58,8 +58,8 @@
 
 <header class="jumbotron subhead" id="overview">
   <div class="container">
-    <h1>漢リポ  Kanseki Repository</h1>
-    <p class="lead">Electronic texts for researchers from researchers.</p>
+    <h1>{{_('漢リポ  Kanseki Repository')}}</h1>
+    <p class="lead">{{_('Electronic texts for researchers from researchers.')}}</p>
   </div>
 </header>
 
@@ -108,14 +108,14 @@
 	      <li><a tabindex="-1" href="#">Separated link</a></li>
 	    </ul>
 	  </div>    
-	  <button class="pz-close">Close</button>
-	  <button class="zoom-in">大</button>
-	  <button class="zoom-out">小</button>
+	  <button class="pz-close" title="{{_('Close')}}">{{_('X')}}</button>
+	  <button class="zoom-in"  title="{{_('Enlarge')}}">{{_('+')}}</button>
+	  <button class="zoom-out"  title="{{_('Shrink')}}">{{_('-')}}</button>
 	  <input type="range" class="zoom-range">
-	  <button class="reset">Reset</button>
-	  <button class="pz-prev">&lt;</button>
+	  <button class="reset"  title="{{_('Reset')}}">{{_('⟲')}}</button>
+	  <button class="pz-prev"  title="{{_('Previous page')}}" >&lt;</button>
 	  {% block edoption %}{% endblock %}
-	  <button class="pz-next">&gt;</button>
+	  <button class="pz-next"  title="{{_('Next page')}}" >&gt;</button>
 	</div>
 	<div id="imgcont">
 	  <div class="panzoom">
@@ -137,7 +137,7 @@
     <div id="footer">
       <div class="container">
 	<p><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
-	  (c) Kanseki Repository. All content created by us is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" title="Creative Commons Attribution-ShareAlike 4.0 International License">CC BY SA</a> license. 
+	  {{_('(c) Kanseki Repository. All content created by us is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" title="Creative Commons Attribution-ShareAlike 4.0 International License">CC BY SA</a> license. ')}}
 	  <!-- Users retain copyright of their contributions.--> </p>
       </div>
     </div>    
