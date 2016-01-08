@@ -12,7 +12,7 @@
     {% if filter %}
     {{_('Filtered by: %(value)s. ', value=filter)}}
     {% endif %}
-    {{_('Found %(value)d unique texts, %(uv)d of them unique.', value = total, uv=uniq)}} 
+    {{_('Found %(value)d matches in %(uv)d texts.', value = total, uv=uniq)}} 
     <span  class="pull-right"><a href="search?query={{key}}">{{_('Show results by content')}}</a></span>
     </p>
   </div>
