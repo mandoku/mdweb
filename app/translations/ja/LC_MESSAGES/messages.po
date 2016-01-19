@@ -94,7 +94,7 @@ msgstr "%(value)sのフィルターで絞り、"
 #: templates/bytext.html:15
 #, python-format
 msgid "Found %(value)d matches in %(uv)d texts."
-msgstr " %(uv)d テキストの中 %(value)d ヒット。"
+msgstr " %(uv)d テキスト中合計 %(value)d ヒット。"
 
 #: templates/bytext.html:16
 msgid "Show results by content"
@@ -253,7 +253,7 @@ msgstr "サインアウト"
 
 #: templates/profile.html:25
 msgid "edit (GitHub)"
-msgstr "ギットハブで編集"
+msgstr "GitHubで編集"
 
 #: templates/profile.html:28
 msgid "unload"
@@ -309,7 +309,7 @@ msgstr "上級："
 
 #: templates/profile.html:54
 msgid "edit settings on GitHub"
-msgstr "ギットハブで設定ファイルの編集"
+msgstr "GitHubで設定ファイルの編集"
 
 #: templates/profile.html:55
 msgid "Recent searches"
@@ -355,7 +355,7 @@ msgstr "検索語順"
 
 #: templates/showtext.html:8 templates/showtext.html:10
 msgid "GitHub"
-msgstr "ギットハブ"
+msgstr "GitHub"
 
 #: templates/titles.html:11
 #, python-format
