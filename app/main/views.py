@@ -49,7 +49,7 @@ def get_locale():
     #print lg
     return lg
 
-@app.route('/favicon.ico')
+@main.route('/favicon.ico')
 @main.route('/robots.txt')
 @main.route('/googled78ca805afaa95df.html')
 # @main.route('/sitemap.xml')
