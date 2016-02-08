@@ -51,7 +51,15 @@
     <input type="hidden" name="next" value="{{url_for('main.profile', uid=session['user'])}}"/>
     <input style="margin-bottom:5px" type="submit" value="{{_('Save')}}"/>　
 </form>
-<p>{{_('Advanced:')}} <a target="github" href="https://github.com/{{session['user']}}/KR-Workspace/edit/{{session['user']}}/Settings/kanripo.cfg"> {{_('edit settings on GitHub')}}</a></p>
+{{_('Advanced:')}}
+  <ul>{{_('Edit settings on GitHub:')}}
+    <li title="{{_('Settings valid for all applications, such as selections of texts, editions etc.')}}">
+      <a target="github" href="https://github.com/{{session['user']}}/KR-Workspace/edit/{{session['user']}}/Settings/global.cfg"> {{_('Global Settings')}}</a>
+    </li>
+    <li title="{{_('Settings specific to this website, such as language, etc.')}}">
+      <a target="github" href="https://github.com/{{session['user']}}/KR-Workspace/edit/{{session['user']}}/Settings/kanripo.cfg"> {{_('Kanripo Settings')}}</a>
+    </li>
+  </ul>
 <h3>{{_('Recent searches')}}</h3>
 <ul>
 {% for s in searches %}

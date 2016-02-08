@@ -116,8 +116,9 @@ class mdDocument(object):
             elif vs_flag == 1:
                 o = "%s<br/>" % (l)
             else:
-                o = gaiji.sub(lambda x : imgbase.format(gaiji=x.group(1)), l)                
+                o = gaiji.sub(lambda x : imgbase.format(gaiji=x.group(1)), l)
                 o = "<span class='tline' id='l%d' data-llen='%d:%d'>%s</span>" % (cnt, oldlen, llen, o)
+                o = o.replace("\t", "</span><span class='tline_right'>")
                 #o = gaiji.sub(u"⬤", l)
             #this is for the links in readme files.. we are in the same folder, so do not need the ID
             o=re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]\]", "<a href='\\2#\\3'>\\4</a>", o)

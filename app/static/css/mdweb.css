@@ -15,3 +15,7 @@
 .ui-draggable-dragging {
     z-index: 10000!important
 }
+
+.tline_right{
+    position: absolute; left : 250px;
+}

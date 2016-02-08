@@ -46,9 +46,10 @@ env = Environment(loader=PackageLoader('__main__', 'templates'))
 @babel.localeselector
 def get_locale():
     lg=request.accept_languages.best_match(current_app.config['LANGUAGES'].keys())
-    print lg
+    #print lg
     return lg
 
+@app.route('/favicon.ico')
 @main.route('/robots.txt')
 @main.route('/googled78ca805afaa95df.html')
 # @main.route('/sitemap.xml')
@@ -311,6 +312,8 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     editurl=False
     showtoc = True
     doc = {}
+    uid = user
+    token = ""
     fn = ""
     key = request.values.get('query', '')
     try:
@@ -328,18 +331,25 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     #the filename is of the form ZB1a/ZB1a0001/ZB1a0001_002.txt
     if "user" in session:
         user = session['user']
+        uid = user
+        user_settings=redis_store.hgetall("%s%s:settings" % (kr_user, user))
+        if user_settings.has_key(id):
+            uidbranch = user_settings[id].split("/")
+            branch=uidbranch[-1]
+            uid = uidbranch[0]
+            token="%s" % (session['token'])
     #print user
     if juan.startswith("Readme"):
-        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s" % (user, id, branch, juan)
-        xediturl =  "https://github.com/%s/%s/edit/%s/%s" % (user, id, branch, juan,)
+        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s" % (uid, id, branch, juan)
+        xediturl =  "https://github.com/%s/%s/edit/%s/%s" % (uid, id, branch, juan,)
     else:
-        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
-        xediturl =  "https://github.com/%s/%s/edit/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
+        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (uid, id, branch,  id, juan)
+        xediturl =  "https://github.com/%s/%s/edit/%s/%s_%s.txt" % (uid, id, branch,  id, juan,)
     # url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
     #     current_app.config['GITHUB_OAUTH_CLIENT_ID'],
     #     current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
-    r = requests.get(url)
-    #print url, r.status_code
+    r = requests.get(url, auth=(user, token))
+    print url, r.status_code
     if r.status_code == 200:
         fn = r.content
         editurl = xediturl
