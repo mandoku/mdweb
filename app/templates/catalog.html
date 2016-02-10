@@ -1,6 +1,9 @@
 {% extends "laybase.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "_macros.html" as macros %}
+{% block KR %}
+{{_('Kanseki Repository')}}
+{% endblock KR %}
 
 {% block navlinks %}
 <li><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
