@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-01-07 12:04+0900\n"
+"POT-Creation-Date: 2016-02-10 19:09+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,79 +17,320 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: app/templates/base.html:76 app/templates/laybase.html:80
+#: app/main/views.py:63
+#, python-format
+msgid "File %(value)s removed from internal database."
+msgstr ""
+
+#: app/main/views.py:71
+#, python-format
+msgid "Loaded %(value)s into the internal database."
+msgstr ""
+
+#: app/main/views.py:73
+#, python-format
+msgid "Could not load %(value)s."
+msgstr ""
+
+#: app/main/views.py:90
+#, python-format
+msgid "Saved text list for %(value)s with %(len)d texts"
+msgstr ""
+
+#: app/main/views.py:92
+msgid "There was a problem saving the text list."
+msgstr ""
+
+#: app/main/views.py:96
+#, python-format
+msgid ""
+"Loaded the text list for %(value)s with %(len)d texts into the internal "
+"database."
+msgstr ""
+
+#: app/main/views.py:98
+msgid "There was a problem loading the text list."
+msgstr ""
+
+#: app/main/views.py:661
+#, python-format
+msgid "Welcome to the Kanseki Repository, user %(value)s! "
+msgstr ""
+
+#: app/main/views.py:672
+msgid "You have been logged out."
+msgstr ""
+
+#: app/main/views.py:680 app/main/views.py:728
+msgid "User data have been loaded into internal database."
+msgstr ""
+
+#: app/main/views.py:682 app/main/views.py:730
+msgid "Could not load user data."
+msgstr ""
+
+#: app/main/views.py:702
+msgid "The settings have been saved."
+msgstr ""
+
+#: app/main/views.py:704
+msgid "There was a problem saving the settings."
+msgstr ""
+
+#: app/templates/base.html:76 app/templates/laybase.html:87
 msgid "News"
 msgstr ""
 
 #: app/templates/bytext.html:11
-msgid "Textlist for"
+#, python-format
+msgid "Textlist for %(value)s. "
 msgstr ""
 
-#: app/templates/bytext.html:14 app/templates/result.html:15
-msgid "Filtered by: "
+#: app/templates/bytext.html:13
+#, python-format
+msgid "Filtered by: %(value)s. "
 msgstr ""
 
-#: app/templates/bytext.html:17
-msgid "found"
+#: app/templates/bytext.html:15
+#, python-format
+msgid "Found %(value)d matches in %(uv)d texts."
 msgstr ""
 
-#: app/templates/bytext.html:19
-msgid "unique texts"
+#: app/templates/bytext.html:16
+msgid "Show results by content"
 msgstr ""
 
-#: app/templates/bytext.html:38 app/templates/titles.html:31
+#: app/templates/bytext.html:33 app/templates/titles.html:32
 msgid "Filename:"
 msgstr ""
 
-#: app/templates/catalog.html:6 app/templates/contact.html:8
-#: app/templates/index.html:8 app/templates/laybase.html:31
-#: app/templates/profile.html:8 app/templates/read.html:12
+#: app/templates/bytext.html:35 app/templates/titles.html:34
+msgid "Save text list"
+msgstr ""
+
+#: app/templates/bytext.html:43
+msgid "Select"
+msgstr ""
+
+#: app/templates/bytext.html:45
+msgid "Text No."
+msgstr ""
+
+#: app/templates/bytext.html:46
+msgid "Title"
+msgstr ""
+
+#: app/templates/bytext.html:47
+msgid "Number of matches"
+msgstr ""
+
+#: app/templates/bytext.html:75 app/templates/titles.html:69
+msgid "Actions"
+msgstr ""
+
+#: app/templates/bytext.html:79 app/templates/titles.html:73
+msgid "Order"
+msgstr ""
+
+#: app/templates/bytext.html:81 app/templates/titles.html:75
+msgid "by number of matches"
+msgstr ""
+
+#: app/templates/bytext.html:82 app/templates/titles.html:76
+msgid "by text number"
+msgstr ""
+
+#: app/templates/bytext.html:83 app/templates/titles.html:77
+msgid "by text title"
+msgstr ""
+
+#: app/templates/catalog.html:5 app/templates/contact.html:7
+#: app/templates/index.html:7 app/templates/laybase.html:22
+#: app/templates/profile.html:7 app/templates/result.html:6
+#: app/templates/titles.html:6
+msgid "Kanseki Repository"
+msgstr ""
+
+#: app/templates/catalog.html:9 app/templates/contact.html:11
+#: app/templates/index.html:11 app/templates/laybase.html:38
+#: app/templates/profile.html:11 app/templates/read.html:12
 #: app/templates/showtext.html:12
 msgid "Catalog"
 msgstr ""
 
-#: app/templates/catalog.html:14
+#: app/templates/catalog.html:17
 msgid "Kanseki Repository Catalog"
 msgstr ""
 
-#: app/templates/catalog.html:71
+#: app/templates/catalog.html:74
 msgid "目錄"
 msgstr ""
 
-#: app/templates/laybase.html:26
-msgid "Kanseki Repository"
-msgstr ""
-
-#: app/templates/laybase.html:29
+#: app/templates/laybase.html:36
 msgid "Collections"
 msgstr ""
 
-#: app/templates/laybase.html:36
+#: app/templates/laybase.html:43
 msgid "Contact"
 msgstr ""
 
-#: app/templates/laybase.html:40
+#: app/templates/laybase.html:47
 msgid "Login"
 msgstr ""
 
-#: app/templates/laybase.html:44
+#: app/templates/laybase.html:51
 msgid "Text Search"
 msgstr ""
 
-#: app/templates/laybase.html:47
+#: app/templates/laybase.html:54
 msgid "Title Search"
 msgstr ""
 
-#: app/templates/profile.html:17
+#: app/templates/laybase.html:68
+msgid "漢リポ  Kanseki Repository"
+msgstr ""
+
+#: app/templates/laybase.html:69
+msgid "Electronic texts for researchers from researchers."
+msgstr ""
+
+#: app/templates/laybase.html:118
+msgid "Close"
+msgstr ""
+
+#: app/templates/laybase.html:118
+msgid "X"
+msgstr ""
+
+#: app/templates/laybase.html:119
+msgid "Enlarge"
+msgstr ""
+
+#: app/templates/laybase.html:119
+msgid "+"
+msgstr ""
+
+#: app/templates/laybase.html:120
+msgid "Shrink"
+msgstr ""
+
+#: app/templates/laybase.html:120
+msgid "-"
+msgstr ""
+
+#: app/templates/laybase.html:122
+msgid "Reset"
+msgstr ""
+
+#: app/templates/laybase.html:122
+msgid "⟲"
+msgstr ""
+
+#: app/templates/laybase.html:123
+msgid "Previous page"
+msgstr ""
+
+#: app/templates/laybase.html:125
+msgid "Next page"
+msgstr ""
+
+#: app/templates/laybase.html:147
+msgid ""
+"(c) Kanseki Repository. All content created by us is licensed under a <a "
+"rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/4.0/\" "
+"title=\"Creative Commons Attribution-ShareAlike 4.0 International "
+"License\">CC BY SA</a> license. "
+msgstr ""
+
+#: app/templates/profile.html:20
+#, python-format
+msgid "Profile for user <u>%(user)s</u>"
+msgstr ""
+
+#: app/templates/profile.html:20
 msgid "Logout"
 msgstr ""
 
-#: app/templates/profile.html:29
+#: app/templates/profile.html:28
+msgid "edit (GitHub)"
+msgstr ""
+
+#: app/templates/profile.html:31
 msgid "unload"
 msgstr ""
 
-#: app/templates/profile.html:32
+#: app/templates/profile.html:34
 msgid "load"
+msgstr ""
+
+#: app/templates/profile.html:40
+msgid "Settings"
+msgstr ""
+
+#: app/templates/profile.html:43
+msgid "Preferred sort method"
+msgstr ""
+
+#: app/templates/profile.html:45 app/templates/result.html:80
+msgid "By text number"
+msgstr ""
+
+#: app/templates/profile.html:46
+msgid "By text number (reversed)"
+msgstr ""
+
+#: app/templates/profile.html:47
+msgid "By date"
+msgstr ""
+
+#: app/templates/profile.html:48
+msgid "By date (reversed)"
+msgstr ""
+
+#: app/templates/profile.html:49
+msgid "By term"
+msgstr ""
+
+#: app/templates/profile.html:50
+msgid "By term (reversed)"
+msgstr ""
+
+#: app/templates/profile.html:51 app/templates/result.html:83
+msgid "By preceding characters"
+msgstr ""
+
+#: app/templates/profile.html:55
+msgid "Save"
+msgstr ""
+
+#: app/templates/profile.html:57
+msgid "Advanced:"
+msgstr ""
+
+#: app/templates/profile.html:58
+msgid "Edit settings on GitHub:"
+msgstr ""
+
+#: app/templates/profile.html:59
+msgid ""
+"Settings valid for all applications, such as selections of texts, "
+"editions etc."
+msgstr ""
+
+#: app/templates/profile.html:60
+msgid "Global Settings"
+msgstr ""
+
+#: app/templates/profile.html:62
+msgid "Settings specific to this website, such as language, etc."
+msgstr ""
+
+#: app/templates/profile.html:63
+msgid "Kanripo Settings"
+msgstr ""
+
+#: app/templates/profile.html:66
+msgid "Recent searches"
 msgstr ""
 
 #: app/templates/read.html:26 app/templates/showtext.html:31
@@ -100,23 +341,46 @@ msgstr ""
 msgid "Contents"
 msgstr ""
 
-#: app/templates/result.html:12 app/templates/titles.html:11
-msgid "Searched for"
+#: app/templates/result.html:15
+#, python-format
+msgid "Searched for %(value)s. "
 msgstr ""
 
-#: app/templates/result.html:18
-msgid "Found"
+#: app/templates/result.html:17
+msgid "Filtered by: "
+msgstr ""
+
+#: app/templates/result.html:20 app/templates/titles.html:16
+#, python-format
+msgid "Found %(total)d, showing %(start)d to %(end)d."
+msgstr ""
+
+#: app/templates/result.html:21
+msgid "Show results by text"
 msgstr ""
 
 #: app/templates/result.html:25
 msgid "release filter"
 msgstr ""
 
-#: app/templates/titles.html:13
-msgid "in text titles.  Found"
+#: app/templates/result.html:81
+msgid "By text date"
 msgstr ""
 
-#: app/templates/titles.html:33
-msgid "Save text list"
+#: app/templates/result.html:82
+msgid "By search term"
+msgstr ""
+
+#: app/templates/showtext.html:8 app/templates/showtext.html:10
+msgid "GitHub"
+msgstr ""
+
+#: app/templates/titles.html:15
+#, python-format
+msgid "Searched for %(value)s in text titles."
+msgstr ""
+
+#: app/templates/titles.html:71
+msgid "Toggle selection"
 msgstr ""
 

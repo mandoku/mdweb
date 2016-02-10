@@ -33,7 +33,7 @@
     　{{_('Filename:')}} 
     <input style="padding:1px;margin-top:3px" type="text" name="filename" value="{{key}}"/>　
     <input style="margin-bottom:5px" type="submit" value="{{_('Save text list')}}"/>　
-    <input style="padding:1px;margin-top:3px" type="checkbox" name="load" value=""/>{{('Immediately load the text list')}}</input>
+    <input style="padding:1px;margin-top:3px" type="checkbox" name="load" value=""/>{{_('Immediately load the text list')}}</input>
     <input type="hidden" name="next" value="{{url_for('main.bytext', query=key)}}"/>
     </span>
 {% endif %}    

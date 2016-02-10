@@ -46,7 +46,7 @@ env = Environment(loader=PackageLoader('__main__', 'templates'))
 @babel.localeselector
 def get_locale():
     lg=request.accept_languages.best_match(current_app.config['LANGUAGES'].keys())
-    #print lg
+    print "locale: ",  lg
     return lg
 
 @main.route('/favicon.ico')
@@ -515,6 +515,7 @@ def catalog(page=1, count=20, coll="", label=""):
 
 @main.route('/titlesearch', methods=['GET',])
 def titlesearch(count=20, page=1):
+    lg=request.accept_languages.best_match(current_app.config['LANGUAGES'].keys())
     key = request.values.get('query', '')
     count=int(request.values.get('count', count))
     page=int(request.values.get('page', page))
@@ -524,7 +525,11 @@ def titlesearch(count=20, page=1):
     if len(key) > 0:
         if not redis_store.exists(titpref+key):
             if not(lib.dotitlesearch(titpref, key)):
-                return render_template("error_page.html", description = "Title search for %s: Nothing found" % (key), key=key)
+                print "lg: ", lg
+                if lg == 'en':
+                    return render_template("error_page.html", description = "Title search for %s: Nothing found" % (key), key=key)
+                else:
+                    return render_template("error_page.html", description = u"タイトル検索 %s: 該当するタイトルはありません。" % (key), key=key)
     else:
         return render_template("error_page.html", code="400", name = "Search Error", description = "No search term. Please submit the search term as parameter 'query'.")
     start = (page - 1) * count
