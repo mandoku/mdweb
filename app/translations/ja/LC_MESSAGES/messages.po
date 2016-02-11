@@ -315,28 +315,26 @@ msgid "Advanced:"
 msgstr "上級："
 
 #: templates/profile.html:58
-#, fuzzy
 msgid "Edit settings on GitHub:"
-msgstr "GitHubで設定ファイルの編集"
+msgstr "GitHubに置かれている設定ファイルの編集"
 
 #: templates/profile.html:59
 msgid ""
 "Settings valid for all applications, such as selections of texts, "
 "editions etc."
-msgstr ""
+msgstr "テキストの選択など、全てのアプリケーションに関する設定"
 
 #: templates/profile.html:60
-#, fuzzy
 msgid "Global Settings"
-msgstr "設定"
+msgstr "全体にかかわる設定"
 
 #: templates/profile.html:62
 msgid "Settings specific to this website, such as language, etc."
-msgstr ""
+msgstr "言語など、このウエブサイトのみに関する設定"
 
 #: templates/profile.html:63
 msgid "Kanripo Settings"
-msgstr ""
+msgstr "漢リポウエブサイト用設定"
 
 #: templates/profile.html:66
 msgid "Recent searches"
