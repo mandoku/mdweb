@@ -310,7 +310,10 @@ def doftsearch(key, idxdir=None):
     #do we want to sort right away here?
     s.sort()
     if len(s) > 0:
-        redis_store.rpush(key, *s)
+        try:
+            redis_store.rpush(key, *s)
+        except:
+            return False
         return True
     else:
         return False
