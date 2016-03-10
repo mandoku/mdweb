@@ -291,7 +291,7 @@ def prevnext(page):
 
 ## search
 
-def doftsearch(key, idxdir=None):
+def doftsearch(key, idxdir=None, exp=3600):
     if not idxdir:
         idxdir = current_app.config['IDXDIR']
     try:
@@ -312,6 +312,7 @@ def doftsearch(key, idxdir=None):
     if len(s) > 0:
         try:
             redis_store.rpush(key, *s)
+            redis_store.expire(key, exp)
         except:
             return False
         return True
@@ -319,7 +320,7 @@ def doftsearch(key, idxdir=None):
         return False
 
 ## title search
-def dotitlesearch(titpref, key):
+def dotitlesearch(titpref, key, exp=3600):
     try:
         ox = subprocess.check_output(['bzgrep -H %s  %s/*titles.txt | cut -d : -f 2-' % (key,
               current_app.config['MDBASE']+'/system')], shell=True )
@@ -332,6 +333,7 @@ def dotitlesearch(titpref, key):
     s=[a for a in s if len(a) > 1]
     if len(s) > 0:
         redis_store.rpush(titpref+key, *s)
+        redis_store.expire(titpref+key, exp)
         return True
     else:
         return False
