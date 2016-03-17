@@ -42,12 +42,20 @@ titpref = "kr:title:"
 link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
 hd = re.compile(r"^(\*+) (.*)$")
 env = Environment(loader=PackageLoader('__main__', 'templates'))
-    
+
+#get the language, if provided save it, if it is saved, use it.  still needs a way to set it in the IF.    
 @babel.localeselector
 def get_locale():
-    lg=request.accept_languages.best_match(current_app.config['LANGUAGES'].keys())
+    lg=request.values.get("lg", None)
+    if lg:
+        session['lg'] = lg
     if not lg:
-        lg = "ja"
+        if "lg" in session:
+            lg = session['lg']
+        else:
+            lg=request.accept_languages.best_match(current_app.config['LANGUAGES'].keys())
+        if not lg:
+            lg = "ja"
     return lg
 
 @main.route('/favicon.ico')
