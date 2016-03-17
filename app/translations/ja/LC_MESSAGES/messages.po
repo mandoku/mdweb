@@ -288,11 +288,11 @@ msgstr "テキスト番号順(逆)"
 
 #: templates/profile.html:47
 msgid "By date"
-msgstr "日付順"
+msgstr "年代順"
 
 #: templates/profile.html:48
 msgid "By date (reversed)"
-msgstr "日付順(逆)"
+msgstr "年代順(逆)"
 
 #: templates/profile.html:49
 msgid "By term"
