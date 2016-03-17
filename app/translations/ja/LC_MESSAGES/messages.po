@@ -372,7 +372,7 @@ msgstr "フィルターを外す"
 
 #: templates/result.html:81
 msgid "By text date"
-msgstr "日付順"
+msgstr "年代順"
 
 #: templates/result.html:82
 msgid "By search term"
