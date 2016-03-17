@@ -84,8 +84,17 @@
 
   <div class="row">
     <div id="sidebardiv" class="span2">
-    {% block sidebar %}
+      {% block sidebar %}
     <h2>{{_('News')}}</h2>
+    {% if lg == 'ja' %}
+    <ul>
+      <li><span class="label-success">[2016-03-10]</span><br />
+	このウエブサイトの初公開。
+      </li>
+      <li><span class="label-info">[2015-10-22]</span><br />
+	テスト中の新しいウエブサイト、約９千種漢籍オンライン。
+      </li>
+    {% else %}
     <ul>
     <li><span class="label-success">[2016-03-10]</span><br />
       First public release of the website.
@@ -100,6 +109,7 @@
       First pretest release of the Kanseki Repository.
       </li>
     </ul>
+    {% endif %}
     {% endblock sidebar %}
     </div>
 

@@ -17,6 +17,12 @@
 
 <div class="row">
   <div id="txtcont" class="span9">
+    {% if lg == 'ja' %}
+    <h3>漢籍リポジトリへの連絡</h3>
+    <p>このウェブサイトは<b>漢籍リポジトリ</b>の中に有るテキストへの閲覧と検索機能を提供しています。質問や意見などはメールで<a href="mailto:krp2015gg@gmail.com">krp2015gg (at) gmail.com</a>までお願いします。</p>
+    <p><b>漢籍リポジトリ</b>の内容と出所の選択の際に著作権の保護に関する法律や国際条約を重視しています。お持ちの権利に侵害されたと思われる場合は速やかに上記のメール宛ご連絡をお願いします。即座の解決に努めます。</p>
+    <p><b>漢籍リポジトリ</b>、その設計背景と目標についての情報は<a href="http://blog.kanripo.org">漢リポブログ</a>にあります。</p>
+    {% else %}
     <h3>Contact Kanseki Repository</h3>
     <p>This website provides access to the texts in
       the <b><a href="http://github.com/kanripo">Kanseki Repository</a></b>.
@@ -29,14 +35,7 @@
     is through <b><a href="http://www.mandoku.org">Mandoku</a></b>, an
     extension of <a href="http://orgmode.org/">Org-Mode</a>
     for <a href="https://www.gnu.org/software/emacs/">Emacs</a>.</p>
-    <!--
-    <h3>Catalog</h3>
-    <h4>　<a href="{{url_for('main.catalog', coll='ZB1')}}">ZB1 	經部</a></h4>
-    <h4>　<a href="{{url_for('main.catalog', coll='ZB2')}}">ZB2 	史部</a></h4>
-    <h4>　<a href="{{url_for('main.catalog', coll='ZB3')}}">ZB3 	子部</a></h4>
-    <h4>　<a href="{{url_for('main.catalog', coll='ZB4')}}">ZB4 	集部</a></h4> 
-    <h4>　<a href="{{url_for('main.catalog', coll='KR5')}}">KR5 	道部</a></h4>
-    <h4>　<a href="{{url_for('main.catalog', coll='ZB6')}}">ZB6 	佛部</a></h4> -->
+    {% endif %}
   </div>
 </div>
 </div>

@@ -46,7 +46,8 @@ env = Environment(loader=PackageLoader('__main__', 'templates'))
 @babel.localeselector
 def get_locale():
     lg=request.accept_languages.best_match(current_app.config['LANGUAGES'].keys())
-    print "locale: ",  lg
+    if not lg:
+        lg = "ja"
     return lg
 
 @main.route('/favicon.ico')
@@ -515,7 +516,7 @@ def catalog(page=1, count=20, coll="", label=""):
 
 @main.route('/titlesearch', methods=['GET',])
 def titlesearch(count=20, page=1):
-    lg=request.accept_languages.best_match(current_app.config['LANGUAGES'].keys())
+    lg=get_locale()
     key = request.values.get('query', '')
     count=int(request.values.get('count', count))
     page=int(request.values.get('page', page))
@@ -526,10 +527,10 @@ def titlesearch(count=20, page=1):
         if not redis_store.exists(titpref+key):
             if not(lib.dotitlesearch(titpref, key)):
                 print "lg: ", lg
-                if lg == 'en':
-                    return render_template("error_page.html", description = "Title search for %s: Nothing found" % (key), key=key)
-                else:
+                if lg == 'ja':
                     return render_template("error_page.html", description = u"タイトル検索 %s: 該当するタイトルはありません。" % (key), key=key)
+                else:
+                    return render_template("error_page.html", description = "Title search for %s: Nothing found" % (key), key=key)
     else:
         return render_template("error_page.html", code="400", name = "Search Error", description = "No search term. Please submit the search term as parameter 'query'.")
     start = (page - 1) * count
@@ -634,7 +635,8 @@ def index():
         #print "token", session['token']
     else:
         user = "Login"
-    return render_template('index.html', user=user)
+    lg=get_locale()
+    return render_template('index.html', user=user, lg=lg)
 
 @main.route('/login/<user>', methods=['GET',])
 def usersettings(user=None):
@@ -741,5 +743,6 @@ def about(id):
 
 @main.route('/contact')
 def contact():
-    return render_template('contact.html')
+    lg=get_locale()
+    return render_template('contact.html', lg=lg)
 
