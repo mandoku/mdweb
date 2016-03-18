@@ -658,8 +658,8 @@ def usersettings(user=None):
 def login():
     if not github.authorized:
         #print url_for("github.login")
-        return redirect("/")
-        #return redirect(url_for("github.login"))
+        #return redirect("/")
+        return redirect(url_for("github.login"))
     resp = github.get("/user")
     assert resp.ok
     session['user'] = resp.json()["login"]
