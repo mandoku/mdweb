@@ -4,10 +4,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    MDBASE="/Users/Shared/krp"
-    TXTDIR="/Users/Shared/krp/gh"
-    IDXDIR="/Users/Shared/krp/index"
-    IMGDIR="/Users/Shared/images/general/skqs/wyg"
+    MDBASE="/Users/Shared/krpdev"
+    TXTDIR="/Users/Shared/krpdev/gh"
+    IDXDIR="/Users/Shared/krpdev/index"
+    IMDGIR="/Volumes/imgdata"
+#    IMGDIR="/Users/Shared/images/general/skqs/wyg"
+
     LANGUAGES = {
         'ja': '日本語',
         'en': 'English',

@@ -357,9 +357,14 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     # url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
     #     current_app.config['GITHUB_OAUTH_CLIENT_ID'],
     #     current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
-    r = requests.get(url, auth=(user, token))
-    print url, r.status_code
-    if r.status_code == 200:
+    try:
+        r = requests.get(url, auth=(user, token))
+        print url, r.status_code
+    except:
+        r=0
+    if r == 0:
+        pass
+    elif r.status_code == 200:
         fn = r.content
         editurl = xediturl
     else:
@@ -427,11 +432,18 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
             branches=[]
     if len(fn) == 0:
         try:
+            if "_Readme" in filename:
+                filename=re.sub("KR.[^/]+_Readme.org.txt", "Readme.org", filename)
             datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-            fn = codecs.open(datei).read(-1)
-            fn.close()
         except:
-            return "File Not found: %s" % (filename)
+            return "File Not found: %s" % (datei)
+        try:
+            fnx = codecs.open(datei, "r", "utf-8")
+            fn = fnx.read(-1)
+            fnx.close()
+        except:
+            return "File not readible: %s" % (datei)
+            
     md = mandoku_view.mdDocument(fn, id, juan)
     try:
         res = redis_store.hgetall("%s%s" % ( zbmeta, id[0:8]))
