@@ -644,7 +644,7 @@ def index():
     else:
         user = "Login"
     lg=get_locale()
-    return render_template('index.html', user=user, lg=lg, ret="Important: This is an old version of the website.  Go to www.kanripo.org for the new one.")
+    return render_template('index.html', user=user, lg=lg, ret="Important: This is the TLS version of the website.  Go to www.kanripo.org for the regular one.")
 
 @main.route('/login/<user>', methods=['GET',])
 def usersettings(user=None):
