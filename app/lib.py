@@ -113,7 +113,8 @@ u'T@BEI' : u'【大→別】',
 })
 
 
-dictab = {'hydcd1' : u'漢語大詞典',
+dictab = {'cik' : u'探典釋辭',
+          'hydcd1' : u'漢語大詞典',
           'hydcd' : u'漢語大詞典',
           'hydzd' : u'漢語大字典',
           'sanli' : u'三禮辭典',
