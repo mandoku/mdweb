@@ -16,12 +16,12 @@ moment = Moment()
 db = SQLAlchemy()
 pagedown = PageDown()
 redis_store = Redis()
+tlsdb = Redis(config_prefix="TLSDB")
 babel = Babel()
 #login_manager = LoginManager()
 #login_manager.session_protection = 'strong'
 #login_manager.login_view = 'auth.login'
 github_bp = make_github_blueprint(scope=["repo"])
-
 
 
 def create_app(config_name):
@@ -37,6 +37,7 @@ def create_app(config_name):
     pagedown.init_app(app)
     
     redis_store.init_app(app)
+    tlsdb.init_app(app)
     babel.__init__(app)
     
     if not app.debug and not app.testing and not app.config['SSL_DISABLE']:
@@ -54,4 +55,7 @@ def create_app(config_name):
 
     app.register_blueprint(github_bp, url_prefix="/login")
 
+    from .tls import tls as tls_blueprint
+    app.register_blueprint(tls_blueprint, url_prefix='/tls')
+    
     return app

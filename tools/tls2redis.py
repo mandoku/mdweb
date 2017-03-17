@@ -99,14 +99,24 @@ def read_concept(con):
     except:
         print base.root.content[-1].heading
         return {'concept' : 'unknown'}
-    res = {'concept' : concept, 'syn' : []}
+    res = {'concept' : concept}
     for n in base.root.content[-1].content:
         if n.TYPE == 'DRAWER_ELEMENT':
             res = read_drawer(n, res)
         elif n.TYPE == 'NODE_ELEMENT':
             if n.heading == 'DEFINITION':
                 res['def'] = "".join(n.content).strip()
-            if n.heading == 'WORDS':
+            elif n.heading == 'POINTERS':
+                px = {}
+                for n1 in n.content:
+                    if n1.TYPE == 'NODE_ELEMENT':
+                        pt = n1.heading
+                        px[pt] = []
+                        for p in n1.content:
+                            if "concept:" in p:
+                                px[pt].append(re.findall("concept:([^]]+)", p)[0])
+                res['pointers'] = px
+            elif n.heading == 'WORDS':
                 res['words'] = []
                 for n1 in n.content:
                     if n1.TYPE == 'NODE_ELEMENT':

@@ -16,6 +16,7 @@ class Config:
     DICURL = "dic:"
     REDIS_URL = "redis://localhost:6379/5"
 
+    TLSDB_URL = 'redis://localhost:6379/3'
 
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'X and U and Z string'
     SSL_DISABLE = False
