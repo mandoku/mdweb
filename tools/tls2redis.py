@@ -20,7 +20,7 @@ swl_key = "swl::"
 syl_txt = tls_root + "index/syllables.txt"
 syl_key = "syl::"
 syn_txt = tls_root + "index/syn-func.txt"
-syn_key = "syn::"
+funx = {"syn-func" : "syn-func::", "sem-feat" : "sem-feat::"} 
 char_txt = tls_root + "core/characters.tab"
 char_key = "char::"
 con_dir = tls_root + "concepts/"
@@ -65,12 +65,12 @@ for line in fx.read().split("$$"):
     # sys.stderr.write("cnt: %d\n" % ( cnt))
     f = line.split("\t")
     try:
-        res = {'syn' :  f[1], 'uuid' : f[0], 'def' : f[2], }
+        res = {'syn' :  f[1], 'uuid' : f[0].strip(), 'def' : f[2].strip(), 'inst' : []}
     except:
         print line
         print f
         sys.exit()
-    r.hmset(syn_key+f[0], res)
+    r.hmset(funx["syn-func"]+res['uuid'], res)
         
 for line in codecs.open(char_txt, "r", "utf-8"):
     #4E00	一	1	0	1	1000.0
@@ -93,11 +93,14 @@ def read_drawer(el, d={}):
 def read_concept(con):
     base = PyOrgMode.OrgDataStructure()
     s = codecs.open(con, "r", "utf-8").read()
-    base.load_from_string(s)
+    try:
+        base.load_from_string(s)
+    except:
+        print "Error", con
     try:
         concept = base.root.content[-1].heading.split("= ")[1]
     except:
-        print base.root.content[-1].heading
+        print con, base.root.content[-1].heading
         return {'concept' : 'unknown'}
     res = {'concept' : concept}
     for n in base.root.content[-1].content:
@@ -105,7 +108,11 @@ def read_concept(con):
             res = read_drawer(n, res)
         elif n.TYPE == 'NODE_ELEMENT':
             if n.heading == 'DEFINITION':
-                res['def'] = "".join(n.content).strip()
+                res['def'] = "\n".join(n.content).strip()
+            elif n.heading == 'SOURCE REFERENCES':
+                res['srcref'] = n.output().strip()
+            elif n.heading == 'NOTES':
+                res['not'] =  n.output().strip()
             elif n.heading == 'POINTERS':
                 px = {}
                 for n1 in n.content:
@@ -129,14 +136,32 @@ def read_concept(con):
                                 w = read_drawer(p, w)
                             elif p.TYPE == 'NODE_ELEMENT':
                                 ch = {'head' : p.heading}
+                                ch['funx'] = re.findall(r":([^:]+)::#([^]]+)\]\[([^]]+)]", p.heading)
                                 for dx in p.content:
                                     if dx.TYPE == 'DRAWER_ELEMENT':
                                         ch = read_drawer(dx, ch)
                                     if dx.TYPE == 'NODE_ELEMENT':
                                         if dx.heading == 'DEFINITION':
-                                            ch['def'] = "".join(dx.content).strip()
+                                            ch['def'] = "\n".join(dx.content).strip()
+                                        if dx.heading == 'SOURCE REFERENCES':
+                                            ch['srcref'] = "\n".join(dx.content).strip()
                                         elif dx.heading == 'NOTES':
                                             ch['not'] = dx.output().strip()
+                                            if ch['not'] == '****** NOTES':
+                                                del(ch['not'])
+                                for f in ch['funx']:
+                                    try:
+                                        r1 = r.hgetall(funx[f[0]]+f[1])
+                                        r1['inst'] = eval(r1['inst'])
+                                    except:
+                                        r1 = {'uuid' : f[1], f[0] : f[2], 'def' : '', 'inst' : []}
+                                    if len(r1) == 0:
+                                        r1 = {'uuid' : f[1], f[0] : f[2], 'def' : '', 'inst' : []}
+                                    try:
+                                        r1['inst'].append(ch['CUSTOM_ID'])
+                                    except:
+                                        print r1, f
+                                    r.hmset(funx[f[0]]+f[1], r1)
                                 ws.append(ch)
                         w['synwords'] = ws
                         res['words'].append(w)
@@ -147,7 +172,7 @@ ls = os.listdir(con_dir)
 ls.sort()
 for fx in ls:
     con = "%s%s" % (con_dir, fx)
-    print fx
+    # print fx
     res = read_concept(con)
-    print res['concept']
+    # print res['concept']
     r.hmset(con_key+res['concept'], res)

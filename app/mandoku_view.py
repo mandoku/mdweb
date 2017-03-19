@@ -16,7 +16,7 @@ pbx = re.compile(r"<pb:([^_]+)_([^_]+)_([^p]+)p([^>]+)>")
 # <pb:KR5a0174_CK-KZ_02p002a>
 imgbase = "<img height='20' width='20' alt='&amp;{gaiji}' title='{gaiji}' src='https://raw.githubusercontent.com/kanripo/KR-Gaiji/master/images/{gaiji}.png'/>"
 class mdDocument(object):
-    def __init__(self, fn, txtid, juan, rep=None):
+    def __init__(self, fn, txtid, juan, rep=None, ignorepb=False):
         self.raw = fn
         # the repository to which this file belongs
         self.txtid = txtid
@@ -24,6 +24,7 @@ class mdDocument(object):
         self.rep = rep
         if rep:
             repo = git.Repo(self.rep)
+        self.ignorepb = ignorepb
         self._config = None
         self._md = None
         self._toc = None
@@ -90,7 +91,9 @@ class mdDocument(object):
             if l.startswith('#'): continue
             if not self._ed and "<pb" in l:
                 self._ed = re.findall(r"<pb[^_]+_([^_]+)_", l)[0]
-            if pby.search(l):
+            if self.ignorepb:
+                l = pb.sub(r'<a name="\3"></a>', l)
+            elif pby.search(l):
                 l = pby.sub(r'''<a onclick="displayPageImage('%s', 'JY-C', '%s-\2-\3' );" name="\2-\3" class="pb">[\2-\3] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)
             if pbk.search(l):
                 l = pbk.sub(r'''<a onclick="displayPageImage('%s', 'CK-KZ', '%s-\2' );" name="\1-\2" class="pb">[\2] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)

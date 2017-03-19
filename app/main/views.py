@@ -313,11 +313,12 @@ def read(juan="Readme.org", id=0, seq=0, branch="master"):
 
 #@main.route('/text/<coll>/<int:seq>/<int:juan>', methods=['GET',] )
 @main.route('/text/<id>/', methods=['GET',])
+@main.route('/text/loc/<loc>', methods=['GET',])
 @main.route('/text/<coll>/<seq>/<juan>', methods=['GET',] )
 @main.route('/text/<id>/<juan>', methods=['GET',])
 @main.route('/edition/<branch>/<id>/<juan>', methods=['GET',])
 @main.route('/edition/<branch>/<id>/', methods=['GET',])
-def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo"):
+def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo", loc=""):
     editurl=False
     showtoc = True
     doc = {}
@@ -325,6 +326,14 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     token = ""
     fn = ""
     key = request.values.get('query', '')
+    if len(loc) > 0:
+        floc = loc.split(":")
+        id = floc[0].split("_")[0]
+        juan = floc[0].split("_")[1]
+        branch = "tls-annotate"
+        if key == '':
+            key = floc[-1]
+        print id, juan, key
     try:
         juan = "%3.3d" % (int(juan))
     except:
@@ -347,7 +356,7 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
             branch=uidbranch[-1]
             uid = uidbranch[0]
             token="%s" % (session['token'])
-    #print user
+    #print uid, user
     if juan.startswith("Readme"):
         url =  "https://raw.githubusercontent.com/%s/%s/%s/%s" % (uid, id, branch, juan)
         xediturl =  "https://github.com/%s/%s/edit/%s/%s" % (uid, id, branch, juan,)
@@ -357,6 +366,7 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     # url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
     #     current_app.config['GITHUB_OAUTH_CLIENT_ID'],
     #     current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
+    print user, token
     r = requests.get(url, auth=(user, token))
     print url, r.status_code
     if r.status_code == 200:
