@@ -1,0 +1,69 @@
+{% extends "tlsbase.html" %}
+
+{% block title %}TLS{% endblock %}
+
+{% block body %}
+
+<div class="row">
+  <div id="txtcont" class="span9">
+    <h1>{{c.concept}} {{c.TR_OCH}} / {{c.TR_ZH}}</h1>
+    <div class="syn">
+      <ul>
+      {% for s in c.SYNONYM %}
+      <li>{{s}}</li>
+      {% endfor %}
+      </ul>
+    </div>
+    <div class="definition">
+      <pre>{{c.def}}</pre>
+    </div>  
+    <div class="pointers">
+      {% for k in c.pointers %}
+      {% if c.pointers[k] %}
+      <h3>{{k}}</h3>
+      <ul>
+      {% for v in c.pointers[k] %}
+      <li><a href="{{url_for('.showconcept')}}?id={{v}}">{{v}}</a></li>
+      {% endfor %}
+      </ul>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <div class="words">
+      {% for w in c.words %}
+      <h4>{{loop.index0}} {{w['head']}}</h4>
+      {% for s in w['synwords'] %}
+      {% if s['head'] != 'SOURCE REFERENCES' %}
+      <h5>
+      {% for sf in s['funx'] %}
+      <a href="{{url_for('.showsynsem', type=sf[0], uuid=sf[1])}}">{{sf[2]}}</a> 
+      {% endfor %}
+      <a onclick="show_swl(uuid='{{s.CUSTOM_ID}}')">Show examples</a>
+      </h5>
+      <pre>{{s.def}}</pre>
+      <ul style="display:none" id="SW{{s.CUSTOM_ID}}">
+      </ul>
+      {% if s.not %}
+      <p>{{s.not}}</p>
+      {% endif %}  <!-- ends notes -->
+      {% endif %}  <!-- ends check for source references -->
+      {% endfor %}
+      {% endfor %}
+    </div>  
+  </div>
+</div>  
+{% endblock %}
+    
+{% block closingscript %}
+<script>
+  (function($) {
+  $(document).ready(function() {
+  $('#update').click(function() {  
+  })(jQuery);
+
+  function show_swl(var uuid){
+  
+  };
+</script>
+
+{% endblock %}

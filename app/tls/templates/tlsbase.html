@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TLS - Thesaurus Linguae Sericae 漢學文典 </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery/jquery.ui.core.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery/jquery.ui.tabs.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery/jquery.ui.theme.css')}}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link href="{{url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/docs.css')}}" rel="stylesheet"> 
+    <link href="{{url_for('static', filename='css/mdweb.css')}}" rel="stylesheet"> 
+
+    {% block head %}{% endblock head %}
+  </head>
+  <body onload="highlightSearchTerms('{{key}}');" data-spy="scroll" data-target=".bs-docs-sidebar">
+    {% block navbar %}
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a href="{{url_for('main.index')}}" class="pull-left" title="{{_('Kanseki Repository')}}">
+	<img width="40" height="40" src="{{ url_for('static', filename='img/kanripo-64.png')}}"/>
+	</a>
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar">	</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="brand" href="{{url_for('main.index')}}">
+	  {% block KR %}
+	  {% endblock KR %}
+      </a>
+      <div class="nav-collapse collapse">
+        <ul class="nav">
+	  <!--          <li class="active"><a href="/texts/dzjy">{{_('Collections')}}</a></li> -->
+	  {% block navlinks %}
+          <li class="active"><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
+	  <li><a href="http://blog.kanripo.org">Blog</a></li>
+	  {% endblock navlinks%}
+        </ul>
+      </div>
+        <ul class="nav pull-right">
+	<li class="active"><a href="{{url_for('main.contact')}}">{{_('Contact')}}</a></li>
+{% if session['user'] %}
+<li  class="label-important"><a href="{{url_for('main.profile', uid=session['user'])}}">{{session['user']}}</a></li>
+{% else %}
+<li class="label-important"><a href="{{url_for('main.login')}}">{{_('Login')}}</a></li>
+{% endif %}
+      </ul>
+      <form class="navbar-search pull-right" action="{{url_for('main.searchtext')}}" method="GET">
+	<input size="10" name="query" id="query" type="text" class="search-query" placeholder="{{_('Text Search')}}">
+      </form>
+      <form class="navbar-search pull-right" action="{{url_for('main.titlesearch')}}" method="GET">
+	<input  size="5" name="query" id="query" type="text" class="search-query" placeholder="{{_('Title Search')}}">
+      </form>
+
+
+    </div>
+  </div>
+</div>
+
+{% endblock navbar %}
+
+{% block subhead %}
+
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>{{_('漢學文典 TLS - Thesaurus Linguae Sericae')}}</h1>
+    <p class="lead">{{_('An Historical and Comparative Encyclopaedia of Chinese Conceptual Schemes.')}}</p>
+  </div>
+</header>
+
+{% endblock subhead %}
+
+
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+  <div class="row">
+    <div id="sidebardiv" class="span2">
+      {% block sidebar %}
+    <h2>{{_('News')}}</h2>
+    {% endblock sidebar %}
+    </div>
+
+    <div id="maintextdiv" class="span9 textbody">
+      {% block body %}{% endblock %}
+    </div>
+    <div id="imagediv" class="span1 hidden" style="margin-left:20px;">
+      <div id="imageinner">
+	<div class="buttons">
+	  <div class="dropdown">
+	    <!-- Link or button to toggle dropdown -->
+	    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+	      <li><a tabindex="-1" href="#">Action</a></li>
+	      <li><a tabindex="-1" href="#">Another action</a></li>
+	      <li><a tabindex="-1" href="#">Something else here</a></li>
+	      <li class="divider"></li>
+	      <li><a tabindex="-1" href="#">Separated link</a></li>
+	    </ul>
+	  </div>    
+	  <button class="pz-close" title="{{_('Close')}}">{{_('X')}}</button>
+	  <button class="zoom-in"  title="{{_('Enlarge')}}">{{_('+')}}</button>
+	  <button class="zoom-out"  title="{{_('Shrink')}}">{{_('-')}}</button>
+	  <input type="range" class="zoom-range">
+	  <button class="reset"  title="{{_('Reset')}}">{{_('⟲')}}</button>
+	  <button class="pz-prev"  title="{{_('Previous page')}}" >&lt;</button>
+	  {% block edoption %}{% endblock %}
+	  <button class="pz-next"  title="{{_('Next page')}}" >&gt;</button>
+	</div>
+	<div id="imgcont">
+	  <div class="panzoom">
+	  </div>
+	</div>
+      </div>
+    </div>
+</div> <!-- closes row -->
+</div>
+    <script  src="{{ url_for('static', filename='jquery/jquery.js')}}"></script>
+    <script  src="{{ url_for('static', filename='jquery/jquery.ui.core.js')}}"></script>
+    <script  src="{{ url_for('static', filename='jquery/jquery.ui.widget.js')}}"></script>
+    <script  src="{{ url_for('static', filename='jquery/jquery.ui.tabs.js')}}"></script>
+    <script  src="{{ url_for('static', filename='js/highlight.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.panzoom.js')}}"></script>
+    {% block closingscript %}
+    {% endblock %}
+    {% block footer %}
+    <div id="footer">
+      <div class="container">
+	<p><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
+	  {{_('(c) TLS - Thesaurus Linguae Sericae. All content created by us is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" title="Creative Commons Attribution-ShareAlike 4.0 International License">CC BY SA</a> license. ')}}
+	  <!-- Users retain copyright of their contributions.--> </p>
+      </div>
+    </div>    
+    {% endblock %}
+  </body>
+</html>
