@@ -73,19 +73,23 @@ class mdDocument(object):
         return "<mdDocument %s>" % (self.title)
 
     def parse(self, content):
+        zhu_flag = False
         vs_flag = 0
         cnt = 0
         llen = 0
         self._toc=[]
         s = ["<p>"]
         o = ""
+        btn=""
+        divc = ""
         lines = content.split('\n')
         for l in lines:
             oldlen = llen
             llen += len(l) + 1
             cnt += 1
             l = l.replace('¶', '')
-            l = re.sub(r'@[a-z]+', '', l)
+            if not zhu_flag:
+                l = re.sub(r'@[a-z]+', '', l)
             l = l.replace("(", "<span class='krp-note'>")
             l = l.replace(")", "</span>")
             if l.startswith('#'): continue
@@ -107,7 +111,20 @@ class mdDocument(object):
                     vs_flag = 1
                 else:
                     vs_flag = 0
-            elif l.startswith(':'): continue
+            try:
+                if ":zhu:" in lines[cnt+1]:
+                    btn = '''<span style="display:inline;" onclick="showhide('div%d')" title="Click to dispaly note">●</span>''' % (cnt+2)
+            except:
+                pass
+            if ":zhu:" in l:
+                zhu_flag = True
+                btn = "<div display='none;' id='div%d'>" % (cnt)
+            elif ":end:" in l:
+                if zhu_flag:
+                    zhu_flag = False
+                    divc = "</span></div>"
+                    l = "　"
+            if l.startswith(':'): continue
             elif hd.search(l):
 #                print l
                 tmp = hd.findall(l)[0]
@@ -120,8 +137,15 @@ class mdDocument(object):
                 o = "%s<br/>" % (l)
             else:
                 o = gaiji.sub(lambda x : imgbase.format(gaiji=x.group(1)), l)
-                o = "<span class='tline' id='l%d' data-llen='%d:%d'>%s</span>" % (cnt, oldlen, llen, o)
-                o = o.replace("\t", "</span><span class='tline_right'>")
+                if "\t" in o:
+                    o += "</span>"
+                if zhu_flag:
+                    o = "%s<span class='tline zhu' id='l%d' data-llen='%d:%d'>%s</span>" % (btn, cnt, oldlen, llen, o)
+                    btn = ""
+                else:
+                    o = "%s<span class='tline' id='l%d' data-llen='%d:%d'>%s</span>%s" % (btn, cnt, oldlen, llen, o, divc)
+                    divc = ""
+                o = o.replace("\t", "<span class='tline_right'>")
                 #o = gaiji.sub(u"⬤", l)
             #this is for the links in readme files.. we are in the same folder, so do not need the ID
             o=re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]\]", "<a href='\\2#\\3'>\\4</a>", o)

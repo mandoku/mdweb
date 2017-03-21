@@ -19,3 +19,11 @@
 .tline_right{
     position: absolute; left : 250px;
 }
+
+.zhudisp {
+    display: block;
+}
+
+.zhu {
+    font-size : 90%;
+}

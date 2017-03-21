@@ -37,6 +37,8 @@ import git, requests, sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 kr_user = "kr_user:"
+zbmeta = "kr:meta:"
+titpref = "kr:title:"
 
 tls_root = "/home/chris/tlsdev/krp/tls/lexicon/"
 swl_txt = tls_root + "index/swl.txt"
@@ -113,6 +115,7 @@ def showsynsem(type=None, uuid=None):
 #@main.route('/edition/<branch>/<id>/<juan>', methods=['GET',])
 #@main.route('/edition/<branch>/<id>/', methods=['GET',])
 def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo", loc=""):
+    rp = False
     editurl=False
     showtoc = True
     doc = {}
@@ -120,11 +123,12 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     token = ""
     fn = ""
     key = request.values.get('query', '')
+    if user=='tls-kr':
+        branch = "tls-annot"
     if len(loc) > 0:
         floc = loc.split(":")
         id = floc[0].split("_")[0]
         juan = floc[0].split("_")[1]
-        branch = "tls-annot"
         if key == '':
             key = floc[-1]
         print id, juan, key
@@ -175,7 +179,7 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
                 except:
                     rpn="No repository found!"
                     rp = False
-    print rpn
+    #print rpn
     if rp:
         fn = rp.get_file_contents("%s_%s.txt" % (id, juan), ref=branch).decoded_content
     else:
@@ -265,4 +269,6 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     # else:
     #     md = mandoku_view.mdDocument(r.content.decode('utf-8'))
     #print "url: ", url
-    return render_template('showtext.html', ct={'mtext': Markup("<br/>\n".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2, showtoc=showtoc, editurl=editurl, ed=md.ed)
+    return render_template('showtext.html', ct={'mtext': Markup("<br/>\n".join(md.md)),
+                                                'doc': res},
+                           doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2, showtoc=showtoc, editurl=editurl, ed=md.ed)

@@ -28,7 +28,7 @@
 {% block sidebar %}
 <div class="sidebar">
 {% if showtoc %}
-<h2>{{_('Versions')}}</h2>
+<h2>{{_('版本')}}</h2>
 <ul>
   {% if edition != 'master' %}
     <li><a href="/text/{{txtid}}/{{juan}}">【master】</a></li>
@@ -38,7 +38,7 @@
     {% endfor %}
   </ul>
 
-<h2>{{_('Contents')}}</h2>
+<h2>{{_('目次')}}</h2>
   <ul>
     {% for i in toc %}
     {% for item in i %}
@@ -55,7 +55,7 @@
 {% block body %}
 
 <div class="row">
-  <div id="txtcont" class="span9" style="position: relative;">
+  <div id="txtcont" class="span12" style="position: relative;">
     {{ct.mtext}}
   </div>
 </div>
@@ -73,7 +73,13 @@
 
 
 {% block closingscript %}
-<script>
+<script type="text/javascript">
+  function showhide(id) {
+  // alert("clicked!"); 
+  var e = document.getElementById(id);
+  e.style.display = (e.style.display == 'block') ? 'none' : 'block';
+ }
+
   var imglist={};
   var edlist = {
  {% for v in branches %} 

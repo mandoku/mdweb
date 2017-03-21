@@ -50,7 +50,7 @@
 <!-- http://localhost:5000/text/ZB6q0003/003#0221a -->
 <!-- ZB1a0068:007-352:2:6 -->
 <td class="text-left">{{it_txtid}}</td>
-	<td class="text-left"><a href="{{url_for('main.showtext', id=it_txtid, juan=it_juan, query=key, _anchor=it_juan+'-'+it_page)}}" title="{{it_txtid}} {{item[2]['TITLE']}}">{{item[2]['TITLE'].decode('utf-8')|truncate(12, true)}}, {{it_juan.lstrip('0')}}, {{it_page.lstrip('0')}}</a></td>
+<td class="text-left"><a href="{{url_for('main.showtext', id=it_txtid, juan=it_juan, query=key, _anchor=it_juan+'-'+it_page)}}" title="{{it_txtid}} {{item[2]['TITLE']}}">{{item[2]['TITLE'].decode('utf-8')|truncate(12, true)}}, {{it_juan.lstrip('0')}}, {{it_page.lstrip('0')}}</a></td>
 <td>{{item[0]|safe}}</td> 
 <td class="text-left">{{item[3]|safe}}</td>
 <td class="text-right">

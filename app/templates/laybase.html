@@ -83,7 +83,7 @@
     {% endfor %}
 
   <div class="row">
-    <div id="sidebardiv" class="span2">
+    <div id="sidebardiv" class="span1">
       {% block sidebar %}
     <h2>{{_('News')}}</h2>
     {% if lg == 'ja' %}
@@ -113,7 +113,7 @@
     {% endblock sidebar %}
     </div>
 
-    <div id="maintextdiv" class="span9 textbody">
+    <div id="maintextdiv" class="span11 textbody">
       {% block body %}{% endblock %}
     </div>
     <div id="imagediv" class="span1 hidden" style="margin-left:20px;">
