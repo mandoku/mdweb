@@ -27,7 +27,7 @@ con_dir = tls_root + "concepts/"
 con_key = "con::"
 zhu_dir = tls_root + "notes/zhu/"
 zhu_key = "zhu::"
-
+uuid_key= "uuid:"
 r.flushdb()
 
 for line in codecs.open(swl_txt, "r", "utf-8"):
@@ -36,6 +36,7 @@ for line in codecs.open(swl_txt, "r", "utf-8"):
     ff = f[1].split("##")
     res = {'loc' :  ff[0], 'title' : ff[1], 'char' : ff[4], 'line' : ff[5] }
     r.hmset(swl_key+f[0], res)
+    r.hmset(uuid_key+f[0], {'type' : 'swl', 'key' : swl_key+f[0]})
 
 for line in codecs.open(syl_txt, "r", "utf-8"):
     #逳	uuid-ee853465-8441-4aec-8453-c00691fc312d	yù	luɡ	jiuk	余	六	入	歩也轉也行也
@@ -48,6 +49,7 @@ for line in codecs.open(syl_txt, "r", "utf-8"):
         print f
         sys.exit()
     r.hmset(syl_key+f[1], res)
+    r.hmset(uuid_key+f[1], {'type' : 'syl', 'key' : syl_key+f[1]})
     w = redis_hash_dict.RedisHashDict(syl_key+f[0])
     try:
         w['uuid'].append( f[0])
@@ -71,6 +73,7 @@ for line in fx.read().split("$$"):
         print f
         sys.exit()
     r.hmset(funx["syn-func"]+res['uuid'], res)
+    r.hmset(uuid_key+res['uuid'], {'type' : 'syn-func', 'key' : funx["syn-func"]+res['uuid']})
         
 for line in codecs.open(char_txt, "r", "utf-8"):
     #4E00	一	1	0	1	1000.0
@@ -162,6 +165,7 @@ def read_concept(con):
                                     except:
                                         print r1, f
                                     r.hmset(funx[f[0]]+f[1], r1)
+                                    r.hmset(uuid_key+f[1], {'type' : f[0], 'key' : funx[f[0]]+f[1]})
                                 ws.append(ch)
                         w['synwords'] = ws
                         res['words'].append(w)
@@ -176,3 +180,4 @@ for fx in ls:
     res = read_concept(con)
     # print res['concept']
     r.hmset(con_key+res['concept'], res)
+    r.hmset(uuid_key+f[0], {'type' : 'concept', 'key' : swl_key+f[0]})
