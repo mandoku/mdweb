@@ -14,7 +14,7 @@ import redis_hash_dict
 
 ## TLS settings
 
-tls_root = "/home/chris/tlsdev/krp/tls/lexicon/"
+tls_root = "/Users/chris/tlsdev/krp/tls/lexicon/"
 swl_txt = tls_root + "index/swl.txt"
 swl_key = "swl::"
 syl_txt = tls_root + "index/syllables.txt"
