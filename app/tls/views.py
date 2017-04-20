@@ -123,8 +123,6 @@ def concepttree():
             p = eval(r['pointers'])
         except:
             p = {'NO POINTER' : []}
-
-            
     # search for concepts, 
     return render_template('tlstaxtree.html', res=res, q=s, tree=t)
 
@@ -133,7 +131,8 @@ def conceptsearch():
     # give the start of the concept tree, at the given concept
     s=request.values.get("query", "N/A")
     res={}
-    
+    if len(res) == 0:
+        pass
     # search for concepts, 
     return render_template('tlssearch.html', res=res)
 
