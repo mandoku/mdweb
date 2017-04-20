@@ -34,6 +34,7 @@
     </div>
     <div class="words">
       {% for w in c.words %}
+      <hr/>
       <h4>{{loop.index}} {{w['head']}}</h4>
       {% for s in w['synwords'] %}
       {% if s['head'] != 'SOURCE REFERENCES' %}
@@ -41,10 +42,10 @@
       {% for sf in s['funx'] %}
       <a href="{{url_for('.showsynsem', type=sf[0], uuid=sf[1])}}">{{sf[2]}}</a> 
       {% endfor %}
-      <a  id="{{s.CUSTOM_ID}}" onclick="show_swl(uuid='{{s.CUSTOM_ID}}')">Show examples</a>
       </h5>
       <pre>{{s.def}}</pre>
-      <ul style="display:none" id="SW{{s.CUSTOM_ID}}">
+      <a  id="{{s.CUSTOM_ID}}" onclick="show_swl(uuid='{{s.CUSTOM_ID}}')">Show examples</a>
+      <ul id="SW{{s.CUSTOM_ID}}">
       </ul>
       {% if s.not %}
       <p>{{s.not}}</p>
@@ -59,8 +60,16 @@
     
 {% block closingscript %}
 <script>
-  function show_swl(uuid){
-  alert(uuid);
+  function show_swl(uid){
+//  alert(uid);
+  $.ajax({
+  type : "GET",
+  url : "{{url_for('tls.showex', uuid=uid)}}" + uid, 
+//  url : "{{url_for('tls.showex', uuid=uid)}}",
+  success : function(resp){
+  $('#SW' + uid).html(resp)
+  },
+  });
   };
   (function($) {
   $(document).ready(function() {

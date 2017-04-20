@@ -144,7 +144,10 @@ def showsynsem(type=None, uuid=None):
     inst=eval(res['inst'])
     new=[]
     for i in inst:
-        new.append(tlsdb.hgetall(swl_key+i))
+        l = tlsdb.lrange(swl_key+i, 0, -1)
+        for b in [a.split("##") for a in l]:
+            f = {'loc': b[0], 'char': b[4], 'line': b[5], 'title' : b[1]}
+            new.append(f)
     res['inst'] = new
     return render_template("funx.html", res=res)
 
@@ -312,3 +315,18 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     return render_template('showtext.html', ct={'mtext': Markup("<br/>\n".join(md.md)),
                                                 'doc': res},
                            doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2, showtoc=showtoc, editurl=editurl, ed=md.ed)
+
+@tls.route('/lexicon/quotations/<uuid>', methods=['GET',])
+def showex(uuid="uuid-39b00dce-3e66-4507-834f-1ec3eb135b29"):
+    l = tlsdb.lrange(swl_key + uuid, 0, -1)
+    res = ""
+    for b in [a.split("##") for a in l]:
+        txtloc = b[0].split(":")
+        it_txtid, it_juan = txtloc[0].split("_")
+        it_page = txtloc[1].split('a')[0] + 'a'
+        href = url_for('tls.showtext', id=it_txtid, juan=it_juan, query=txtloc[-1], _anchor=it_juan+'-'+it_page, user='tls-kr')
+        res += "<li>%s (<a href='%s'>%s</a>)</li>\n" % (b[5], href, b[1])
+    if len(res) == 0:
+        res = "<b>No attributions registered for this syntactic word.</b>"
+    return res
+    

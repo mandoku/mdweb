@@ -35,7 +35,7 @@ for line in codecs.open(swl_txt, "r", "utf-8"):
     f = line[:-1].split("\t", 1)
     ff = f[1].split("##")
     res = {'loc' :  ff[0], 'title' : ff[1], 'char' : ff[4], 'line' : ff[5] }
-    r.hmset(swl_key+f[0], res)
+    r.lpush(swl_key+f[0], f[1])
     r.hmset(uuid_key+f[0], {'type' : 'swl', 'key' : swl_key+f[0]})
 print "Reading %s..." % (syl_txt)
 for line in codecs.open(syl_txt, "r", "utf-8"):
