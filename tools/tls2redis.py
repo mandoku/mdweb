@@ -29,7 +29,7 @@ zhu_dir = tls_root + "notes/zhu/"
 zhu_key = "zhu::"
 uuid_key= "uuid:"
 r.flushdb()
-
+print "Reading %s..." % (swl_txt)
 for line in codecs.open(swl_txt, "r", "utf-8"):
     #uuid-017e4a46-92e1-4c9a-a0c5-168e0d0ce644	KR1a0001_065:1a01:1::天尊##周易##--##--##天@tiān##天尊地卑	Heaven is exalted and Earth is humble,
     f = line[:-1].split("\t", 1)
@@ -37,7 +37,7 @@ for line in codecs.open(swl_txt, "r", "utf-8"):
     res = {'loc' :  ff[0], 'title' : ff[1], 'char' : ff[4], 'line' : ff[5] }
     r.hmset(swl_key+f[0], res)
     r.hmset(uuid_key+f[0], {'type' : 'swl', 'key' : swl_key+f[0]})
-
+print "Reading %s..." % (syl_txt)
 for line in codecs.open(syl_txt, "r", "utf-8"):
     #逳	uuid-ee853465-8441-4aec-8453-c00691fc312d	yù	luɡ	jiuk	余	六	入	歩也轉也行也
     f = line[:-1].split("\t")
@@ -59,7 +59,8 @@ for line in codecs.open(syl_txt, "r", "utf-8"):
         w['pinyin'].append(f[2])
     except:
         w['pinyin'] = [f[0]]
-cnt = 0    
+cnt = 0
+print "Reading %s..." % (syn_txt)
 fx = codecs.open(syn_txt, "r", "utf-8")
 for line in fx.read().split("$$"):
     #uuid-2037d19a-5025-47a3-8213-544eb032a437	vt+npro.adN	transitive verb preceding its pronominal object, this whole phrase modifying a main nominal$$
@@ -71,6 +72,7 @@ for line in fx.read().split("$$"):
     except:
         print line
         print f
+        print "Error reading syn.txt"
         sys.exit()
     r.hmset(funx["syn-func"]+res['uuid'], res)
     r.hmset(uuid_key+res['uuid'], {'type' : 'syn-func', 'key' : funx["syn-func"]+res['uuid']})
@@ -145,12 +147,12 @@ def read_concept(con):
                                         ch = read_drawer(dx, ch)
                                     if dx.TYPE == 'NODE_ELEMENT':
                                         if dx.heading == 'DEFINITION':
-                                            ch['def'] = "\n".join(dx.content).strip()
+                                            ch['def'] = "\n".join(dx.content).replace("*", "").strip()
                                         if dx.heading == 'SOURCE REFERENCES':
                                             ch['srcref'] = "\n".join(dx.content).strip()
                                         elif dx.heading == 'NOTES':
-                                            ch['not'] = dx.output().strip()
-                                            if ch['not'] == '****** NOTES':
+                                            ch['not'] = dx.output().replace("*", "").strip()
+                                            if ch['not'] == 'NOTES':
                                                 del(ch['not'])
                                 for f in ch['funx']:
                                     try:
@@ -171,7 +173,7 @@ def read_concept(con):
                         res['words'].append(w)
     return res
 
-
+print "Reading TLS database from: %s" % (con_dir)
 ls = os.listdir(con_dir)
 ls.sort()
 for fx in ls:

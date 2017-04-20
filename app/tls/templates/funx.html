@@ -6,7 +6,10 @@
 
 <div class="row">
   <div id="txtcont" class="span9">
-    <h1>{{res['syn-func']}} {{res['sem-feat']}}</h1>
+    <h2>{% if res['syn'] %} Syntactic function:  {{res['syn']}} {% endif %}
+      {% if res['sem-feat'] %} Semantic feature:  {{res['sem-feat']}} {% endif %}
+      </h2>
+    <p>{{res['def']}}<p>
     <div class="syn">
       <ul>
 	{% for s in res.inst %}
@@ -15,7 +18,8 @@
 	{% set it_txtid, it_juan = txtloc[0].split('_') %}
 	<!-- stupid hack, fails in 30% -->
 	{% set it_page = txtloc[1].split('a')[0] + 'a' %}
-	<li><b>{{s.char}}</b><br/> <a href="{{url_for('tls.showtext', id=it_txtid, juan=it_juan, query=txtloc[-1], _anchor=it_juan+'-'+it_page, user='tls-kr')}}">{{s.title}}</a>{{s.line}}</li>
+	<li><b>{{s.char}}</b><br/>
+	  {{s.line}} ( <a href="{{url_for('tls.showtext', id=it_txtid, juan=it_juan, query=txtloc[-1], _anchor=it_juan+'-'+it_page, user='tls-kr')}}">{{s.title}}</a>)</li>
 	{% endif %}
       {% endfor %}
       </ul>

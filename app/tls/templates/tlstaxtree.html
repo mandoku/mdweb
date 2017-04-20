@@ -1,0 +1,18 @@
+{% extends "tlsbase.html" %}
+
+{% block body %}
+
+    <h2>{{q}}</h2>
+    {% for item in tree %}
+    <a title="POINTER" href="{{url_for('tls.concepttree', query=item)}}">{{item}}</a>&nbsp;→
+    {% endfor %}
+    {% for ptype in res.keys() %}
+    <h3>{{ptype}}</h3>
+    <ul>
+      {% for item in res[ptype] %}
+      <li><a title="POINTER" href="{{url_for('tls.concepttree', query=item)}}">{{item}}</a>　　　<b title="CONCEPT">Concept: <a href="{{url_for('tls.showconcept', id=item)}}">{{item}}</a></b></li>
+      {% endfor %}
+    </ul>
+    {% endfor %}
+    
+{% endblock %}

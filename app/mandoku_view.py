@@ -83,10 +83,10 @@ class mdDocument(object):
         btn=""
         divc = ""
         lines = content.split('\n')
-        for l in lines:
+        for cnt, l in enumerate(lines):
             oldlen = llen
             llen += len(l) + 1
-            cnt += 1
+            # cnt += 1
             l = l.replace('¶', '')
             if not zhu_flag:
                 l = re.sub(r'@[a-z]+', '', l)
@@ -111,19 +111,26 @@ class mdDocument(object):
                     vs_flag = 1
                 else:
                     vs_flag = 0
-            try:
-                if ":zhu:" in lines[cnt+1]:
-                    btn = '''<span style="display:inline;" onclick="showhide('div%d')" title="Click to dispaly note">●</span>''' % (cnt+2)
-            except:
-                pass
             if ":zhu:" in l:
                 zhu_flag = True
-                btn = "<div display='none;' id='div%d'>" % (cnt)
+                btn = "<div style='display: none;' id='div%d'>" % (cnt)
             elif ":end:" in l:
                 if zhu_flag:
                     zhu_flag = False
                     divc = "</span></div>"
                     l = "　"
+            else:
+                try:
+                    if ":zhu:" in lines[cnt+1]:
+                        # print btn, "b", l, cnt, lines[cnt]
+                        btn = '''<span style="display:inline;" onclick="showhide('div%d')" title="Click to display note">●</span>''' % (cnt+1)
+                except:
+                    pass
+            l = re.sub("\[\[tls:concept:[^#]+([^]]+)\]\[([^]]+)\]\]", "<a href='/tls/concept/\\2\\1'>\\2</a>", l)
+            l = re.sub("\[\[tls:([^#]+)::#([^]]+)\]\[([^]]+)\]\]", "<a href='/tls/func/\\1/\\2'>\\3</a>", l)
+            if zhu_flag:
+                l = l.replace("\t", " ")
+                l = l.replace("@", " ")
             if l.startswith(':'): continue
             elif hd.search(l):
 #                print l

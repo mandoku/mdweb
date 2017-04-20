@@ -35,7 +35,8 @@
         <ul class="nav">
 	  <!--          <li class="active"><a href="/texts/dzjy">{{_('Collections')}}</a></li> -->
 	  {% block navlinks %}
-          <li class="active"><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
+          <li class="active"><a href="{{url_for('main.catalog')}}">{{_('KR Catalog')}}</a></li>
+          <li class="active"><a href="{{url_for('tls.concepttree')}}">{{_('Concepts')}}</a></li>
 	  <li><a href="http://blog.kanripo.org">Blog</a></li>
 	  {% endblock navlinks%}
         </ul>
@@ -51,8 +52,8 @@
       <form class="navbar-search pull-right" action="{{url_for('main.searchtext')}}" method="GET">
 	<input size="10" name="query" id="query" type="text" class="search-query" placeholder="{{_('Text Search')}}">
       </form>
-      <form class="navbar-search pull-right" action="{{url_for('main.titlesearch')}}" method="GET">
-	<input  size="5" name="query" id="query" type="text" class="search-query" placeholder="{{_('Title Search')}}">
+      <form class="navbar-search pull-right" action="{{url_for('tls.conceptsearch')}}" method="GET">
+	<input  size="5" name="query" id="query" type="text" class="search-query" placeholder="{{_('Concept Search')}}">
       </form>
 
 

@@ -65,14 +65,19 @@ def static_from_root():
 #@tls.route('/concept/<id>', methods=['GET', 'POST',])
 #def display_concept(id):
 #    c=redis_store.hgetall("%s%s" % (con_key,id))
-    
 
-@tls.route('/<coll>/search', methods=['GET', 'POST',])
-@tls.route('/search', methods=['GET', 'POST',])
-def searchconcept(count=20, page=1):
-    rsort=""
-    sort = request.values.get('sort', '')
-    q = request.values.get('query', '')
+@tls.route('/index', methods=['GET',])
+def tls_index():
+    """Show the start page for tls"""
+    return
+
+
+# @tls.route('/<coll>/search', methods=['GET', 'POST',])
+# @tls.route('/search', methods=['GET', 'POST',])
+# def searchconcept(count=20, page=1):
+#     rsort=""
+#     sort = request.values.get('sort', '')
+#     q = request.values.get('query', '')
 
 @tls.route('/concept', methods=['GET'],)
 @tls.route('/concept/<concept_id>', methods=['GET'],)
@@ -93,10 +98,45 @@ def showconcept(concept_id=None):
     return render_template('concept.html', c=res)
 
 
+
 @tls.route('/index', methods=['GET',])
+@tls.route('/', methods=['GET',])
 def index():
     return render_template('tls.html', concept="START")
 #    return "INDEX"
+@tls.route('/concepts/browse', methods=['GET',])
+def concepttree():
+    s=request.values.get("query", "N/A")
+    r=tlsdb.hgetall(con_key+s)
+    try:
+        p = eval(r['pointers'])
+    except:
+        p = {'NO POINTER' : []}
+    res = p
+    t = []
+    # get the tree for s
+    while p.has_key("KIND OF"):
+        t.append(p["KIND OF"][0])
+        r=tlsdb.hgetall(con_key + p["KIND OF"][0])
+        print r
+        try:
+            p = eval(r['pointers'])
+        except:
+            p = {'NO POINTER' : []}
+
+            
+    # search for concepts, 
+    return render_template('tlstaxtree.html', res=res, q=s, tree=t)
+
+@tls.route('/search', methods=['GET',])
+def conceptsearch():
+    # give the start of the concept tree, at the given concept
+    s=request.values.get("query", "N/A")
+    res={}
+    
+    # search for concepts, 
+    return render_template('tlssearch.html', res=res)
+
 
 @tls.route('/func/<type>/<uuid>', methods=['GET',])
 def showsynsem(type=None, uuid=None):
@@ -181,7 +221,7 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
                     rp = False
     #print rpn
     if rp:
-        fn = rp.get_file_contents("%s_%s.txt" % (id, juan), ref=branch).decoded_content
+        fn = rp.get_file_contents("%s_%s.txt" % (id, juan), ref=branch).decoded_content.decode('utf-8')
     else:
         r = requests.get(url, auth=(user, token))
         print url, r.status_code

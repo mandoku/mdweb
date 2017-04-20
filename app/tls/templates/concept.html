@@ -6,7 +6,10 @@
 
 <div class="row">
   <div id="txtcont" class="span9">
-    <h1>{{c.concept}} {{c.TR_OCH}} / {{c.TR_ZH}}</h1>
+    <h2>{{c.concept}} 
+      {% if c.TR_OCH %} (古: {{c.TR_OCH}}) {% endif %} /
+      {% if c.TR_ZH %} (現: {{c.TR_ZH}}) {% endif %}
+    </h2>
     <div class="syn">
       <ul>
       {% for s in c.SYNONYM %}
@@ -31,14 +34,14 @@
     </div>
     <div class="words">
       {% for w in c.words %}
-      <h4>{{loop.index0}} {{w['head']}}</h4>
+      <h4>{{loop.index}} {{w['head']}}</h4>
       {% for s in w['synwords'] %}
       {% if s['head'] != 'SOURCE REFERENCES' %}
       <h5>
       {% for sf in s['funx'] %}
       <a href="{{url_for('.showsynsem', type=sf[0], uuid=sf[1])}}">{{sf[2]}}</a> 
       {% endfor %}
-      <a onclick="show_swl(uuid='{{s.CUSTOM_ID}}')">Show examples</a>
+      <a  id="{{s.CUSTOM_ID}}" onclick="show_swl(uuid='{{s.CUSTOM_ID}}')">Show examples</a>
       </h5>
       <pre>{{s.def}}</pre>
       <ul style="display:none" id="SW{{s.CUSTOM_ID}}">
@@ -56,14 +59,14 @@
     
 {% block closingscript %}
 <script>
+  function show_swl(uuid){
+  alert(uuid);
+  };
   (function($) {
   $(document).ready(function() {
-  $('#update').click(function() {  
-  })(jQuery);
+//  $('#update').click(function() {  
+  })})(jQuery);
 
-  function show_swl(var uuid){
-  
-  };
 </script>
 
 {% endblock %}

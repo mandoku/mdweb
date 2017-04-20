@@ -22,19 +22,20 @@ def index():
 @api.route('/procline', methods=['GET',])
 def procline():
     l = request.values.get('query', '')
+    jp = request.values.get('japanese', False)
     l = lib.md_re.sub("", l)
     de = []
     for i in range(0, len(l)):
         j = i+1
         try:
-            res = lib.dicentry(l[i:j], current_app.config['DICURL'])
+            res = lib.dicentry(l[i:j], current_app.config['DICURL'], japanese=jp)
         except:
             res = ""
         de.append(res)
         while res and j < len(l):
             j += 1
             try:
-                res = lib.dicentry(l[i:j], current_app.config['DICURL'])
+                res = lib.dicentry(l[i:j], current_app.config['DICURL'], japanese=jp)
             except:
                 res = ""
             de.append(res)

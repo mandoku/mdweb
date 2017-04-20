@@ -219,7 +219,7 @@ def formatle(l, e, dicurl):
         except:
             return "%s : %s" % (l, e)
             
-def dicentry(key, dicurl):
+def dicentry(key, dicurl, japanese=False):
     if r:
         try:
             d = r.hgetall(key)
@@ -230,6 +230,11 @@ def dicentry(key, dicurl):
         except:
             pass
         if len(d) > 0:
+            if japanese:
+                if d.has_key("pron-kanwa-01"):
+                    return "%s\t%s\n" % (key, d["pron-kanwa-01"])
+                else:
+                    return ""
             ks = d.keys()
             ks.sort()
             s = "** %s (%s)" % (key, len(d))
