@@ -11,6 +11,7 @@ from collections import defaultdict
 
 zbmeta = "kr:meta:"
 kr_user = "kr_user:"
+tpref="taisho:"
 ## dictionary stuff.  really should wrap this in an object?!
 md_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯\n¶]+|\t[^\n]+\n|\$[^;]+;")
 gaiji = re.compile(r"&([^;]+);")
@@ -603,3 +604,26 @@ class Pagination(object):
                 yield num
                 last = num
 
+def gettaisho(vol, page):
+    "Retrieves the file for a pair of volume, page of the taisho."
+    vol=vol.upper()
+    page=page.lower()
+    page=page.replace("p", "")
+    tmp = re.split("([a-z])", page)
+    print page, tmp
+    if len(tmp)==1:
+        tmp.append("a")
+    if len(tmp) == 2 or len(tmp[2]) < 2:
+        tmp[2] = "00"
+    try:
+        pn=float(tmp[0] + str(ord(tmp[1]) - 96) + tmp[2])
+    except:
+        print tmp
+        pn=0
+    print vol, pn
+    res=redis_store.zrangebyscore(tpref+vol, 0, "inf", withscores=True)
+    if len(res) > 0:
+        fn = [p for p in res if p[1] > pn][0][0].split("_")
+    else:
+        fn = False
+    return fn

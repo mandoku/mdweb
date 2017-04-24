@@ -755,3 +755,15 @@ def contact():
     lg=get_locale()
     return render_template('contact.html', lg=lg)
 
+@main.route('/taisho/<vol>/<page>', methods=['GET',])
+def taisho(vol, page):
+    fn=lib.gettaisho(vol, page)
+    pg = re.split("([a-z])", page)
+    if len(pg) == 1:
+        pg.append("a")
+    page = "%4.4d%s" % (int(pg[0]), pg[1])
+    if fn:
+        return redirect(url_for("main.showtext", juan=fn[1], id=fn[0], branch="CBETA", _anchor="%s-%s" %(fn[1], page )))
+    else:
+        return "%s %s Not found." % (vol, page)
+# showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo", loc="")
