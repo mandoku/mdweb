@@ -53,6 +53,9 @@ con_dir = tls_root + "concepts/"
 con_key = "con::"
 zhu_dir = tls_root + "notes/zhu/"
 zhu_key = "zhu::"
+ft_key = "ft::"
+uuid_key= "uuid:"
+tax_key = "tax::"
 
 link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
 hd = re.compile(r"^(\*+) (.*)$")
@@ -127,14 +130,27 @@ def concepttree():
     return render_template('tlstaxtree.html', res=res, q=s, tree=t)
 
 @tls.route('/search', methods=['GET',])
-def conceptsearch():
+def ftsearch():
     # give the start of the concept tree, at the given concept
     s=request.values.get("query", "N/A")
-    res={}
-    if len(res) == 0:
-        pass
-    # search for concepts, 
-    return render_template('tlssearch.html', res=res)
+    key = s
+    ctax = tlsdb.hgetall(tax_key + s)
+    print ctax
+    if not s.endswith("="):
+        s += "*"
+    ftk = tlsdb.keys(ft_key + s)
+    res = [(a.split("::")[1], tlsdb.lrange(a, 0, -1)) for a in ftk]
+    return render_template('tlssearch.html', res=res, key=key,
+                           ldic={"con" : "Concept",
+                                "def" : "Definition",
+                                "sw" : "Word",
+                                "csyn" : "Synonym",
+                                "czh" : u"現代漢語",
+                                "coch" : u"古代漢語",
+                           },
+                           ct = ctax,
+                           ts = len(res)
+    )
 
 
 @tls.route('/func/<type>/<uuid>', methods=['GET',])

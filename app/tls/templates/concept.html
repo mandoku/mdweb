@@ -35,7 +35,7 @@
     <div class="words">
       {% for w in c.words %}
       <hr/>
-      <h4>{{loop.index}} {{w['head']}}</h4>
+      <h4 id="{{w['CUSTOM_ID']}}">{{loop.index}} {{w['head']}}</h4>
       {% for s in w['synwords'] %}
       {% if s['head'] != 'SOURCE REFERENCES' %}
       <h5>

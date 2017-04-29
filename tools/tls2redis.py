@@ -27,7 +27,9 @@ con_dir = tls_root + "concepts/"
 con_key = "con::"
 zhu_dir = tls_root + "notes/zhu/"
 zhu_key = "zhu::"
+ft_key = "ft::"
 uuid_key= "uuid:"
+tax_key = "tax::"
 r.flushdb()
 print "Reading %s..." % (swl_txt)
 for line in codecs.open(swl_txt, "r", "utf-8"):
