@@ -54,7 +54,7 @@ to. When found, also add to concepts hash."""
     return " ".join(cp)
 
 bu = "http://tls.kanripo.org/tls/concept?id="
-txf = "/home/chris/Dropbox-gmail/Dropbox/TLS/krp/tls/work/taxonomy-2017-02-20.txt"
+txf = "/Users/chris/tlsdev/krp/tls/work/taxonomy-2017-02-20.txt"
 curr = ""
 ol = []
 for line in codecs.open(txf, "r", "utf-8"):
