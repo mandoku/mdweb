@@ -565,6 +565,8 @@ def getfacets():
     key = request.values.get('query', '')
     tpe = request.values.get('type', 'ID')
     prefix = request.values.get('prefix', '')
+    if key:
+        return ""
     # length of the ID
     ln = int(request.values.get('len', '3'))
     # number of top_most entries, 0 = all

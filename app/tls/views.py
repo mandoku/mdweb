@@ -109,7 +109,7 @@ def index():
 #    return "INDEX"
 @tls.route('/concepts/browse', methods=['GET',])
 def concepttree():
-    s=request.values.get("query", "N/A")
+    s=request.values.get("query", "PRIME")
     r=tlsdb.hgetall(con_key+s)
     try:
         p = eval(r['pointers'])

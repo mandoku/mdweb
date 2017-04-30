@@ -34,8 +34,13 @@
     </div>
     <div class="words">
       {% for w in c.words %}
+      {% set wrd = w['head'].split()[0] %}
+      {% set uuid = w['CUSTOM_ID'] %}
       <hr/>
-      <h4 id="{{w['CUSTOM_ID']}}">{{loop.index}} {{w['head']}}</h4>
+      <h4 id="{{uuid}}">{{loop.index}} {{w['head']}}
+	<a title="Show the syntactic word entries for this Lexeme" onclick="show_h5(uuid='H5-{{uuid}}')">Syntactic words</a> | 
+	<a title="This will search for this word and allow you to select example sentences." href="{{url_for('main.searchtext', query=wrd, filter='$tls', type='tls', action='add_attr', uuid=uuid)}}">Add example</a></h4>
+      <div id="H5-{{uuid}}" style="display:none;">
       {% for s in w['synwords'] %}
       {% if s['head'] != 'SOURCE REFERENCES' %}
       <h5>
@@ -52,6 +57,7 @@
       {% endif %}  <!-- ends notes -->
       {% endif %}  <!-- ends check for source references -->
       {% endfor %}
+      </div>
       {% endfor %}
     </div>  
   </div>
@@ -60,12 +66,24 @@
     
 {% block closingscript %}
 <script>
+  function show_h5x(uid){
+  var x = document.getElementById(uid);
+  if (x.style.display === 'none')
+  { x.style.display = 'block'; }
+  else
+  { x.style.display = 'none'; }
+  };
+  
+  function show_h5 (uid){
+//  alert(uid);
+  $('#' + uid).css({"display" : "block"});
+  };
   function show_swl(uid){
 //  alert(uid);
   $.ajax({
   type : "GET",
-  url : "{{url_for('tls.showex', uuid=uid)}}" + uid, 
-//  url : "{{url_for('tls.showex', uuid=uid)}}",
+  url : "{{url_for('.showex', uuid=uid)}}" + uid, 
+//  url : "{{url_for('.showex', uuid=uid)}}",
   success : function(resp){
   $('#SW' + uid).html(resp)
   },
