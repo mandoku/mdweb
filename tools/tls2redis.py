@@ -123,7 +123,9 @@ def read_concept(con):
             elif n.heading == 'POINTERS':
                 px = {}
                 for n1 in n.content:
-                    if n1.TYPE == 'NODE_ELEMENT':
+                    if type(n1) is unicode:
+                        pass
+                    elif n1.TYPE == 'NODE_ELEMENT':
                         pt = n1.heading
                         px[pt] = []
                         for p in n1.content:
