@@ -333,15 +333,44 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
 
 @tls.route('/lexicon/quotations/<uuid>', methods=['GET',])
 def showex(uuid="uuid-39b00dce-3e66-4507-834f-1ec3eb135b29"):
-    l = tlsdb.lrange(swl_key + uuid, 0, -1)
     res = ""
-    for b in [a.split("##") for a in l]:
-        txtloc = b[0].split(":")
-        it_txtid, it_juan = txtloc[0].split("_")
-        it_page = txtloc[1].split('a')[0] + 'a'
-        href = url_for('tls.showtext', id=it_txtid, juan=it_juan, query=txtloc[-1], _anchor=it_juan+'-'+it_page, user='tls-kr')
-        res += "<li>%s (<a href='%s'>%s</a>)</li>\n" % (b[5], href, b[1])
-    if len(res) == 0:
-        res = "<b>No attributions registered for this syntactic word.</b>"
-    return res
+    if uuid.startswith("CONCEPT"):
+        ## we need to look for all words in this concept, then loop
+        ## through and find the examples
+        concept_id = uuid.split("-", 1)[-1]
+        w = tlsdb.hgetall(con_key + concept_id)
+        if w.has_key('words'):
+            wrds=eval(w['words'])
+            for nx, sw in enumerate(wrds):
+                swc = sw['head'].split()[0]
+                synw = sw['synwords']
+                for synwi in synw:
+                    if synwi.has_key('CUSTOM_ID'):
+                        swid = synwi['CUSTOM_ID']
+                        lnk = "<a href='#%s'>(%d)</a>" % (sw['CUSTOM_ID'], nx +1)
+                        l = tlsdb.lrange(swl_key + swid, 0, -1)
+                        for b in [a.split("##") for a in l]:
+                            lnx = re.sub("(%s)" % (swc), "<span style='color:blue;'>\\1</span>", b[5])
+                            txtloc = b[0].split(":")
+                            it_txtid, it_juan = txtloc[0].split("_")
+                            it_page = txtloc[1].split('a')[0] + 'a'
+                            href = url_for('tls.showtext', id=it_txtid, juan=it_juan, query=txtloc[-1], _anchor=it_juan+'-'+it_page, user='tls-kr')
+                            res += "<li>%s %s (<a href='%s'>%s</a>)</li>\n" % (lnk, lnx, href, b[1])
+            if len(res) == 0:
+                res = "<b>No attributions registered for this concept.</b>"
+            print res
+            return res
+        else:
+            return "<b>No attributions registered for this concept.</b>"
+    else:
+        l = tlsdb.lrange(swl_key + uuid, 0, -1)
+        for b in [a.split("##") for a in l]:
+            txtloc = b[0].split(":")
+            it_txtid, it_juan = txtloc[0].split("_")
+            it_page = txtloc[1].split('a')[0] + 'a'
+            href = url_for('tls.showtext', id=it_txtid, juan=it_juan, query=txtloc[-1], _anchor=it_juan+'-'+it_page, user='tls-kr')
+            res += "<li>%s (<a href='%s'>%s</a>)</li>\n" % (b[5], href, b[1])
+        if len(res) == 0:
+            res = "<b>No attributions registered for this syntactic word.</b>"
+        return res
     

@@ -33,14 +33,21 @@
       {% endfor %}
     </div>
     <div class="words">
+      <h3>Words
+　　	<a title="Show the syntactic word entries for all Lexemes" onclick="show_swl(uuid='CONCEPT-{{c.concept}}')">Show all examples</a>
+      </h3>
+      <ul id="SWCONCEPT-{{c.concept}}"></ul>
       {% for w in c.words %}
       {% set wrd = w['head'].split()[0] %}
       {% set uuid = w['CUSTOM_ID'] %}
       <hr/>
       <h4 id="{{uuid}}">{{loop.index}} {{w['head']}}
-	<a title="Show the syntactic word entries for this Lexeme" onclick="show_h5(uuid='H5-{{uuid}}')">Syntactic words</a> | 
-	<a title="This will search for this word and allow you to select example sentences." href="{{url_for('main.searchtext', query=wrd, filter='$tls', type='tls', action='add_attr', uuid=uuid)}}">Add example</a></h4>
-      <div id="H5-{{uuid}}" style="display:none;">
+	<a title="Show the syntactic word entries for this Lexeme" onclick="show_h5(uuid='H5-{{uuid}}')">Syntactic words</a>
+	<!--
+	| 
+	<a title="This will search for this word and allow you to select example sentences." href="{{url_for('main.searchtext', query=wrd, filter='$tls', type='tls', action='add_attr', uuid=uuid)}}">Add example</a> -->
+      </h4>
+      <div id="H5-{{uuid}}" style="display:none;"/>
       {% for s in w['synwords'] %}
       {% if s['head'] != 'SOURCE REFERENCES' %}
       <h5>
