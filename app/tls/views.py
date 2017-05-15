@@ -135,9 +135,10 @@ def ftsearch():
     s=request.values.get("query", "N/A")
     key = s
     ctax = tlsdb.hgetall(tax_key + s)
-    print ctax
+    #print ctax
     if not s.endswith("="):
         s += "*"
+    s = s.upper()
     ftk = tlsdb.keys(ft_key + s)
     res = [(a.split("::")[1], tlsdb.lrange(a, 0, -1)) for a in ftk]
     return render_template('tlssearch.html', res=res, key=key,
