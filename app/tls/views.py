@@ -132,7 +132,7 @@ def concepttree():
 
 @tls.route('/synfunc/browse', methods=['GET',])
 def synfunctree():
-    s=request.values.get("query", "N")
+    s=request.values.get("query", "{CONSTITUENT}")
     kx=tlsdb.lrange(ft_key+ "sf::" + s, 0, -1)[0]
     r=tlsdb.hgetall(kx.split("@")[-1])
     res = []
