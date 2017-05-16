@@ -129,11 +129,19 @@ def concepttree():
     # search for concepts, 
     return render_template('tlstaxtree.html', res=res, q=s, tree=t)
 
+def redirect_url(default='index'):
+    return request.args.get('next') or \
+           request.referrer or \
+           url_for(default)
 
 @tls.route('/synfunc/browse', methods=['GET',])
 def synfunctree():
     s=request.values.get("query", "{CONSTITUENT}")
-    kx=tlsdb.lrange(ft_key+ "sf::" + s, 0, -1)[0]
+    try:
+        kx=tlsdb.lrange(ft_key+ "sf::" + s, 0, -1)[0]
+    except:
+        flash("Your query for %s returned no results!" % (s)  )
+        return redirect(redirect_url())
     r=tlsdb.hgetall(kx.split("@")[-1])
     uuid = r['uuid']
     res = []
