@@ -70,12 +70,20 @@ for line in fx.read().split("$$"):
     # sys.stderr.write("cnt: %d\n" % ( cnt))
     f = line.split("\t")
     try:
-        res = {'syn' :  f[1], 'uuid' : f[0].strip(), 'def' : f[2].strip(), 'inst' : []}
+        if len(f) > 3:
+            if f[3].startswith("nil"):
+                f3 = []
+            else:
+                f3 = eval(f[3].replace("(", "[").replace(")", "]").replace(" . ", ",").replace("] [", "],["))
+            res = {'syn' :  f[1], 'uuid' : f[0].strip(), 'def' : f[2].strip(), 'inst' : [], 'pointers': f3}
+        else:
+            res = {'syn' :  f[1], 'uuid' : f[0].strip(), 'def' : f[2].strip(), 'inst' : []}
     except:
         print line
         print f
         print "Error reading syn.txt"
-        sys.exit()
+        if len(f) > 2:
+            sys.exit()
     r.hmset(funx["syn-func"]+res['uuid'], res)
     r.hmset(uuid_key+res['uuid'], {'type' : 'syn-func', 'key' : funx["syn-func"]+res['uuid']})
         
