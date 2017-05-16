@@ -135,6 +135,7 @@ def synfunctree():
     s=request.values.get("query", "{CONSTITUENT}")
     kx=tlsdb.lrange(ft_key+ "sf::" + s, 0, -1)[0]
     r=tlsdb.hgetall(kx.split("@")[-1])
+    uuid = r['uuid']
     res = []
     try:
         p = eval(r['pointers'])
@@ -142,7 +143,7 @@ def synfunctree():
         p = {'NO POINTER' : []}
     for pt in p:
         r=tlsdb.hgetall(funx['syn-func'] + pt[0])
-        print pt[0], r.keys()
+        #print pt[0], r.keys()
         try:
             inst = eval(r['inst'])
         except:
@@ -161,7 +162,7 @@ def synfunctree():
             ul = eval(r['uplink'])
         except:
             ul = {'NO POINTER' : []}
-    return render_template('tlssyntree.html', res=res, q=s, tree=t)
+    return render_template('tlssyntree.html', res=res, q=s, tree=t, uuid=uuid)
 
 
 @tls.route('/search', methods=['GET',])

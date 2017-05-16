@@ -2,13 +2,14 @@
 
 {% block body %}
 
-    <h2>{{q}}</h2>
-    {% for item in tree %}
-    <a title="POINTER" href="{{url_for('tls.synfunctree', query=item[1])}}">{{item[1]}}</a>&nbsp;→
-    {% endfor %}
-    <ul>
-    {% for item in res %}
-    <li><a title="POINTER" href="{{url_for('tls.synfunctree', query=item[1])}}">{{item[1]}}</a>　　　<b title="CONCEPT">Syntactic function: <a href="{{url_for('tls.showsynsem', type='syn-func', uuid=item[0])}}">{{item[1]}}</a></b> ({{item[2]}} instances)</li>
+<h2><a href="{{url_for('tls.showsynsem', type='syn-func', uuid=uuid)}}">{{q}}</a> </h2>
+
+{% for item in tree %}
+<a title="POINTER" href="{{url_for('tls.synfunctree', query=item[1])}}">{{item[1]}}</a>&nbsp;→
+{% endfor %}
+<ul>
+  {% for item in res %}
+  <li><a title="POINTER" href="{{url_for('tls.synfunctree', query=item[1])}}">{{item[1]}}</a>　　　<b title="CONCEPT">Syntactic function: <a href="{{url_for('tls.showsynsem', type='syn-func', uuid=item[0])}}">{{item[1]}}</a></b> ({{item[2]}} instances)</li>
     {% endfor %}
     </ul>
 
