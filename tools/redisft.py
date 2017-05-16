@@ -67,3 +67,22 @@ for k in r.keys(con_key+"*"):
                     print cc, c, target
 
             
+for k in r.keys(funx["syn-func"]+"*"):
+    sf=r.hgetall(k)
+    pt = eval(sf['pointers'])
+    syn = sf['syn']
+    dex = sf['def']
+    r.rpush(ft_key + "sf::" + syn, "synf@" + k)
+    for d in dex.split():
+        r.rpush(ft_key + "sf::" + d, "synd@" + k)
+    # here we add reverse pointers to make it easier to traverse the tree
+    for p in pt:
+        mp=p[0]
+        res = r.hgetall(funx["syn-func"]+mp)
+        for a in res.keys():
+            try:
+                res[a] = eval(res[a])
+            except:
+                pass
+        res['uplink'] = [k, syn]
+        r.hmset(funx["syn-func"]+mp, res)

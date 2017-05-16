@@ -8,8 +8,16 @@
   <div id="txtcont" class="span9">
     <h2>{% if res['syn'] %} Syntactic function:  {{res['syn']}} {% endif %}
       {% if res['sem-feat'] %} Semantic feature:  {{res['sem-feat']}} {% endif %}
-      </h2>
-    <p>{{res['def']}}<p>
+    </h2>
+    {% if res['syn'] %} <p>Syntactic function tree: <a href="{{url_for('tls.synfunctree', query=res['syn'])}}">{{res['syn']}}</a></p> {% endif %}
+    <p><b>{{res['def']}}</b><p>
+      {% if res.inst %}
+    <p>There are {{cnt}} attributions recorded in the TLS:
+      {% if cnt > 1000 %}
+      (showing only the first 1000)
+      {% endif %}
+    </p>
+      {% endif %}
     <div class="syn">
       <ul>
 	{% for s in res.inst %}
@@ -18,7 +26,9 @@
 	{% set it_txtid, it_juan = txtloc[0].split('_') %}
 	<!-- stupid hack, fails in 30% -->
 	{% set it_page = txtloc[1].split('a')[0] + 'a' %}
-	<li><b>{{s.char}}</b><br/>
+	{% set ch = s.char.split('@')[0] %}
+	{% set py = s.char.split('@')[1] %}
+	<li><b>{{ch}} {{py}}</b><br/>
 	  {{s.line}} ( <a href="{{url_for('tls.showtext', id=it_txtid, juan=it_juan, query=txtloc[-1], _anchor=it_juan+'-'+it_page, user='tls-kr')}}">{{s.title}}</a>)</li>
 	{% endif %}
       {% endfor %}

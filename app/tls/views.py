@@ -121,13 +121,48 @@ def concepttree():
     while p.has_key("KIND OF"):
         t.append(p["KIND OF"][0])
         r=tlsdb.hgetall(con_key + p["KIND OF"][0])
-        print r
+        #print r
         try:
             p = eval(r['pointers'])
         except:
             p = {'NO POINTER' : []}
     # search for concepts, 
     return render_template('tlstaxtree.html', res=res, q=s, tree=t)
+
+
+@tls.route('/synfunc/browse', methods=['GET',])
+def synfunctree():
+    s=request.values.get("query", "N")
+    kx=tlsdb.lrange(ft_key+ "sf::" + s, 0, -1)[0]
+    r=tlsdb.hgetall(kx.split("@")[-1])
+    res = []
+    try:
+        p = eval(r['pointers'])
+    except:
+        p = {'NO POINTER' : []}
+    for pt in p:
+        r=tlsdb.hgetall(funx['syn-func'] + pt[0])
+        print pt[0], r.keys()
+        try:
+            inst = eval(r['inst'])
+        except:
+            inst = []
+        pt.append(len(inst))
+        res.append(pt)
+    t = []
+    try:
+        ul = eval(r["uplink"])
+    except:
+        ul = {'NO POINTER' : []}
+    while len(ul) > 1:
+        t.append(ul)
+        r=tlsdb.hgetall(ul[0])
+        try:
+            ul = eval(r['uplink'])
+        except:
+            ul = {'NO POINTER' : []}
+    return render_template('tlssyntree.html', res=res, q=s, tree=t)
+
 
 @tls.route('/search', methods=['GET',])
 def ftsearch():
@@ -164,8 +199,10 @@ def showsynsem(type=None, uuid=None):
         for b in [a.split("##") for a in l]:
             f = {'loc': b[0], 'char': b[4], 'line': b[5], 'title' : b[1]}
             new.append(f)
-    res['inst'] = new
-    return render_template("funx.html", res=res)
+    cnt = len(new)
+    res['inst'] = new[0:1000]
+    
+    return render_template("funx.html", res=res, cnt=cnt)
 
 
 #@main.route('/text/<id>/', methods=['GET',])
