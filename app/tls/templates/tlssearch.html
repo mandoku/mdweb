@@ -14,18 +14,28 @@
     <td class="text-left">{{item[0]}}</td>
     <td>
       {% for nit in it_res|sort %}
-      {% set concept = nit.split("@")[1].split("::")[-1] %}
+      {% set concept = nit.split("@")[-1].split("::")[-1] %}
       {% set rtype = nit.split("@")[0].split("=")[0] %}
+      {% set stype = nit.split("@")[1] %}
+      {% if rtype == 'synf' %}
+      <a title="{{ldic[rtype]}}" href="{{url_for('tls.showsynsem', uuid=concept, type='syn-func')}}">{{item[0]}}</a>
+      {% else %}
+      {% if rtype == 'synd' %}
+      <a title="{{ldic[rtype]}}" href="{{url_for('tls.showsynsem', uuid=concept, type='syn-func')}}">{{stype}}</a>
+      {% else %}
       {% if rtype == 'sw' %}
       {% set anchor = nit.split("@")[0].split("=")[1] %}
       <a title="{{ldic[rtype]}}" href="{{url_for('tls.showconcept', id=concept, _anchor=anchor)}}">{{concept}}</a>
       {% else %}
       <a title="{{ldic[rtype]}}" href="{{url_for('tls.showconcept', id=concept)}}">{{concept}}</a>
       {% endif %}
+      {% endif %}
+      {% endif %}
       {% endfor %}
     </td>
   </tr>
   {% endfor %}
 </table>
-    <p><a href="{{url_for('tls.concepttree')}}">Browse the concepts</a></p>
+    <p><a href="{{url_for('tls.concepttree')}}">Browse the concepts</a> | 
+    <a href="{{url_for('tls.synfunctree')}}">Browse the syntactic functions</a></p>
 {% endblock %}

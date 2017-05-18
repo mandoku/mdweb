@@ -74,7 +74,7 @@ for k in r.keys(funx["syn-func"]+"*"):
     dex = sf['def']
     r.rpush(ft_key + "" + syn, "synf@" + k)
     for d in dex.split():
-        r.rpush(ft_key + "" + d, "synd@" + k)
+        r.rpush(ft_key + "" + d, "synd@%s@%s" % (syn,  k))
     # here we add reverse pointers to make it easier to traverse the tree
     for p in pt:
         mp=p[0]

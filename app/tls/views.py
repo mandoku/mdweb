@@ -138,7 +138,7 @@ def redirect_url(default='index'):
 def synfunctree():
     s=request.values.get("query", "{CONSTITUENT}")
     try:
-        kx=tlsdb.lrange(ft_key+ "sf::" + s, 0, -1)[0]
+        kx=tlsdb.lrange(ft_key+ "" + s, 0, -1)[0]
     except:
         flash("Your query for %s returned no results!" % (s)  )
         return redirect(redirect_url())
@@ -182,8 +182,10 @@ def ftsearch():
     #print ctax
     if not s.endswith("="):
         s += "*"
-    s = s.upper()
     ftk = tlsdb.keys(ft_key + s)
+    if len(ftk) < 1:
+        s = s.upper()
+        ftk = tlsdb.keys(ft_key + s)
     res = [(a.split("::")[1], tlsdb.lrange(a, 0, -1)) for a in ftk]
     return render_template('tlssearch.html', res=res, key=key,
                            ldic={"con" : "Concept",
