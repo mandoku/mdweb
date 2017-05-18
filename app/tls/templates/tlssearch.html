@@ -7,31 +7,35 @@
 {{_('Found %(total)d', total=ts)}}
 <p>{{ct['tax']|safe}}</p>
 <hr/>
-<table>
+<table style="border: 1px solid black;">
   {% for item in res|sort %}
   {% set it_res = item[1] %}
   <tr>
-    <td class="text-left">{{item[0]}}</td>
-    <td>
-      {% for nit in it_res|sort %}
-      {% set concept = nit.split("@")[-1].split("::")[-1] %}
-      {% set rtype = nit.split("@")[0].split("=")[0] %}
-      {% set stype = nit.split("@")[1] %}
-      {% if rtype == 'synf' %}
-      <a title="{{ldic[rtype]}}" href="{{url_for('tls.showsynsem', uuid=concept, type='syn-func')}}">{{item[0]}}</a>
-      {% else %}
-      {% if rtype == 'synd' %}
-      <a title="{{ldic[rtype]}}" href="{{url_for('tls.showsynsem', uuid=concept, type='syn-func')}}">{{stype}}</a>
-      {% else %}
-      {% if rtype == 'sw' %}
-      {% set anchor = nit.split("@")[0].split("=")[1] %}
-      <a title="{{ldic[rtype]}}" href="{{url_for('tls.showconcept', id=concept, _anchor=anchor)}}">{{concept}}</a>
-      {% else %}
-      <a title="{{ldic[rtype]}}" href="{{url_for('tls.showconcept', id=concept)}}">{{concept}}</a>
-      {% endif %}
-      {% endif %}
-      {% endif %}
-      {% endfor %}
+    <td class="text-left" style="border: 1px solid black;">{{item[0]}}</td>
+    <td style="border: 1px solid black;">
+      <ul>
+	{% for nit in it_res|sort %}
+	<li>
+	  {% set concept = nit.split("@")[-1].split("::")[-1] %}
+	  {% set rtype = nit.split("@")[0].split("=")[0] %}
+	  {% set stype = nit.split("@")[1] %}
+	  {% if rtype == 'synf' %}
+	  <a title="{{ldic[rtype]}}" href="{{url_for('tls.showsynsem', uuid=concept, type='syn-func')}}">{{item[0]}}</a>
+	  {% else %}
+	  {% if rtype == 'synd' %}
+	  <a title="{{ldic[rtype]}}" href="{{url_for('tls.showsynsem', uuid=concept, type='syn-func')}}">{{stype}}</a>
+	  {% else %}
+	  {% if rtype == 'sw' %}
+	  {% set anchor = nit.split("@")[0].split("=")[1] %}
+	  <a title="{{ldic[rtype]}}" href="{{url_for('tls.showconcept', id=concept, _anchor=anchor)}}">{{concept}}</a>
+	  {% else %}
+	  <a title="{{ldic[rtype]}}" href="{{url_for('tls.showconcept', id=concept)}}">{{concept}}</a>
+	  {% endif %}
+	  {% endif %}
+	  {% endif %}
+	  </li>
+	  {% endfor %}
+      </ul>
     </td>
   </tr>
   {% endfor %}
