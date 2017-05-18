@@ -190,6 +190,8 @@ def ftsearch():
                                 "def" : "Definition",
                                 "sw" : "Word",
                                 "csyn" : "Synonym",
+                                "synf" : "Syntactic function",
+                                "synd" : "Def. of syntactic function",
                                 "czh" : u"現代漢語",
                                 "coch" : u"古代漢語",
                            },
