@@ -35,7 +35,7 @@ def parseline(l):
     """Extract information from a typical line"""
     pass
 
-def addlink(l, urlbase=""):
+def addlink(l, urlbase="", curr=""):
     """All capital expressions are considered a concept worth linking
 to. When found, also add to concepts hash."""
     cp = []
@@ -48,7 +48,30 @@ to. When found, also add to concepts hash."""
         if c.isupper():
             # maybe check to see if this is existing?
             if r.exists(con_key + c):
-                cp[i] = "<a href='%s%s'>%s</a>" % (urlbase, c, c)
+                n=r.hgetall(con_key + c)
+                sf=[]
+                uuid = ""
+                w=eval(n['words'])
+                for z in w:
+                    try:
+                        tmp=z['head'].split()[0]
+                    except:
+                        print z
+                        continue
+                    if z['head'].split()[0] == curr:
+                        uuid=z['CUSTOM_ID']
+                        for sw in z['synwords']:
+                            try:
+                                for swf in sw['funx']:
+                                    if swf[0] == 'syn-func':
+                                        sf.append(swf[2])
+                            except:
+                                print sw['funx']
+                if len(sf) > 0:
+                    cp[i] = "<a href='%s%s#%s'>%s</a> (%s)" % (urlbase, c, uuid, c, ",".join(sf))
+                else:
+                    cp[i] = "<a href='%s%s#%s'>%s</a>" % (urlbase, c, uuid, c)
+                    
             else:
                 cp[i] = "<a style='color:red;' href='%s%s'>%s</a>" % (urlbase, c, c)
     return " ".join(cp)
@@ -68,7 +91,7 @@ for line in codecs.open(txf, "r", "utf-8"):
         if line.startswith("*"):
             lev, rest = line.split(" ", 1)
             if len(lev) > 2:
-                s1 = "%s%s%s\n" % ("　" * len(lev), addlink(rest, bu), "<br/>")
+                s1 = "%s%s%s\n" % ("　" * len(lev), addlink(rest, bu, curr), "<br/>")
             else:
                 if ") " in rest:
                     r1, r2 = rest.split(") ", 1)
