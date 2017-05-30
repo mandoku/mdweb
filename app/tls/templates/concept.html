@@ -9,8 +9,9 @@
     <h2>{{c.concept}} 
       {% if c.TR_OCH %} (古: {{c.TR_OCH}}) {% endif %} /
       {% if c.TR_ZH %} (現: {{c.TR_ZH}}) {% endif %}
+      <a style="font-size: 50%" title="Show the alternate concept labels" onclick="show_h5('alt-labels')">Labels</a>
     </h2>
-    <div class="syn">
+    <div class="syn" style="display:none" id="alt-labels">
       <ul>
       {% for s in c.SYNONYM %}
       <li>{{s}}</li>
