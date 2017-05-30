@@ -82,8 +82,14 @@
   };
   
   function show_h5 (uid){
-//  alert(uid);
+//  var x = $('#' + uid).css("display");
+//  alert(x);
+  if ($('#' + uid).css("display") != "block"){
   $('#' + uid).css({"display" : "block"});
+  } else {
+//  alert(uid);
+  $('#' + uid).css({"display" : "none"});
+  }
   };
   function show_swl(uid){
 //  alert(uid);
