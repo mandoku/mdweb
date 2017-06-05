@@ -5,6 +5,11 @@
  * highlightStartTag or highlightEndTag parameters are omitted or
  * are empty strings then the default <font> tags will be used.
  */
+
+var shiftWindow = function() { scrollBy(0, -50) };
+if (location.hash) shiftWindow();
+window.addEventListener("hashchange", shiftWindow);
+
 function doHighlight(bodyText, searchTerm, highlightStartTag, highlightEndTag) 
 {
   // the highlightStartTag and highlightEndTag parameters are optional
