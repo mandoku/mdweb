@@ -40,6 +40,8 @@ zbmeta = "kr:meta:"
 kr_user = "kr_user:"
 titpref = "kr:title:"
 link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
+img_re = re.compile(ur'<i[^>]*>')
+mdx_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯]|\n|¶")
 hd = re.compile(r"^(\*+) (.*)$")
 env = Environment(loader=PackageLoader('__main__', 'templates'))
 
@@ -767,3 +769,71 @@ def taisho(vol, page):
     else:
         return "%s %s Not found." % (vol, page)
 # showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo", loc="")
+
+@main.route('/advsearch', methods=['GET','POST'])
+def advsearch():
+    ima=datetime.now()
+    if request.method == 'GET':
+        help="Enter the text you want to find parallels for above."
+        return render_template('advsearch.html', res=[], help=help)
+    else:
+        return render_template('advsearch.html', res=[], help=help)
+
+@main.route('/citfind', methods=['GET','POST'])
+def citfind():
+    ima=datetime.now()
+    if request.method == 'GET':
+        help="Enter the text you want to find parallels for above."
+        return render_template('citfind.html', res=[], help=help)
+    else:
+        out = []
+        cutoff = 0.4
+        x = 2
+        n = 3
+        acc = "para"
+        if request.form.has_key("br"):
+            br = True
+        else:
+            br = False
+        try:
+            inp= request.form["inp"]
+            x = int(request.form["x"])
+            acc = request.form["acc"]
+        except:
+            inp=""
+        if len(inp) > 0:
+            inp = mdx_re.sub("", inp)
+            print br
+            print inp
+            strs = lib.partition(inp, x)
+            for s in strs:
+                #we take the first n chars
+                key = s[:n]
+                pos = inp.index(s)
+                #print key, s
+                if not redis_store.exists(key): 
+                    lib.doftsearch(key)
+                res = [key[0:1]+a for a in redis_store.lrange(key, 0, -1)]
+                res = [img_re.sub(u"〓",a) for a in res]
+                res = [a.split("\t") for a in res]
+                for r in res:
+                    if br or (r[-1].startswith("KR") or r[-1].startswith("n")):
+                        t = r[0].split(",")[0]
+                        c = lib.cscore(t, inp[pos:pos+len(t)])
+                        if c > cutoff:
+                            out.append((c, t, r[1], key))
+        ld = defaultdict(list)
+        for o in out:
+            kx = o[2].split(":")
+            if acc == "para":
+                akey = kx[0]+":"+kx[-1]
+            else:
+                akey = kx[0]
+            ld[akey].append((o))
+        if acc != "None":
+            out = lib.consorted(ld)
+        else:
+            out = sorted(out, key=lambda x : x[0], reverse=True)
+        out = [(a, redis_store.hgetall(u"%s%s" %( zbmeta, a[2].split(":")[0][0:8]))) for a in out]
+        elapsed = "%s" % (datetime.now() - ima).total_seconds()
+        return render_template('citfind.html', inp=inp, res=out, df = elapsed, x=x, acc=acc)

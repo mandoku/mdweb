@@ -1,0 +1,79 @@
+{% extends "laybase.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+
+{% block subhead %}
+
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <p>Advanced search</p>
+  </div>
+</header>
+
+
+{% endblock subhead %}
+
+
+
+{% block body %}
+
+<div>
+  <form id="citfindinput" action="{{url_for('main.citfind')}}" method="POST">
+    
+
+      <textarea class="form-control" name="inp" style="min-width: 90%">{{inp}}</textarea><br/>
+      <input style="margin-bottom:5px" type="submit" value="{{_('Find text passages')}}"/>　
+ --       How many times to search?
+<select name ="x" style="width: 50px">
+    <option value="2" {% if x == 2 %} selected {% endif %}>2</option>
+    <option value="3" {% if x == 3 %} selected {% endif %}>3</option>
+    <option value="4" {% if x == 4 %} selected {% endif %}>4</option>
+    <option value="5" {% if x == 5 %} selected {% endif %}>5</option>
+</select>
+ -- Consolidate by 
+<select name ="acc" style="width: 100px">
+    <option value="None" {% if acc == "None" %} selected {% endif %}>None</option>
+    <option value="para" {% if acc == "para" %} selected {% endif %}>Paragraph</option>
+    <option value="juan" {% if acc == "juan" %} selected {% endif %}>Juan 巻</option>
+</select>
+
+
+</p>
+  </form>
+  {% if res %}
+  <hr/>
+  <h2>Results: Found {{res|length}} in {{df}}</h2>
+  <table id="result">
+    <tr>
+      <td>Score</td>
+      <td>Text</td>
+      <td>Location</td>
+    </tr>
+  {% else %}
+    <h2>Finding parallel texts</h2>
+    {{help}}
+  <p></p>
+  {% endif %}
+    {% for r in res %}
+      {% set it_txtid, it_juan = r[2].split(':')[0].split('_') %}
+      {% set it_page = r[2].split(':')[1] %}
+      {% set it_line = r[2].split(':')[2] %}
+    <tr>
+      <td>{{r[0]}}</td>
+      <td>{{r[1]}}</td>
+      <td><a href="{{url_for('main.showtext', id=it_txtid, juan=it_juan, query=key, _anchor=it_juan+'-'+it_page)}}" title="{{it_txtid}} ">{{r[2]}}</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+
+{% endblock %}
+
+{% block sidebar %}
+<div>
+  <h2>{{_('Actions')}}</h2>
+</div>  
+{% endblock sidebar %}
+

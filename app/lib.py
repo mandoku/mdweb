@@ -4,10 +4,14 @@
 from flask import current_app, g, session
 from math import ceil
 import re, requests
-from . import redis_store
+try:
+    from . import redis_store
+except:
+    pass
 import subprocess
 from github import Github
 from collections import defaultdict
+from difflib import SequenceMatcher
 
 zbmeta = "kr:meta:"
 kr_user = "kr_user:"
@@ -627,3 +631,33 @@ def gettaisho(vol, page):
     else:
         fn = False
     return fn
+
+def partition(lst, n):
+    division = len(lst) / float(n)
+    return [ lst[int(round(division * i)): int(round(division * (i + 1)))] for i in xrange(n) ]
+
+def cscore(s, ref):
+    m = SequenceMatcher()
+    m.set_seq1(ref)
+    m.set_seq2(s)
+    return m.quick_ratio()
+
+def consorted(defdic):
+    #This will take a dictionary of lists and consolidate the list
+    #elements in the list are tuples: score, text, location, key
+    #scores are added, text values aggregated, one location will be
+    #used an the key ignored
+    out = []
+    for d in defdic:
+        s = 0
+        t = ""
+        for l in defdic[d]:
+            s += l[0]
+            if len(t) > 0:
+                t = t + " / " + l[1] + "-(%s)" % (l[3]) 
+            else:
+                t = l[1] + "-(%s)" % (l[3]) 
+        #print s, t, d, defdic[d]
+        out.append((s, t, defdic[d][0][2]))
+    out = sorted(out, key=lambda x : x[0], reverse=True)
+    return out

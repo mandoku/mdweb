@@ -22,11 +22,6 @@
       <a href="{{url_for('main.index')}}" class="pull-left" title="{{_('Kanseki Repository')}}">
 	<img width="40" height="40" src="{{ url_for('static', filename='img/kanripo-64.png')}}"/>
 	</a>
-      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar">	</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
       <a class="brand" href="{{url_for('main.index')}}">
 	  {% block KR %}
 	  {% endblock KR %}
@@ -38,6 +33,15 @@
           <li class="active"><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
 	  <li><a href="http://blog.kanripo.org">Blog</a></li>
 	  {% endblock navlinks%}
+	   <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">More...
+          <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{{url_for('main.citfind')}}">Find related texts</a></li>
+            <li><a href="{{url_for('main.advsearch')}}">Advanced search</a></li>
+            <li><a href="#">Page 1-3</a></li>
+          </ul>
+        </li>
         </ul>
       </div>
         <ul class="nav pull-right">
@@ -151,6 +155,7 @@
     <script  src="{{ url_for('static', filename='jquery/jquery.ui.widget.js')}}"></script>
     <script  src="{{ url_for('static', filename='jquery/jquery.ui.tabs.js')}}"></script>
     <script  src="{{ url_for('static', filename='js/highlight.js')}}"></script>
+    <script  src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/jquery.panzoom.js')}}"></script>
     {% block closingscript %}
     {% endblock %}
