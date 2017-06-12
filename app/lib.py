@@ -117,9 +117,10 @@ u'T@LI-CBETA' : u'【大→麗-CB】',
 u'T@BEI' : u'【大→別】', 
 })
 
-
-dictab = {'hydcd1' : u'漢語大詞典',
+dictab = {'cik' : u'探典釋辭',
+          'hydcd1' : u'漢語大詞典',
           'hydcd' : u'漢語大詞典',
+          'yd' : u'漢語大字典',
           'hydzd' : u'漢語大字典',
           'sanli' : u'三禮辭典',
           'daikanwa' : u'大漢和辞典',
@@ -624,8 +625,7 @@ def gettaisho(vol, page):
     except:
         print tmp
         pn=0
-    print vol, pn
-    res=redis_store.zrangebyscore(tpref+vol, 0, "inf", withscores=True)
+    res=redis_store.zrangebyscore(tpref+vol, pn - 20000, pn + 20000, withscores=True)
     if len(res) > 0:
         fn = [p for p in res if p[1] > pn][0][0].split("_")
     else:
