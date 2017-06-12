@@ -19,24 +19,36 @@
 {% block body %}
 
 <div>
-  <form id="citfindinput" action="{{url_for('main.citfind')}}" method="POST">
-    
+  <h2>Advanced search</h2>
+  <p style="color:red;">{{help}}</p>
+  <form id="advsearchinput" action="{{url_for('main.advsearch')}}" method="POST">
+    <table>
+      <tr><td>Find: </td><td><input style="width: 200px" type="text" name="key0" value="{{key0}}"/></td></tr>
 
-      <textarea class="form-control" name="inp" style="min-width: 90%">{{inp}}</textarea><br/>
-      <input style="margin-bottom:5px" type="submit" value="{{_('Find text passages')}}"/>　
- --       How many times to search?
-<select name ="x" style="width: 50px">
-    <option value="2" {% if x == 2 %} selected {% endif %}>2</option>
-    <option value="3" {% if x == 3 %} selected {% endif %}>3</option>
-    <option value="4" {% if x == 4 %} selected {% endif %}>4</option>
-    <option value="5" {% if x == 5 %} selected {% endif %}>5</option>
+      <tr><td>
+<select name ="conn1" style="width: 100px">
+    <option value="and" {% if conn1 == "and" %} selected {% endif %}>AND</option>
+    <option value="or" {% if conn1 == "or" %} selected {% endif %}>OR</option>
+    <option value="andnot" {% if conn1 == "andnot" %} selected {% endif %}>AND NOT</option>
 </select>
- -- Consolidate by 
-<select name ="acc" style="width: 100px">
-    <option value="None" {% if acc == "None" %} selected {% endif %}>None</option>
-    <option value="para" {% if acc == "para" %} selected {% endif %}>Paragraph</option>
-    <option value="juan" {% if acc == "juan" %} selected {% endif %}>Juan 巻</option>
+	</td><td><input style="width: 200px" type="text" name="key1" value="{{key1}}"/></td></tr>
+      <tr><td>
+<select name ="conn2" style="width: 100px">
+    <option value="and" {% if conn2 == "and" %} selected {% endif %}>AND</option>
+    <option value="or" {% if conn2 == "or" %} selected {% endif %}>OR</option>
+    <option value="andnot" {% if conn2 == "andnot" %} selected {% endif %}>AND NOT</option>
 </select>
+	</td><td><input style="width: 200px" type="text" name="key2" value="{{key2}}"/></td></tr>
+      <tr><td>Within</td><td><select name ="acc" style="width: 200px">
+    <option value="line" {% if acc == "None" %} selected {% endif %}>18 characters</option>
+    <option value="para" {% if acc == "para" %} selected {% endif %}>same paragraph</option>
+    <option value="juan" {% if acc == "juan" %} selected {% endif %}>same juan 巻</option>
+</select>
+	</td>
+	<td><input style="margin-bottom:5px" type="submit" value="{{_('Search')}}"/>　</td>
+      </tr>
+    </table>  
+      
 
 
 </p>
@@ -51,9 +63,6 @@
       <td>Location</td>
     </tr>
   {% else %}
-    <h2>Finding parallel texts</h2>
-    {{help}}
-  <p></p>
   {% endif %}
     {% for r in res %}
       {% set it_txtid, it_juan = r[2].split(':')[0].split('_') %}

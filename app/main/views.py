@@ -42,6 +42,7 @@ titpref = "kr:title:"
 link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
 img_re = re.compile(ur'<i[^>]*>')
 mdx_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯]|\n|¶")
+mdx_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯\n\r¶]+|\t[^\n\r]+\r\n|\$[^;]+;")
 hd = re.compile(r"^(\*+) (.*)$")
 env = Environment(loader=PackageLoader('__main__', 'templates'))
 
@@ -773,21 +774,52 @@ def taisho(vol, page):
 @main.route('/advsearch', methods=['GET','POST'])
 def advsearch():
     ima=datetime.now()
+    help="Under construction."
     if request.method == 'GET':
-        help="Enter the text you want to find parallels for above."
         return render_template('advsearch.html', res=[], help=help)
     else:
+        return render_template('advsearch.html', res=[], help=help)
+        keys = [request.form["key0"],request.form["key1"],request.form["key2"]]
+        conn = ['dummy', request.form["conn1"], request.form["conn2"]]
+        acc = request.form["acc"]
+        rt = [[],[],[]]
+        for j, k in enumerate(keys):
+            rx = []
+            if len(k) > 0 (j == 0 or conn[j] in ["and", "or"]):
+                if j == 0 or acc != "line":
+                    if not redis_store.exists(k): 
+                        lib.doftsearch(k)
+                rx = [k[0:1]+a for a in redis_store.lrange(k, 0, -1)]
+            rt[j] = rx
+        out = []
+        if acc == "line":
+            for r in rx:
+                pass
+        for j in [1, 2]:
+            pass
+        ld = defaultdict(list)
+        for o in out:
+            kx = o[2].split(":")
+            if acc == "para":
+                akey = kx[0]+":"+kx[-1]
+            else:
+                akey = kx[0]
+            ld[akey].append((o))
+        if acc != "line":
+            out = lib.consorted(ld)
+            
         return render_template('advsearch.html', res=[], help=help)
 
 @main.route('/citfind', methods=['GET','POST'])
 def citfind():
+    cutoff = 0.4
     ima=datetime.now()
     if request.method == 'GET':
         help="Enter the text you want to find parallels for above."
-        return render_template('citfind.html', res=[], help=help)
+        return render_template('citfind.html', res=[], help=help, cutoff=cutoff)
     else:
+        tbl=[]
         out = []
-        cutoff = 0.4
         x = 2
         n = 3
         acc = "para"
@@ -796,32 +828,42 @@ def citfind():
         else:
             br = False
         try:
+            cutoff = float(request.form["cutoff"])
+        except:
+            cutoff = 0.4
+        try:
             inp= request.form["inp"]
             x = int(request.form["x"])
             acc = request.form["acc"]
         except:
             inp=""
         if len(inp) > 0:
-            inp = mdx_re.sub("", inp)
-            print br
+            if x == 0:
+                inp = inp.replace("\n", "$$")
+                inp = mdx_re.sub("", inp)
+                strs = inp.split("$$")
+            else:
+                inp = mdx_re.sub("", inp)
+                strs = lib.partition(inp, x)
             print inp
-            strs = lib.partition(inp, x)
             for s in strs:
                 #we take the first n chars
                 key = s[:n]
-                pos = inp.index(s)
-                #print key, s
-                if not redis_store.exists(key): 
-                    lib.doftsearch(key)
-                res = [key[0:1]+a for a in redis_store.lrange(key, 0, -1)]
-                res = [img_re.sub(u"〓",a) for a in res]
-                res = [a.split("\t") for a in res]
-                for r in res:
-                    if br or (r[-1].startswith("KR") or r[-1].startswith("n")):
-                        t = r[0].split(",")[0]
-                        c = lib.cscore(t, inp[pos:pos+len(t)])
-                        if c > cutoff:
-                            out.append((c, t, r[1], key))
+                if len(key) > 0:
+                    pos = inp.index(s)
+                    #print key, s
+                    if not redis_store.exists(key): 
+                        lib.doftsearch(key)
+                    res = [key[0:1]+a for a in redis_store.lrange(key, 0, -1)]
+                    res = [img_re.sub(u"〓",a) for a in res]
+                    res = [a.split("\t") for a in res]
+                    tbl.append((key, s, len(res)))
+                    for r in res:
+                        if br or (r[-1].startswith("KR") or r[-1].startswith("n")):
+                            t = r[0].split(",")[0]
+                            c = lib.cscore(t, inp[pos:pos+len(t)])
+                            if c > cutoff:
+                                out.append((c, t, r[1], key))
         ld = defaultdict(list)
         for o in out:
             kx = o[2].split(":")
@@ -836,4 +878,25 @@ def citfind():
             out = sorted(out, key=lambda x : x[0], reverse=True)
         out = [(a, redis_store.hgetall(u"%s%s" %( zbmeta, a[2].split(":")[0][0:8]))) for a in out]
         elapsed = "%s" % (datetime.now() - ima).total_seconds()
-        return render_template('citfind.html', inp=inp, res=out, df = elapsed, x=x, acc=acc)
+        if x == 0:
+            inp = "\n".join(strs)
+        return render_template('citfind.html', tbl=tbl, inp=inp, res=out, df = elapsed, x=x, acc=acc, cutoff=cutoff)
+
+
+@main.route('/locjump', methods=['GET','POST'])
+def locjump():
+    if request.method == 'GET':
+        vol= ["T%2.2d"%(a) for a in range(1, 56)]
+        vol.append("T85")
+        return render_template('locjump.html', vol=vol)
+    else:
+        vol= request.form["vol"]
+        page = request.form["page"]
+        sec = request.form["sec"]
+        page = "%4.4d%s" % (int(page), sec)
+        fn=lib.gettaisho(vol, page)
+        pg = re.split("([a-z])", page)
+        if len(pg) == 1:
+            pg.append("a")
+        if fn:
+            return redirect(url_for("main.showtext", juan=fn[1], id=fn[0], branch="CBETA", _anchor="%s-%s" %(fn[1], page )))

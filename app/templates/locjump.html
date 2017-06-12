@@ -1,0 +1,85 @@
+{% extends "laybase.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+
+{% block subhead %}
+
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <p>Jump to location</p>
+  </div>
+</header>
+
+
+{% endblock subhead %}
+
+
+
+{% block body %}
+
+<div>
+  <h2>Jump to text location</h2>
+  <p>For texts in the <i>Taishō Shinshū Daizōkyō</i> 大正新脩大藏經,
+  you can use this form to directly open a specific text location by
+  providing the volume and page. </p>
+  <form id="advsearchinput" action="{{url_for('main.locjump')}}" method="POST">
+    <table>
+      <tr><td>Volume:
+	  <select name ="vol" style="width: 100px">
+	    {% for v in vol %}
+	    <option value="{{v}}" {% if vol == "{{v}}" %} selected {% endif %}>{{v}}</option>
+	    {% endfor %}
+	  </select>
+	</td>
+      <td>Page: <input style="width: 50px" type="text" name="page" value="{{page}}"/></td>
+	
+<td><select name ="sec" style="width: 50px">
+    <option value="a" {% if sec == "a" %} selected {% endif %}>a</option>
+    <option value="b" {% if sec == "b" %} selected {% endif %}>b</option>
+    <option value="c" {% if sec == "c" %} selected {% endif %}>c</option>
+</select>
+</td>
+
+
+	<td><input style="margin-bottom:5px" type="submit" value="{{_('Go to location')}}"/>　</td>
+      </tr>
+    </table>  
+      
+
+
+</p>
+  </form>
+  {% if res %}
+  <hr/>
+  <h2>Results: Found {{res|length}} in {{df}}</h2>
+  <table id="result">
+    <tr>
+      <td>Score</td>
+      <td>Text</td>
+      <td>Location</td>
+    </tr>
+  {% else %}
+  {% endif %}
+    {% for r in res %}
+      {% set it_txtid, it_juan = r[2].split(':')[0].split('_') %}
+      {% set it_page = r[2].split(':')[1] %}
+      {% set it_line = r[2].split(':')[2] %}
+    <tr>
+      <td>{{r[0]}}</td>
+      <td>{{r[1]}}</td>
+      <td><a href="{{url_for('main.showtext', id=it_txtid, juan=it_juan, query=key, _anchor=it_juan+'-'+it_page)}}" title="{{it_txtid}} ">{{r[2]}}</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+
+{% endblock %}
+
+{% block sidebar %}
+<div>
+  <h2>{{_('Actions')}}</h2>
+</div>  
+{% endblock sidebar %}
+

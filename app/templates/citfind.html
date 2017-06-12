@@ -23,13 +23,13 @@
     
     <p >Text to find parallels for:<br/>
       <textarea class="form-control" name="inp" style="min-width: 90%">{{inp}}</textarea><br/>
-      <input style="margin-bottom:5px" type="submit" value="{{_('Find text passages')}}"/>　
- -       How many times to search?
+How many times to search?
 <select name ="x" style="width: 50px">
     <option value="2" {% if x == 2 %} selected {% endif %}>2</option>
     <option value="3" {% if x == 3 %} selected {% endif %}>3</option>
     <option value="4" {% if x == 4 %} selected {% endif %}>4</option>
     <option value="5" {% if x == 5 %} selected {% endif %}>5</option>
+    <option value="0" {% if x == 0 %} selected {% endif %}>(newline)</option>
 </select>
  - Consolidate by 
 <select name ="acc" style="width: 100px">
@@ -38,10 +38,30 @@
     <option value="None" {% if acc == "None" %} selected {% endif %}>None</option>
 </select>
 
+- Cutoff value: <input style="width: 50px" type="text" name="cutoff" value="{{cutoff}}"/>
 - <input type="checkbox" name="br" value="branches">Include branches</input>　
+<br/>
+      <input style="margin-bottom:5px" type="submit" value="{{_('Find text passages')}}"/>　
 
 </p>
   </form>
+  {% if tbl %}
+  <h2>Info</h2>
+  <table id="info">
+    <tr>
+      <td>Key</td>
+      <td class="text-center">　String</td>
+      <td class="text-center">　Matches</td>
+    </tr>
+  {% for item in tbl %}
+    <tr>
+      <td class="text-left">{{item[0]}}</td>
+      <td class="text-left">　{{item[1]}}</td>
+      <td class="text-left">　{{item[2]}}</td>
+    </tr>
+    {% endfor %}
+  </table>  
+  {% endif %}
   {% if res %}
   <hr/>
   <h2>Results: Found {{res|length}} items ({{df}} sec.)</h2>
