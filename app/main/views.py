@@ -780,7 +780,7 @@ def advsearch():
     else:
         return render_template('advsearch.html', res=[], help=help)
         keys = [request.form["key0"],request.form["key1"],request.form["key2"]]
-        conn = ['dummy', request.form["conn1"], request.form["conn2"]]
+        conn = ['or', request.form["conn1"], request.form["conn2"]]
         acc = request.form["acc"]
         rt = [[],[],[]]
         for j, k in enumerate(keys):
@@ -792,6 +792,11 @@ def advsearch():
                 rx = [k[0:1]+a for a in redis_store.lrange(k, 0, -1)]
             rt[j] = rx
         out = []
+        for j, k in enumerate(rt):
+            for g in k:
+                if conn[j] == 'or':
+                    out.append
+                
         if acc == "line":
             for r in rx:
                 pass
@@ -815,7 +820,19 @@ def citfind():
     cutoff = 0.4
     ima=datetime.now()
     if request.method == 'GET':
-        help="Enter the text you want to find parallels for above."
+        help="""Enter the text you want to find parallels in the textfield above.
+<p>The following options are available:</p> <ul> <li><b>How many times to
+search?</b><br/>The text will be split into as many parts as indicated
+here and for each of these parts a search will be executed and the
+results will be consolidated. Alternatively the text can be split at a
+linebreak (newline).  </li> <li><b>Consolidate by</b><br/>The search results
+will be grouped together either by paragraph or by juan. Alternatively
+"None" can be selected to do no consolidation.</li> <li><b>Cutoff
+value</b><br/> The search results will be scored against the source text;
+the score values are between 1.0 for identical strings and 0.0 for
+completely different strings. Results with scores less than the cutoff
+value will be ignored.</li> 
+<li><b>Include branches</b><br/> By default only the master branch is used for scoring. Check here to include also other versions.</li></ul>"""
         return render_template('citfind.html', res=[], help=help, cutoff=cutoff)
     else:
         tbl=[]

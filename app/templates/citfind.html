@@ -21,8 +21,9 @@
 <div>
   <form id="citfindinput" action="{{url_for('main.citfind')}}" method="POST">
     
-    <p >Text to find parallels for:<br/>
+    <p title="Enter the text you want to find parallels for here.">Text to find parallels for:<br/>
       <textarea class="form-control" name="inp" style="min-width: 90%">{{inp}}</textarea><br/>
+<span title="The text will be split into as many parts as indicated here and for each of these parts a search will be executed and the results will be consolidated. Alternatively the text can be split at a linebreak (newline).">      
 How many times to search?
 <select name ="x" style="width: 50px">
     <option value="2" {% if x == 2 %} selected {% endif %}>2</option>
@@ -31,17 +32,21 @@ How many times to search?
     <option value="5" {% if x == 5 %} selected {% endif %}>5</option>
     <option value="0" {% if x == 0 %} selected {% endif %}>(newline)</option>
 </select>
+</span>
+<span title="The search results will be grouped together either by paragraph or by juan. Alternatively 'None' can be selected to do no consolidation.">
  - Consolidate by 
 <select name ="acc" style="width: 100px">
     <option value="para" {% if acc == "para" %} selected {% endif %}>Paragraph</option>
     <option value="juan" {% if acc == "juan" %} selected {% endif %}>Juan 巻</option>
     <option value="None" {% if acc == "None" %} selected {% endif %}>None</option>
 </select>
-
-- Cutoff value: <input style="width: 50px" type="text" name="cutoff" value="{{cutoff}}"/>
+</span>
+<span title="The search results will be scored against the source text; the score values are between 1.0 for identical strings and 0.0 for completely different strings. Results with scores less than the cutoff value will be ignored.">
+  - Cutoff value: <input style="width: 50px" type="text" name="cutoff" value="{{cutoff}}"/></span>
+<span title="By default only the master branch is used for scoring. Check here to include also other versions.">
 - <input type="checkbox" name="br" value="branches">Include branches</input>　
-<br/>
-      <input style="margin-bottom:5px" type="submit" value="{{_('Find text passages')}}"/><seg style="color:red">(WARNING: This may take several minutes to complete.</seg>)
+<br/></span>
+      <input style="margin-bottom:5px" type="submit" value="{{_('Find text passages')}}"/><seg style="color:red">  (WARNING: This may take several minutes to complete.</seg>)
 
 </p>
   </form>
@@ -73,7 +78,7 @@ How many times to search?
     </tr>
   {% else %}
     <h2>Finding parallel texts</h2>
-    {{help}}
+    {{help|safe}}
   <p></p>
   {% endif %}
   {% for item in res %}
