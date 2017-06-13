@@ -795,6 +795,7 @@ def advsearch():
         for j, k in enumerate(rt):
             for g in k:
                 if conn[j] == 'or':
+                    # now construct the key
                     out.append
                 
         if acc == "line":
@@ -870,7 +871,7 @@ value will be ignored.</li>
                     pos = inp.index(s)
                     #print key, s
                     if not redis_store.exists(key): 
-                        lib.doftsearch(key)
+                        lib.doftsearch(key, exp=False)
                     res = [key[0:1]+a for a in redis_store.lrange(key, 0, -1)]
                     res = [img_re.sub(u"〓",a) for a in res]
                     res = [a.split("\t") for a in res]
