@@ -318,7 +318,8 @@ def doftsearch(key, idxdir=None, exp=3600):
     if len(s) > 0:
         try:
             redis_store.rpush(key, *s)
-            redis_store.expire(key, exp)
+            if exp:
+                redis_store.expire(key, exp)
         except:
             return False
         return True
