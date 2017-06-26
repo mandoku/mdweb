@@ -818,7 +818,7 @@ def advsearch():
 
 @main.route('/citfind', methods=['GET','POST'])
 def citfind():
-    cutoff = 0.4
+    cutoff = 0.7
     ima=datetime.now()
     if request.method == 'GET':
         help="""Enter the text you want to find parallels in the textfield above.
