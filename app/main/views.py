@@ -882,19 +882,20 @@ value will be ignored.</li>
                             c = lib.cscore(t, inp[pos:pos+len(t)])
                             if c > cutoff:
                                 out.append((c, t, r[1], key))
-        ld = defaultdict(list)
+        out = sorted(out, key = lambda k : lib.kformat(k[2]))
+        out = lib.kcondense(out, kf=lambda x : x[2])
+        out = sorted(out, key = lambda k : len(k), reverse = True)
+        o2 = []
         for o in out:
-            kx = o[2].split(":")
-            if acc == "para":
-                akey = kx[0]+":"+kx[-1]
-            else:
-                akey = kx[0]
-            ld[akey].append((o))
-        if acc != "None":
-            out = lib.consorted(ld)
-        else:
-            out = sorted(out, key=lambda x : x[0], reverse=True)
-        out = [(a, redis_store.hgetall(u"%s%s" %( zbmeta, a[2].split(":")[0][0:8]))) for a in out]
+            c = sum([a[0] for a in o])
+            c = 0
+            s = lib.kcombine([lib.krestore(a[1]) for a in o])
+            for k in [a[3] for a in o]:
+                if k in s:
+                    c += 1
+            o2.append((c, s, o[0][2], ",".join([a[3] for a in o])))
+        out = [(a, redis_store.hgetall(u"%s%s" %( zbmeta, a[2].split(":")[0][0:8]))) for a in o2]
+        out = sorted(out, key = lambda k: k[0], reverse = True)
         elapsed = "%s" % (datetime.now() - ima).total_seconds()
         if x == 0:
             inp = "\n".join(strs)
