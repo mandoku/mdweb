@@ -320,6 +320,9 @@ def read(juan="Readme.org", id=0, seq=0, branch="master"):
 @main.route('/text/<id>/<juan>', methods=['GET',])
 @main.route('/edition/<branch>/<id>/<juan>', methods=['GET',])
 @main.route('/edition/<branch>/<id>/', methods=['GET',])
+#added new URL scheme for textref.org [2017-12-08T11:30:11+0900]
+@main.route('/ed/<id>/<branch>/<juan>', methods=['GET',])
+@main.route('/ed/<id>/<branch>/', methods=['GET',])
 def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo"):
     editurl=False
     showtoc = True

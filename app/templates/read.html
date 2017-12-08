@@ -26,7 +26,7 @@
 <h2>{{_('Versions')}}</h2>
   <ul>
     {% for v in branches %} 
-    <li><a href="/edition/{{v[0]}}/{{txtid}}/{{juan}}">{{v[1]}}</a></li>
+    <li><a href="/ed/{{txtid}}/{{v[0]}}/{{juan}}">{{v[1]}}</a></li>
     <ul>
     {% for s, f in ct.doc.sections %}
     <li><a href="{{s}}?edition={{v}}&amp;pos=1&amp;fac=True">{{s}}</a></li>
