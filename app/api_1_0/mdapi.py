@@ -68,11 +68,7 @@ Other parameters are:
     total = redis_store.llen(key)
     ox = redis_store.lrange(key, 1, total)
     if titles:
-        if count < total:
-            no=count
-        else:
-            no=total
-        ox = ["\t".join(("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split('\t')[1].split(':')[0][0:8]))['TITLE'], "\t".join(k.split("\t")[1:]))) for k in ox[start:start+no+1]]
+        ox = ["\t".join(("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split('\t')[1].split(':')[0][0:8]))['TITLE'], "\t".join(k.split("\t")[1:]))) for k in ox]
     return Response ("\n%s" % ("\n".join(ox).decode('utf-8')),  content_type="text/plain;charset=UTF-8")
 
     
