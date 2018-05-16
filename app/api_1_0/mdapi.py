@@ -68,7 +68,20 @@ Other parameters are:
     total = redis_store.llen(key)
     ox = redis_store.lrange(key, 1, total)
     if titles:
-        ox = ["\t".join(("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split('\t')[1].split(':')[0][0:8])), "\t".join(k.split("\t")[1:]))) for k in ox]
+        ox = [("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split('\t')[1].split(':')[0][0:8])), "\t".join(k.split("\t")[1:])) for k in ox]
+        out = []
+        for k in ox:
+            l = list(k)
+            if l[1].has_key('TITLE'):
+                l[1] = l[1]['TITLE']
+            else:
+                l[1] = 'no title'
+            l="\t".join(l)
+            l=re.sub(r"<img[^>]*>", u"●", l)
+            l=l.split("\t")
+            if len(l) == 3 or l[-1] == "n":
+                out.append("\t".join(l))
+        ox=out
     return Response ("\n%s" % ("\n".join(ox).decode('utf-8')),  content_type="text/plain;charset=UTF-8")
 
     
