@@ -45,7 +45,11 @@ def procline():
 # for the moment, we are just dumping out all matches
 @api.route('/search', methods=['GET', 'POST',])
 def searchtext(count=20, start=None, n=20):
+    zbmeta = "kr:meta:"
     key = request.values.get('query', '')
+    force = request.values.get('force', None)
+    titles = request.values.get('with-titles', None)
+    ready = request.values.get('kwic-ready', None)
     force = request.values.get('force', None)
     count=int(request.values.get('count', count))
     start=int(request.values.get('start', 0))
@@ -53,9 +57,22 @@ def searchtext(count=20, start=None, n=20):
         if (not redis_store.exists(key)) or force:
             lib.doftsearch(key)
     else:
-        return "400 please submit searchkey as parameter 'query'."
+        return """400 please submit searchkey as parameter 'query'.
+Other parameters are:
+  'force‘： This parameter, set to any value, will force a rerun of the search, by passing the cache.
+  'count':  (integer) Number of items to transmit.
+  'start':  (integer) Position of first item to transmit.
+  'with-titles': This parameter, set to any value, will cause the results to include the titles in a tab-separated text format, this also implies 'kwic-ready'.
+  'kwic-ready' : This parameter, set to any value, will cause the keyword in context format to be formated to be directly usable.
+"""
     total = redis_store.llen(key)
     ox = redis_store.lrange(key, 1, total)
+    if titles:
+        if count < total:
+            no=count
+        else:
+            no=total
+        ox = ["\t".join(("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split('\t')[1].split(':')[0][0:8])['TITLE']), "\t".join(k.split("\t")[1:]))) for k in ox[start:start+no+1]]
     return Response ("\n%s" % ("\n".join(ox).decode('utf-8')),  content_type="text/plain;charset=UTF-8")
 
     
