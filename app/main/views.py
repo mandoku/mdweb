@@ -318,6 +318,7 @@ def read(juan="Readme.org", id=0, seq=0, branch="master"):
 @main.route('/text/<id>/', methods=['GET',])
 @main.route('/text/<coll>/<seq>/<juan>', methods=['GET',] )
 @main.route('/text/<id>/<juan>', methods=['GET',])
+#TODO: add a redirect for these ?
 @main.route('/edition/<branch>/<id>/<juan>', methods=['GET',])
 @main.route('/edition/<branch>/<id>/', methods=['GET',])
 #added new URL scheme for textref.org [2017-12-08T11:30:11+0900]
