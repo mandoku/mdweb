@@ -67,6 +67,11 @@ def get_locale():
 # @main.route('/sitemap.xml')
 def static_from_root():
     return send_from_directory(current_app.static_folder, request.path[1:])
+
+@main.route('/api')
+def api_doc():
+    return render_template("apidoc.html")
+
 @main.route('/textlist/unload', methods=['GET',])
 def unloadtextlist():
     tl=request.values.get("ffile")

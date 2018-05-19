@@ -16,6 +16,7 @@ import gitlab, requests
 
 @api.route('/index', methods=['GET',])
 def index():
+    print request.values.has_key("query")
     return "INDEX"
 
 
@@ -47,12 +48,18 @@ def procline():
 def searchtext(count=20, start=None, n=20):
     zbmeta = "kr:meta:"
     key = request.values.get('query', '')
-    force = request.values.get('force', None)
-    titles = request.values.get('with-titles', None)
-    ready = request.values.get('kwic-ready', None)
-    force = request.values.get('force', None)
-    count=int(request.values.get('count', count))
-    start=int(request.values.get('start', 0))
+    force = request.values.has_key("force")
+    titles = request.values.has_key('with-titles')
+    ready = request.values.has_key('kwic-ready')
+    link = request.values.has_key('with-link')
+    if request.values.has_key("start"):
+        start=int(request.values.get('start', 0))
+    if request.values.has_key("count"):
+        count=int(request.values.get('count', count))
+        if not start:
+            start = 0
+    else:
+        count = None
     if len(key) > 0:
         if (not redis_store.exists(key)) or force:
             lib.doftsearch(key)
@@ -62,8 +69,8 @@ Other parameters are:
   'force‘： This parameter, set to any value, will force a rerun of the search, by passing the cache.
   'count':  (integer) Number of items to transmit.
   'start':  (integer) Position of first item to transmit.
-  'with-titles': This parameter, set to any value, will cause the results to include the titles in a tab-separated text format, this also implies 'kwic-ready'.
-  'kwic-ready' : This parameter, set to any value, will cause the keyword in context format to be formated to be directly usable.
+  'with-titles': This parameter, if present, will cause the results to include the titles in a tab-separated text format, this also implies 'kwic-ready'.
+  'kwic-ready' : This parameter, if present, will cause the keyword in context format to be formated to be directly usable.
 """,  content_type="text/plain;charset=UTF-8")
     total = redis_store.llen(key)
     ox = redis_store.lrange(key, 1, total)
@@ -76,12 +83,20 @@ Other parameters are:
                 l[1] = l[1]['TITLE']
             else:
                 l[1] = 'no title'
+            l2 = l[2].split(":")
+            l[2] = "https://raw.githubusercontent.com/kanripo/%s/master/%s.txt\t%s" % (l2[0][0:8], l2[0], l2[1])
             l="\t".join(l)
             l=re.sub(r"<img[^>]*>", u"●", l)
             l=l.split("\t")
-            if len(l) == 3 or l[-1] == "n":
+            if len(l) == 4 or l[-1] == "n":
                 out.append("\t".join(l))
         ox=out
+    elif ready:
+        ox = ["\t".join(("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), k.split('\t')[1])) for k in ox]
+    if count:
+        if count > len(ox):
+            count = len(ox)
+        ox = ox[start:count+1]
     return Response ("\n%s" % ("\n".join(ox).decode('utf-8')),  content_type="text/plain;charset=UTF-8")
 
     

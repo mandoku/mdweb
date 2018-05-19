@@ -1,0 +1,100 @@
+{% extends "laybase.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Kanripo{% endblock %}
+
+{% block KR %}
+{{_('Kanseki Repository')}}
+{% endblock KR %}
+
+{% block navlinks %}
+<li><a href="{{url_for('main.catalog')}}">{{_('Catalog')}}</a></li>
+<li><a href="http://blog.kanripo.org">Blog</a></li>
+{% endblock navlinks%}
+
+
+
+{% block body %}
+
+<div class="row">
+  <div id="txtcont" class="span9">
+    {% if lg == 'ja' %}
+    <h3>漢籍リポジトリのAPIついて</h3>
+    {% else %}
+    <h3>About the Kanseki Repository API</h3>
+    {% endif %}
+    {% if ret %}
+    <p><b>{{ret}}</b></p>
+    {% endif %}
+<!--    
+    {% if lg == 'ja' %}
+    <p>ここでは<a href="http://github.com">ウェブサイトGitHub.com</a>の<a href="http://github.com/kanripo">@kanripoユーザーアカウント</a>の中に有るテキストへの閲覧と検索機能を提供しています。現時点では簡単な検索しか出来ませんが、使用者の要望に従って次第に機能を拡張したいと思っています。
+    <p><b>漢籍リポジトリ</b>、その設計背景と目標についての情報は<a href="http://blog.kanripo.org">漢リポブログ</a>にあります。</p>
+    <p>ブラウザー上でテキストを編集すること、また読むことでさえ、それが長時間になると面倒です。この目的のために、<b><a href="http://www.mandoku.org">マンドク</a></b>と呼ばれる特化されたソフトウェアを開発しました。マンドクはその基盤として<a href="https://www.gnu.org/software/emacs/">Emacs</a>というテキストエディターを使っています。</p>
+    <h3>目録</h3>
+    {% else %}
+    {% endif %} -->
+    <p>The Kanseki Repository can be accessed programmatically to
+    retrieve information for further processing, a socalled API
+      interface.  </p>
+    <p>The API is accessed at <a href="https://www.kanripo.org/api/v1.0/">https://www.kanripo.org/api/v1.0/</a>.
+    <h4>API Endpoints</h4>
+    <p>Currently, the following endpoints exist:</p>
+    <ul>
+      <li><b>search</b> <br /> Invoked
+	as <b>https://api/v1.0/search?query=[searchterm]</b>. The
+	result will be a list of matches.  Without any additional
+	parameter, all matches will be returned in the format found in
+	the index.  The formatting and amount of information returned
+	can be controlled by further parameters. <br />
+	<table border="1">
+	  <tr>
+	    <td>parameter</td>
+	    <td>status</td>
+	    <td>comment</td>
+	    <td>example</td>
+	  </tr>
+	  <tr>
+	    <td><b>query</b></td>
+	    <td>required</td>
+	    <td>The term to be searched. </td>
+	    <td><a href="api/v1.0/search?query=時間">search?query=時間</a></td>
+	  </tr>
+	  <tr>
+	    <td><b>force</b></td>
+	    <td>optional</td>
+	    <td>The presence of this parameter will bypass the cache and force a re-run of the query on the server.</td>
+	    <td><a href="api/v1.0/search?query=時間&amp;force">search?query=時間&force</a></td>
+	  </tr>
+	  <tr>
+	    <td><b>count</b></td>
+	    <td>optional</td>
+	    <td>(integer) Number of items to transmit.</td>
+	    <td><a href="api/v1.0/search?query=時間&amp;count=20">search?query=時間&count=20</a></td>
+	  </tr>
+	  <tr>
+	    <td><b>start</b></td>
+	    <td>optional</td>
+	    <td>(integer) Number of items to transmit.</td>
+	    <td><a href="api/v1.0/search?query=時間&amp;start=20">search?query=時間&start=20</a></td>
+	  </tr>
+	  <tr>
+	    <td><b>with-titles</b></td>
+	    <td>optional</td>
+	    <td>This will cause the results to include the titles in a tab-separated text format, this also implies 'kwic-ready'</td>
+	    <td><a href="api/v1.0/search?query=時間&amp;with-titles">search?query=時間&with-titles</a></td>
+	  </tr>
+	  <tr>
+	    <td><b>kwic-ready</b></td>
+	    <td>optional</td>
+	    <td>This will cause the keyword in context format in the results to be formated to be directly usable.</td>
+	    <td><a href="api/v1.0/search?query=時間&amp;kwic-ready">search?query=時間&kwic-ready</a></td>
+	  </tr>
+	</table>
+    </ul>
+    <p></p>
+  </div>
+</div>
+</div>
+{% endblock %}
+
