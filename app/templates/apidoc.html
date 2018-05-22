@@ -57,26 +57,8 @@
 	  <tr>
 	    <td><b>query</b></td>
 	    <td>required</td>
-	    <td>The term to be searched. </td>
+	    <td>The term to be searched. The returned results are raw; use one of the following parameters to control the format.</td>
 	    <td><a href="api/v1.0/search?query=時間">search?query=時間</a></td>
-	  </tr>
-	  <tr>
-	    <td><b>force</b></td>
-	    <td>optional</td>
-	    <td>The presence of this parameter will bypass the cache and force a re-run of the query on the server.</td>
-	    <td><a href="api/v1.0/search?query=時間&amp;force">search?query=時間&force</a></td>
-	  </tr>
-	  <tr>
-	    <td><b>count</b></td>
-	    <td>optional</td>
-	    <td>(integer) Number of items to transmit.</td>
-	    <td><a href="api/v1.0/search?query=時間&amp;count=20">search?query=時間&count=20</a></td>
-	  </tr>
-	  <tr>
-	    <td><b>start</b></td>
-	    <td>optional</td>
-	    <td>(integer) Start position of items to transmit.</td>
-	    <td><a href="api/v1.0/search?query=時間&amp;start=20">search?query=時間&start=20</a></td>
 	  </tr>
 	  <tr>
 	    <td><b>with-titles</b></td>
@@ -95,6 +77,24 @@
 	    <td>optional</td>
 	    <td>By default matches to editions other than the one from the master branch are removed from the results if they differ only in characters other than the matched characters.  This parameter causes results from all editions to be included. </td>
 	    <td><a href="api/v1.0/search?query=時間&amp;with-titles&amp;all-editions">search?query=時間&amp;with-titles&amp;all-editions</a></td>
+	  </tr>
+	  <tr>
+	    <td><b>count</b></td>
+	    <td>optional</td>
+	    <td>(integer) Number of items to transmit.</td>
+	    <td><a href="api/v1.0/search?query=時間&amp;count=20">search?query=時間&count=20</a></td>
+	  </tr>
+	  <tr>
+	    <td><b>start</b></td>
+	    <td>optional</td>
+	    <td>(integer) Start position of items to transmit.</td>
+	    <td><a href="api/v1.0/search?query=時間&amp;start=20">search?query=時間&start=20</a></td>
+	  </tr>
+	  <tr>
+	    <td><b>force</b></td>
+	    <td>optional</td>
+	    <td>The presence of this parameter will bypass the cache and force a re-run of the query on the server.</td>
+	    <td><a href="api/v1.0/search?query=時間&amp;force">search?query=時間&force</a></td>
 	  </tr>
 	</table>
     </ul>
