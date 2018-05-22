@@ -42,7 +42,7 @@
     <p>Currently, the following endpoints exist:</p>
     <ul>
       <li><b>search</b> <br /> Invoked
-	as <b>https://api/v1.0/search?query=[searchterm]</b>. The
+	as <b>https://www.kanripo.org/api/v1.0/search?query=[searchterm]</b>. The
 	result will be a list of matches.  Without any additional
 	parameter, all matches will be returned in the format found in
 	the index.  The formatting and amount of information returned
@@ -75,7 +75,7 @@
 	  <tr>
 	    <td><b>start</b></td>
 	    <td>optional</td>
-	    <td>(integer) Number of items to transmit.</td>
+	    <td>(integer) Start position of items to transmit.</td>
 	    <td><a href="api/v1.0/search?query=時間&amp;start=20">search?query=時間&start=20</a></td>
 	  </tr>
 	  <tr>
@@ -89,6 +89,12 @@
 	    <td>optional</td>
 	    <td>This will cause the keyword in context format in the results to be formated to be directly usable.</td>
 	    <td><a href="api/v1.0/search?query=時間&amp;kwic-ready">search?query=時間&kwic-ready</a></td>
+	  </tr>
+	  <tr>
+	    <td><b>all-editions</b></td>
+	    <td>optional</td>
+	    <td>By default matches to editions other than the one from the master branch are removed from the results if they differ only in characters other than the matched characters.  This parameter causes results from all editions to be included. </td>
+	    <td><a href="api/v1.0/search?query=時間&amp;with-titles&amp;all-editions">search?query=時間&amp;with-titles&amp;all-editions</a></td>
 	  </tr>
 	</table>
     </ul>

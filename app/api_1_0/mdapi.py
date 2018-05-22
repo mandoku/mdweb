@@ -49,6 +49,7 @@ def searchtext(count=20, start=None, n=20):
     zbmeta = "kr:meta:"
     key = request.values.get('query', '')
     force = request.values.has_key("force")
+    var = request.values.has_key("all-editions")
     titles = request.values.has_key('with-titles')
     ready = request.values.has_key('kwic-ready')
     link = request.values.has_key('with-link')
@@ -84,15 +85,33 @@ Other parameters are:
             else:
                 l[1] = 'no title'
             l2 = l[2].split(":")
-            l[2] = "https://raw.githubusercontent.com/kanripo/%s/master/%s.txt\t%s" % (l2[0][0:8], l2[0], l2[1])
+            if var:
+                v=[a for a in l2[-1].split("\t")[1:] if (a != 'n')]
+                # arbitrarily we select the edition with the shortest sigle, but not including @
+                try:
+                    v=min([a for a in v[0].split() if not '@' in a], key=len)
+                except:
+                    v='master'
+                l[2] = "https://raw.githubusercontent.com/kanripo/%s/%s/%s.txt\t%s" % (l2[0][0:8], v, l2[0], l2[1])
+            else:
+                l[2] = "https://raw.githubusercontent.com/kanripo/%s/master/%s.txt\t%s" % (l2[0][0:8], l2[0], l2[1])
             l="\t".join(l)
-            l=re.sub(r"<img[^>]*>", u"●", l)
+            #l=re.sub(r"<img[^>]*>", u"●", l)
             l=l.split("\t")
             if len(l) == 4 or l[-1] == "n":
                 out.append("\t".join(l))
         ox=out
     elif ready:
-        ox = ["\t".join(("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), k.split('\t')[1])) for k in ox]
+        ox = ["\t".join(("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), k.split('\t', 1)[1])) for k in ox]
+
+    #TODO: implement all-editions handling
+    if not var and not titles:
+        out = []
+        for k in ox:
+            l = k.split("\t")
+            if len(l) == 2 or l[-1] == "n":
+                out.append("\t".join(l))
+        ox = out
     if count:
         if count > len(ox):
             count = len(ox)
