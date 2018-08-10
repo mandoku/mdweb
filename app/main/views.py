@@ -337,11 +337,14 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     token = ""
     fn = ""
     key = request.values.get('query', '')
+    if len(juan) == 4:
+        templ = "%4.4d"
+    else:
+        templ = "%3.3d"
     try:
-        juan = "%3.3d" % (int(juan))
+        juan = templ % (int(juan))
     except:
         showtoc = False
-
     if coll:
         #TODO: allow for different repositories, make this configurable
         if coll.startswith('KR'):
@@ -410,10 +413,15 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
             pass
     tk = toc.keys()
     tk.sort()
+    #print tockey
+    #print tk
     try:
         t2 = [[(a, b[2], b[3].split()[-1]) for b in eval(toc[a])] for a in tk]
     except:
-        t2 = [[(a, b[2], b[3].split()[-1]) for b in toc[a]] for a in tk]
+        try:
+            t2 = [[(a, b[2], b[3].split()[-1]) for b in toc[a]] for a in tk]
+        except:
+            t2 = ""
     if branch == "master":
         #url =  "%s/%s/%s/raw/%s/%s_%s.txt?private_token=%s" % (current_app.config['GITLAB_HOST'], id[0:4], id,  id, juan, current_app.config['GITLAB_TOKEN'])
 
