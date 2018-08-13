@@ -13,6 +13,51 @@ import codecs, re, os
 
 import gitlab, requests
 
+import functools
+
+# decorator for Mimetype handling, see https://bitbucket.org/snippets/audriusk/4ARz and https://stackoverflow.com/questions/28791613/route-requests-based-on-the-accept-header-in-flask
+def accept(func_or_mimetype=None):
+    """Decorator which allows to use multiple MIME type handlers for a single
+    endpoint.
+    """
+
+    # Default MIME type.
+    mimetype = 'text/html'
+
+    class Accept(object):
+        def __init__(self, func):
+            self.default_mimetype = mimetype
+            self.accept_handlers = {mimetype: func}
+            functools.update_wrapper(self, func)
+
+        def __call__(self, *args, **kwargs):
+            default = self.default_mimetype
+            mimetypes = request.accept_mimetypes
+            best = mimetypes.best_match(self.accept_handlers.keys(), default)
+            # In case of Accept: */*, choose default handler.
+            if best != default and mimetypes[best] == mimetypes[default]:
+                best = default
+            return self.accept_handlers[best](*args, **kwargs)
+
+        def accept(self, mimetype):
+            """Register a MIME type handler."""
+
+            def decorator(func):
+                self.accept_handlers[mimetype] = func
+                return func
+            return decorator
+
+    # If decorator is called without argument list, return Accept instance.
+    if callable(func_or_mimetype):
+        return Accept(func_or_mimetype)
+
+    # Otherwise set new MIME type (if provided) and let Accept act as a
+    # decorator.
+    if func_or_mimetype is not None:
+        mimetype = func_or_mimetype
+    return Accept
+
+
 
 @api.route('/index', methods=['GET',])
 def index():
@@ -45,7 +90,18 @@ def procline():
 
 # for the moment, we are just dumping out all matches
 @api.route('/search', methods=['GET', 'POST',])
+@accept
 def searchtext(count=20, start=None, n=20):
+    mime=True
+    return searchtext_internal(mime, count, start, n)
+
+@searchtext.accept('application/json')
+def searchtext_json(count=20, start=None, n=20):
+    mime='application/json'
+    print "returning JSON"
+    return searchtext_internal(mime, count, start, n)
+    
+def searchtext_internal(mime, count=20, start=None, n=20):
     zbmeta = "kr:meta:"
     key = request.values.get('query', '')
     force = request.values.has_key("force")
@@ -75,49 +131,82 @@ Other parameters are:
 """,  content_type="text/plain;charset=UTF-8")
     total = redis_store.llen(key)
     ox = redis_store.lrange(key, 1, total)
-    if titles:
-        ox = [("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split('\t')[1].split(':')[0][0:8])), "\t".join(k.split("\t")[1:])) for k in ox]
-        out = []
-        for k in ox:
-            l = list(k)
-            if l[1].has_key('TITLE'):
-                l[1] = l[1]['TITLE']
-            else:
-                l[1] = 'no title'
-            l2 = l[2].split(":")
-            if var:
-                v=[a for a in l2[-1].split("\t")[1:] if (a != 'n')]
-                # arbitrarily we select the edition with the shortest sigle, but not including @
-                try:
-                    v=min([a for a in v[0].split() if not '@' in a], key=len)
-                except:
-                    v='master'
-                l[2] = "https://raw.githubusercontent.com/kanripo/%s/%s/%s.txt\t%s" % (l2[0][0:8], v, l2[0], l2[1])
-            else:
-                l[2] = "https://raw.githubusercontent.com/kanripo/%s/master/%s.txt\t%s" % (l2[0][0:8], l2[0], l2[1])
-            l="\t".join(l)
-            #l=re.sub(r"<img[^>]*>", u"●", l)
-            l=l.split("\t")
-            if len(l) == 4 or l[-1] == "n":
-                out.append("\t".join(l))
-        ox=out
-    elif ready:
-        ox = ["\t".join(("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), k.split('\t', 1)[1])) for k in ox]
+    if mime == 'application/json':
+        out = [{"prev" : k.split("\t")[0].split(',')[1], "match" : "%s%s" % (key[0], k.split("\t")[0].split(',')[0]), "meta" : proc_meta(redis_store.hgetall(u"%s%s" %( zbmeta, k.split('\t')[1].split(':')[0][0:8]))), "location" : proc_loc(k.split("\t")[1]), "textid" : k.split('\t')[1].split(':')[0][0:8]} for k in ox]
+        return jsonify({"key" : key, "count" : len(out), "matches" : out})
+    else:
+        if titles:
+            ox = addtitles(ox, key, var, zbmeta)
+        elif ready:
+            ox = ["\t".join(("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), k.split('\t', 1)[1])) for k in ox]
 
-    #TODO: implement all-editions handling
-    if not var and not titles:
-        out = []
-        for k in ox:
-            l = k.split("\t")
-            if len(l) == 2 or l[-1] == "n":
-                out.append("\t".join(l))
-        ox = out
-    if count:
-        if count > len(ox):
-            count = len(ox)
-        ox = ox[start:count+1]
-    return Response ("\n%s" % ("\n".join(ox).decode('utf-8')),  content_type="text/plain;charset=UTF-8")
+        #TODO: implement all-editions handling
+        if not var and not titles:
+            out = []
+            for k in ox:
+                l = k.split("\t")
+                if len(l) == 2 or l[-1] == "n":
+                    out.append("\t".join(l))
+            ox = out
+        if count:
+            if count > len(ox):
+                count = len(ox)
+            ox = ox[start:count+1]
+        return Response ("\n%s" % ("\n".join(ox).decode('utf-8')),  content_type="text/plain;charset=UTF-8")
 
+def proc_loc(location):
+    """prepare location for json"""
+    if "$" in location:
+        lt, pos = location.split("$")
+    else:
+        pos = "0"
+    l = lt.split(":")
+    return {"position" : pos, "fn" : l[0], "juan" : l[0].split("_")[-1], "page" : l[1], "line" : l[2], "char" : l[3]}
+    
+def proc_meta(meta):
+    """Process the metadata returned from redis to the format required for returning"""
+    retd = {}
+    if meta.has_key("RESP"):
+        retd.update({"resp" : meta["RESP"]})
+    else:
+        retd.update({"resp" : ""})
+    if meta.has_key("TPUR"):
+        retd.update({"title" : meta["TPUR"]})
+    else:
+        retd.update({"title" : ""})
+    if meta.has_key("DYNASTY"):
+        retd.update({"dynasty" : meta["DYNASTY"]})
+    else:
+        retd.update({"dynasty" : ""})
+    return retd
+
+def addtitles(ox, key, var, zbmeta):
+    ox = [("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split('\t')[1].split(':')[0][0:8])), "\t".join(k.split("\t")[1:])) for k in ox]
+    out = []
+    for k in ox:
+        l = list(k)
+        if l[1].has_key('TITLE'):
+            l[1] = l[1]['TITLE']
+        else:
+            l[1] = 'no title'
+        l2 = l[2].split(":")
+        if var:
+            v=[a for a in l2[-1].split("\t")[1:] if (a != 'n')]
+            # arbitrarily we select the edition with the shortest sigle, but not including @
+            try:
+                v=min([a for a in v[0].split() if not '@' in a], key=len)
+            except:
+                v='master'
+            l[2] = "https://raw.githubusercontent.com/kanripo/%s/%s/%s.txt\t%s" % (l2[0][0:8], v, l2[0], ":".join(l2[1:]))
+        else:
+            l[2] = "https://raw.githubusercontent.com/kanripo/%s/master/%s.txt\t%s" % (l2[0][0:8], l2[0], ":".join(l2[1:]))
+        l="\t".join(l)
+        #l=re.sub(r"<img[^>]*>", u"●", l)
+        l=l.split("\t")
+        # we ignore other editions!
+        if len(l) == 4 or l[-1] == "n":
+            out.append("\t".join(l))
+    return out
     
 ## file
 

@@ -8,6 +8,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.pagedown import PageDown
 from flask.ext.redis import Redis
 from flask.ext.babel import Babel
+from flask_cors import CORS
 from config import config
 from flask_dance.contrib.github import make_github_blueprint
 bootstrap = Bootstrap()
@@ -38,7 +39,7 @@ def create_app(config_name):
     
     redis_store.init_app(app)
     babel.__init__(app)
-    
+    cors = CORS(app, resources={r"/api/*": {"origins": "*"}})    
     if not app.debug and not app.testing and not app.config['SSL_DISABLE']:
         from flask.ext.sslify import SSLify
         sslify = SSLify(app)
