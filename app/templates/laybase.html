@@ -3,9 +3,11 @@
   <head>
     <title>Kanripo 漢籍リポジトリ : {{txtid}} {{title}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery/jquery.ui.core.css')}}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery/jquery.ui.tabs.css')}}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery/jquery.ui.theme.css')}}">
+    -->
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="{{url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/docs.css')}}" rel="stylesheet"> 
@@ -150,10 +152,12 @@
     </div>
 </div> <!-- closes row -->
 </div>
-    <script  src="{{ url_for('static', filename='jquery/jquery.js')}}"></script>
+<script  src="{{ url_for('static', filename='jquery/jquery.js')}}"></script>
+<!--
     <script  src="{{ url_for('static', filename='jquery/jquery.ui.core.js')}}"></script>
     <script  src="{{ url_for('static', filename='jquery/jquery.ui.widget.js')}}"></script>
     <script  src="{{ url_for('static', filename='jquery/jquery.ui.tabs.js')}}"></script>
+-->
     <script  src="{{ url_for('static', filename='js/highlight.js')}}"></script>
     <script  src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/jquery.panzoom.js')}}"></script>

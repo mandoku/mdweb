@@ -115,10 +115,12 @@ function displayPageImage(txtid, edition, juan, page){
   
   
 	$( ".panzoom" ).panzoom({
-            $zoomIn: $(".zoom-in"),
-            $zoomOut: $(".zoom-out"),
-            $zoomRange: $(".zoom-range"),
-            $reset: $(".reset")
+          $zoomIn: $(".zoom-in"),
+          $zoomOut: $(".zoom-out"),
+          $zoomRange: $(".zoom-range"),
+          $reset: $(".reset"),
+	  disablePan: false,
+	  which: 1,
   });
   $( "#edoption").on('change', function(){
   ind = ob.indexOf(ejp);
