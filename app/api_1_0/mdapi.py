@@ -88,6 +88,41 @@ def procline():
     # except:
     #     return "Not Found: %s " % (l)
 
+
+@api.route('/titles', methods=['GET', 'POST',])
+@accept
+def searchtitle(count=20, start=0, n=20):
+    mime=True
+    return searchtitle_internal(mime, count, start, n)
+
+@searchtitle.accept('application/json')
+def searchtitle_json(count=20, start=0, n=20):
+    mime='application/json'
+    print "returning JSON"
+    return searchtitle_internal(mime, count, start, n)
+    
+def searchtitle_internal(mime, count=20, start=0, n=20, force=False):
+    titpref = "kr:title:"
+    count=int(request.values.get('count', count))
+    start=int(request.values.get('start', start))
+    key = request.values.get('query', '')
+    if len(key) > 0:
+        if (not redis_store.exists(titpref+key)) or force:
+            lib.dotitlesearch(titpref, key)
+    total = redis_store.llen(titpref+key)
+    print (total)
+    tits = redis_store.lrange(titpref+key, start, start+count)
+    if mime == 'application/json':
+        out = [{"textid": k.split()[0],
+                "title" : k.split()[1].split("-")[0],
+                "dynasty" : k.split()[1].split("-")[1],
+                "responsible" : k.split()[1].split("-")[2],
+        } for k in tits]
+        return jsonify({"query" : key, "total": total, "start": start, "count" : len(out), "matches" : out})
+    else:
+        return Response("\n".join(tits))
+
+
 # for the moment, we are just dumping out all matches
 @api.route('/search', methods=['GET', 'POST',])
 @accept
@@ -133,7 +168,7 @@ Other parameters are:
     ox = redis_store.lrange(key, 1, total)
     if mime == 'application/json':
         out = [{"prev" : k.split("\t")[0].split(',')[1], "match" : "%s%s" % (key[0], k.split("\t")[0].split(',')[0]), "meta" : proc_meta(redis_store.hgetall(u"%s%s" %( zbmeta, k.split('\t')[1].split(':')[0][0:8]))), "location" : proc_loc(k.split("\t")[1]), "textid" : k.split('\t')[1].split(':')[0][0:8]} for k in ox]
-        return jsonify({"key" : key, "count" : len(out), "matches" : out})
+        return jsonify({"query" : key, "count" : len(out), "matches" : out})
     else:
         if titles:
             ox = addtitles(ox, key, var, zbmeta)

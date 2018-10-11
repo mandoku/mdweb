@@ -47,6 +47,11 @@
 	parameter, all matches will be returned in the format found in
 	the index.  The formatting and amount of information returned
 	can be controlled by further parameters. <br />
+	If
+	"Accept:application/json" is sent in the header, the result
+	will be returned in JSON format, otherwise in plain
+	text.<br />
+	<br />
 	<table border="1">
 	  <tr>
 	    <td>parameter</td>
@@ -96,6 +101,48 @@
 	    <td>The presence of this parameter will bypass the cache and force a re-run of the query on the server.</td>
 	    <td><a href="api/v1.0/search?query=時間&amp;force">search?query=時間&force</a></td>
 	  </tr>
+	</table>
+      </li>
+      <li><b>titles</b> <br /> Invoked
+	as <b>https://www.kanripo.org/api/v1.0/titles?query=[searchterm]</b>. The
+	result will be a list of matches.  Without any additional
+	parameter, all matches will be returned in the format found in
+	the index.  The formatting and amount of information returned
+	can be controlled by further parameters. <br />
+	If
+	"Accept:application/json" is sent in the header, the result
+	will be returned in JSON format, otherwise in plain
+	text.<br />
+	<br />
+	<table border="1">
+	  <tr>
+	    <td>parameter</td>
+	    <td>status</td>
+	    <td>comment</td>
+	    <td>example</td>
+	  </tr>
+	  <tr>
+	  <tr>
+	    <td><b>query</b></td>
+	    <td>required</td>
+	    <td>The term to be searched within the list of titles.
+	    Parts of the text identifier can also be used, for example
+	    "KR6q" to retrieve all texts in the category KR6q.</td>
+	    <td><a href="api/v1.0/titles?query=春秋">titles?query=春秋</a></td>
+	  </tr>
+	  <tr>
+	    <td><b>count</b></td>
+	    <td>optional</td>
+	    <td>(integer) Number of items to transmit.</td>
+	    <td><a href="api/v1.0/titles?query=春秋">titles?query=春秋&count=20</a></td>
+	  </tr>
+	  <tr>
+	    <td><b>start</b></td>
+	    <td>optional</td>
+	    <td>(integer) Start position of items to transmit. The first item has the position 0.</td>
+	    <td><a href="api/v1.0/titles?query=春秋">titles?query=春秋&start=0&count=40</a></td>
+	  </tr>
+		       
 	</table>
     </ul>
     <p></p>
