@@ -2,6 +2,7 @@
 from flask import jsonify
 from flask import Response, render_template, redirect, url_for, abort, flash, request,\
     current_app, make_response, send_file
+from werkzeug.utils import safe_join
 from app.exceptions import ValidationError
 from . import api
 from .. import redis_store
@@ -96,7 +97,7 @@ def dicpage(dic=None,page=None):
 @api.route('/getimage', methods=['GET',])
 def getimage():
     filename = request.values.get('filename', '')
-    datei = "%s/%s" % (current_app.config['IMGDIR'], filename)
+    datei = safe_join(current_app.config['IMGDIR'], filename)
     mtype = filename[-3:]
     try:
         return send_file(datei, mimetype='image/%s' % (mtype), attachment_filename=filename)
