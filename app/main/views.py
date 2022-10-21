@@ -7,7 +7,7 @@ from flask.ext.babel import gettext, ngettext
 #from flask.ext.sqlalchemy import get_debug_queries
 ## github authentication [2015-10-03T17:08:15+0900]
 from werkzeug.contrib.fixers import ProxyFix
-from flask_dance.contrib.github import make_github_blueprint, github
+from flask_dance.contrib.github import make_github_blueprint   
 from jinja2 import Environment, PackageLoader
 from github import Github
 import urllib
@@ -676,6 +676,8 @@ def usersettings(user=None):
 
 @main.route('/login',methods=['GET',])
 def login():
+    flash("Login is not available at this moment.")
+    return redirect(request.values.get('next') or '/')
     if not github.authorized:
         #print url_for("github.login")
         #return redirect("/")

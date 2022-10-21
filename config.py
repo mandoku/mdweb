@@ -4,10 +4,10 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    MDBASE="/extra/krp"
-    TXTDIR="/extra/krp/gh"
-    IDXDIR="/extra/krp/index"
-    IMGDIR="/extra/images/general/skqs/wyg"
+    MDBASE="/home/Shared/krp"
+    TXTDIR="/home/Shared/krp/gh"
+    IDXDIR="/home/Shared/krp/index"
+    IMGDIR="/home/Shared/images/"
     LANGUAGES = {
         'ja': '日本語',
         'en': 'English',
