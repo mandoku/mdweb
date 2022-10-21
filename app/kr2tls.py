@@ -86,10 +86,11 @@ def parse_text_to_p(lines, gjd, md=False):
             lcnt = 0
         if "<md:" in l:
             l=re.sub("<md:([^_]+)_([^_]+)_([^>]+)>", "<pb ed='\\2' n='\\3' xml:id='\\1_\\2_\\3'/>", l)
-        if "&KR" in l:
+#        if "&KR" in l:
             # only for the sideeffect
-            re.sub("&KR([^;]+);", lambda x : gjd.update({"KR%s" % (x.group(1)) : "%c" % (int(x.group(1)) + puamagic)}), l)
-        l = re.sub("&KR([^;]+);", lambda x : "%c" % (int(x.group(1)) + puamagic ), l)
+#            re.sub("&KR([^;]+);", lambda x : gjd.update({"KR%s" % (x.group(1)) : "%c" % (int(x.group(1)) + puamagic)}), l)
+#        l = re.sub("&KR([^;]+);", lambda x : "%c" % (int(x.group(1)) + puamagic ), l)
+        l = re.sub("&([^;]+);", "<g ref='#\\1'/>", l)        
         # if md:
         #     pass
         #     #l=re.sub("¶", f"<!-- ¶ -->", l)
