@@ -471,7 +471,10 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
 
 
 @main.route('/tlskr/<txtid>', methods=['GET',])
-def tlskr(txtid):
+#def tlskr(txtid):
+#    return Response(kr2tls.test(txtid), content_type="text/html;charset=UTF-8")
+
+def tlskr_orig(txtid):
     return Response(kr2tls.convert_text(txtid), content_type="text/xml;charset=UTF-8")
 
 def showtextredis(juan, id=0, coll=None, seq=0):

@@ -7,9 +7,11 @@ from github import Github
 #load_dotenv()
 
 puamagic = 1069056
-if os.path.exists('../../.env'):
+scriptpath = os.path.dirname(os.path.abspath(__file__))
+envpath = "%s/%s" % (scriptpath, ".env") 
+if os.path.exists(envpath):
     print('Importing environment from .env...')
-    for line in open('.env'):
+    for line in open(envpath):
         var = line.strip().split('=')
         if len(var) == 2:
             os.environ[var[0]] = var[1]
@@ -241,6 +243,10 @@ def save_gjd (txtid, branch, gjd, type="entity"):
     of.write("""</character-map>\n</stylesheet>\n""")
     of.close()
     
+def test(txtid):
+    return at
+
+
 def convert_text(txtid, user='kanripo', format='xml'):
     gh=Github(at)
     hs=gh.get_repo("%s/%s" % (user, txtid))
@@ -253,7 +259,7 @@ def convert_text(txtid, user='kanripo', format='xml'):
             bt = "/doc/"
         else:
             bt = "/int/"
-        flist = [a['path'] for a in hs.get_contents("/", ref=branch).raw_data]
+        flist = [a.path for a in hs.get_contents("/", ref=branch)]
         print (branch, len(flist))
         pdic = {}
         md = False
