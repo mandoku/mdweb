@@ -101,7 +101,7 @@ def parse_text_to_p(lines, gjd, md=False):
         l = l.replace("(", "<note>")
         l = l.replace(")¶", "¶</note>")
         l = l.replace(")", "</note>")
-  #      l=re.sub("¶", "<lb/>", l)
+        l = l.replace("¶", "<lb/>")
         if not re.match("^</p>", l) and len(l) > 0:
             l="%s\n" % (l)
         if l == "":
