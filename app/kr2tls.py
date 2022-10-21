@@ -3,8 +3,8 @@
 #
 import re, os, sys, requests, datetime
 from github import Github
-from dotenv import load_dotenv
-load_dotenv()
+#from dotenv import load_dotenv
+#load_dotenv()
 
 puamagic = 1069056
 if os.path.exists('../../.env'):
@@ -243,7 +243,7 @@ def save_gjd (txtid, branch, gjd, type="entity"):
     
 def convert_text(txtid, user='kanripo', format='xml'):
     gh=Github(at)
-    hs=gh.get_repo(f"{user}/{txtid}")
+    hs=gh.get_repo("%s/%s" % (user, txtid))
     #get the branches
     # only work with master for now
     branches=[a.name for a in hs.get_branches() if a.name.startswith("master")]
@@ -253,7 +253,7 @@ def convert_text(txtid, user='kanripo', format='xml'):
             bt = "/doc/"
         else:
             bt = "/int/"
-        flist = [a.path for a in hs.get_contents("/", ref=branch)]
+        flist = [a['path'] for a in hs.get_contents("/", ref=branch).raw_data]
         print (branch, len(flist))
         pdic = {}
         md = False
@@ -263,7 +263,7 @@ def convert_text(txtid, user='kanripo', format='xml'):
         for path in flist:
             # in case of txt, get readme as well!
             if path.startswith(txtid):
-                r=requests.get(f"https://raw.githubusercontent.com/{user}/{txtid}/{branch}/{path}")
+                r=requests.get("https://raw.githubusercontent.com/%s/%s/%s/%s" % (user, txtid, branch, path))
                 if r.status_code == 200:
                     cont=r.content.decode(r.encoding)
                     if "<md:" in cont:
@@ -287,22 +287,20 @@ def convert_text(txtid, user='kanripo', format='xml'):
 
 
         date=datetime.datetime.now()
-        today=f"{date:%Y-%m-%d}"
+        today=date
         sd="".join(of)
         if format=='xml':
             ntxtid = txtid.replace("KR", "KR")
             #os.makedirs(ntxtid+ bt + ntxtid + "_" + branch, exist_ok=True)
             #save_gjd (ntxtid, branch, gjd, "entity")
             #save_gjd (ntxtid, branch, gjd, "g")
-            fname = f"{ntxtid}.xml"
+            fname = "%s.xml" % (ntxtid)
             if branch == 'master':
                 btxtid = ntxtid
             else:
                 btxtid = "%s_%s" % (ntxtid, branch)
             out=tei_template.format(sd="<text><body>\n%s</body></text>" % (sd), today=today, user=user, btxtid=btxtid, title=lx['TITLE'], date=lx['DATE'], branch=branch)
-            ow=open(fname, "w")
-            ow.write(out)
-            ow.close()
+            return out
         else:
             pass
         

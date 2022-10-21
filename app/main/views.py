@@ -30,6 +30,7 @@ from collections import defaultdict
 
 import codecs, re
 from .. import mandoku_view
+from .. import kr2tls
 import git, requests, sys
 
 
@@ -467,6 +468,11 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     #print "url: ", url
     return render_template('showtext.html', ct={'mtext': Markup("<br/>\n".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2, showtoc=showtoc, editurl=editurl, ed=md.ed)
 #return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
+
+
+@main.route('/tlskr/<txtid>', methods=['GET',])
+def tlskr(txtid):
+    return Response(kr2tls.convert_text(txtid), content_type="text/xml;charset=UTF-8")
 
 def showtextredis(juan, id=0, coll=None, seq=0):
     juan = "%3.3d" % (int(juan))
