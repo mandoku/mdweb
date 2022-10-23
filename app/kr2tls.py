@@ -323,8 +323,9 @@ if __name__ == '__main__':
         ntxtid = txtid.replace("KR", "KR")
     else:
         ntxtid = txtid
-    os.makedirs(ntxtid+"/aux/map", exist_ok=True)
-    os.makedirs(ntxtid+"/doc", exist_ok=True)
-    os.makedirs(ntxtid+"/int", exist_ok=True)
 
-    convert_text(txtid)
+    out = convert_text(txtid)
+    fname = "%s.xml" % (ntxtid)
+    ow=open(fname, "w")
+    ow.write(out)
+    ow.close()
