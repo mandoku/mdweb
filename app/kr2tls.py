@@ -22,12 +22,17 @@ lang="zho"
 # need the following vars:
 # user, txtid, title, date, branch, today, body, lang
 # body should contain the preformatted content for the body element
-tei_template="""<TEI xmlns="http://www.tei-c.org/ns/1.0" xml:id="{btxtid}">
+tei_template="""<TEI xmlns="http://www.tei-c.org/ns/1.0" xml:id="{btxtid}" state="red">
   <teiHeader>
       <fileDesc>
          <titleStmt>
             <title>{title}</title>
          </titleStmt>
+         <editionStmt>
+            <edition>
+                <idno type="kanripo">{btxtid}</idno>
+            </edition>
+         </editionStmt>
          <publicationStmt>
             <p>Published by @kanripo on GitHub.com</p>
          </publicationStmt>
@@ -42,6 +47,15 @@ tei_template="""<TEI xmlns="http://www.tei-c.org/ns/1.0" xml:id="{btxtid}">
       {sd}
 </TEI>
 """
+
+def imglink(imglist, x):
+    key = "%s %s" % (x.group(2), x.group(3))
+    key = key.replace("'", "")
+    print (key)
+    if key in imglist:
+        return "%s facs='%s'" % (x.group(), imglist[key])
+    else:
+        return x.group()
 
 def get_property(p_in):
     p = p_in[2:]
@@ -65,7 +79,7 @@ def combine_note(lines):
 # loop through the lines and return a dictionary of metadata and text content
 # gjd is the dictionary to hold gaiji encountered, md is wether we want to care about <md: style tags.
 # here we parse the text into paragraphs, instead of surface elements
-def parse_text_to_p(lines, gjd, md=False):
+def parse_text_to_p(lines, gjd, imglist, md=False):
     lx={'TEXT' : []}
     lcnt=0
     nl=[]
@@ -81,8 +95,10 @@ def parse_text_to_p(lines, gjd, md=False):
         elif l.startswith("#"):
             continue
         elif "<pb:" in l:
+            #         line = re.sub(u"&([^;]+);", lambda x : norgaiji(x.group(1)), line)
             pbxmlid=re.sub("<pb:([^_]+)_([^_]+)_([^>]+)>", "\\1_\\2_\\3", l)
             l=re.sub("<pb:([^_]+)_([^_]+)_([^>]+)>", "<pb ed='\\2' n='\\3' xml:id='\\1_\\2_\\3'/>", l)
+            l=re.sub("xml:id='([^_]+)_([^_]+)_([^>/]+)", lambda x: imglink(inglist, x), l)
             lcnt = 0
         if "<md:" in l:
             l=re.sub("<md:([^_]+)_([^_]+)_([^>]+)>", "<pb ed='\\2' n='\\3' xml:id='\\1_\\2_\\3'/>", l)
@@ -242,7 +258,26 @@ def save_gjd (txtid, branch, gjd, type="entity"):
     
 def test(txtid):
     return at
-
+# 000-1a00	WYG 000-1a	WYG0797/WYG0797-0227a.png
+# need to test also with other editions
+def get_imglist(txtid, user='kanripo'):
+    res = {}
+    gh=Github(at)
+    hs=gh.get_repo("%s/%s" % (user, txtid))
+    branch = "_data"
+    #ct = hs.get_contents("/", ref=branch)
+    flist = [a.path for a in hs.get_contents("/imglist", ref=branch)]
+    for path in flist:
+        if path.endswith("txt"):
+            r=requests.get("https://raw.githubusercontent.com/%s/%s/%s/%s" % (user, txtid, branch, path))
+            if r.status_code == 200:
+                cont=r.content.decode(r.encoding)
+                lines=cont.split("\n")
+                for l in lines:
+                    if "\t" in  l:
+                        f = l.split("\t")
+                        res[f[1]] = f[2]
+    return res
 
 def convert_text(txtid, user='kanripo', format='xml'):
     gh=Github(at)
@@ -250,6 +285,7 @@ def convert_text(txtid, user='kanripo', format='xml'):
     #get the branches
     # only work with master for now
     branches=[a.name for a in hs.get_branches() if a.name.startswith("master")]
+    #imglist = get_imglist(txtid)
     res=[]
     for branch in branches:
         if re.match("^[A-Z-]+$", branch):
@@ -272,7 +308,7 @@ def convert_text(txtid, user='kanripo', format='xml'):
                     if "<md:" in cont:
                         md = True
                     lines=cont.split("\n")
-                    lx = parse_text_to_p(lines, gjd, md)
+                    lx = parse_text_to_p(lines, gjd, imglist, md)
                     localid=path[:-4].split("_")
                     localid.insert(1, branch)
                     lid = "_".join(localid)
