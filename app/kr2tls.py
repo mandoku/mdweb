@@ -285,7 +285,10 @@ def convert_text(txtid, user='kanripo', format='xml'):
     #get the branches
     # only work with master for now
     branches=[a.name for a in hs.get_branches() if a.name.startswith("master")]
-    imglist = get_imglist(txtid)
+    try:
+        imglist = get_imglist(txtid)
+    except:
+        imglist = {}
     res=[]
     for branch in branches:
         if re.match("^[A-Z-]+$", branch):
