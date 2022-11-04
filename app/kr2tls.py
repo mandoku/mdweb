@@ -98,7 +98,7 @@ def parse_text_to_p(lines, gjd, imglist, md=False):
             #         line = re.sub(u"&([^;]+);", lambda x : norgaiji(x.group(1)), line)
             pbxmlid=re.sub("<pb:([^_]+)_([^_]+)_([^>]+)>", "\\1_\\2_\\3", l)
             l=re.sub("<pb:([^_]+)_([^_]+)_([^>]+)>", "<pb ed='\\2' n='\\3' xml:id='\\1_\\2_\\3'/>", l)
-            l=re.sub("xml:id='([^_]+)_([^_]+)_([^>/]+)", lambda x: imglink(inglist, x), l)
+            l=re.sub("xml:id='([^_]+)_([^_]+)_([^>/]+)", lambda x: imglink(imglist, x), l)
             lcnt = 0
         if "<md:" in l:
             l=re.sub("<md:([^_]+)_([^_]+)_([^>]+)>", "<pb ed='\\2' n='\\3' xml:id='\\1_\\2_\\3'/>", l)
@@ -285,7 +285,7 @@ def convert_text(txtid, user='kanripo', format='xml'):
     #get the branches
     # only work with master for now
     branches=[a.name for a in hs.get_branches() if a.name.startswith("master")]
-    #imglist = get_imglist(txtid)
+    imglist = get_imglist(txtid)
     res=[]
     for branch in branches:
         if re.match("^[A-Z-]+$", branch):
