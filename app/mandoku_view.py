@@ -91,9 +91,9 @@ class mdDocument(object):
             if not self._ed and "<pb" in l:
                 self._ed = re.findall(r"<pb[^_]+_([^_]+)_", l)[0]
             if pby.search(l):
-                l = pby.sub(r'''<a onclick="displayPageImage('%s', 'JY-C', '%s-\2-\3' );" name="\2-\3" class="pb">[\2-\3] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)
+                l = pby.sub(r'''<a onclick="displayPageImage('%s', 'YP-C', '\2-\3' );" name="\2-\3" class="pb">[\2-\3] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid), l)
             if pbk.search(l):
-                l = pbk.sub(r'''<a onclick="displayPageImage('%s', 'CK-KZ', '%s-\2' );" name="\1-\2" class="pb">[\2] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid, self.juan), l)
+                l = pbk.sub(r'''<a onclick="displayPageImage('%s', 'CK-KZ', '\2' );" name="\1-\2" class="pb">[\2] <img width="20"  src="/static/img/kanseki-5.png"/></a>''' % (self.txtid), l)
             elif pb.search(l):
                 l = pb.sub(r'''<a onclick="displayPageImage('\1', '\2', '\3' );" name="\3" class="pb">[\3] <img width="20"  src="/static/img/kanseki-5.png"/></a>''', l)
             elif pbx.search(l):
