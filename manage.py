@@ -80,12 +80,20 @@ def index():
 @index.command("build")
 @click.option('--rebuild/--incremental', default=False,
               help="Drop and rebuild the FTS table from scratch.")
-def index_build(rebuild):
+@click.option('--quiet', is_flag=True, default=False,
+              help="Suppress per-file progress output.")
+def index_build(rebuild, quiet):
     """Build the SQLite FTS5 search index from TXTDIR."""
     from app.indexer import build_index
     db_path = app.config['INDEX_DB_PATH']
     txtdir = app.config['TXTDIR']
-    n = build_index(txtdir, db_path, rebuild=rebuild)
+
+    def report(i, n_files, path, total):
+        if i == 1 or i == n_files or i % 50 == 0:
+            click.echo(f"[{i}/{n_files}] {os.path.basename(path)}  ({total} lines)")
+
+    n = build_index(txtdir, db_path, rebuild=rebuild,
+                    progress=None if quiet else report)
     click.echo(f"Indexed {n} lines into {db_path}")
 
 

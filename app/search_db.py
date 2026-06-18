@@ -1,5 +1,6 @@
 #    -*- coding: utf-8 -*-
 """SQLite FTS5 search-index connection helpers."""
+import os
 import sqlite3
 from flask import current_app, g
 
@@ -30,8 +31,18 @@ CREATE INDEX IF NOT EXISTS idx_titles_title ON titles(title);
 
 
 def connect(db_path):
-    conn = sqlite3.connect(db_path)
+    parent = os.path.dirname(db_path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    conn = sqlite3.connect(db_path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
+    conn.executescript(
+        "PRAGMA journal_mode=WAL;"
+        "PRAGMA synchronous=NORMAL;"
+        "PRAGMA temp_store=MEMORY;"
+        "PRAGMA cache_size=-65536;"  # 64 MB page cache
+        "PRAGMA mmap_size=268435456;"  # 256 MB mmap
+    )
     conn.executescript(SCHEMA)
     return conn
 
