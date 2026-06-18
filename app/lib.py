@@ -315,13 +315,7 @@ def dotitlesearch(key, offset=0, limit=20):
     return [(r["txtid"], r["title"]) for r in rows], total
 
 
-def get_meta(txtid8):
-    """Return the metadata dict for an 8-char txtid, or {}."""
-    db = get_db()
-    row = db.execute(
-        "SELECT title, dynasty, collection, raw_json FROM metadata WHERE txtid = ?",
-        (txtid8,),
-    ).fetchone()
+def _row_to_meta(row):
     if row is None:
         return {}
     if row["raw_json"]:
@@ -335,8 +329,39 @@ def get_meta(txtid8):
     data.setdefault("TITLE", row["title"] or "")
     data.setdefault("DYNASTY", row["dynasty"] or "")
     data.setdefault("COLLECTION", row["collection"] or "")
+    return data
+
+
+def get_meta(txtid8):
+    """Return the metadata dict for an 8-char txtid, or {}."""
+    db = get_db()
+    row = db.execute(
+        "SELECT title, dynasty, collection, raw_json FROM metadata WHERE txtid = ?",
+        (txtid8,),
+    ).fetchone()
+    data = _row_to_meta(row)
     data["ID"] = txtid8
     return data
+
+
+def get_meta_many(txtids):
+    """Return {txtid: meta_dict} for the given ids in a single query."""
+    ids = [t for t in txtids if t]
+    if not ids:
+        return {}
+    db = get_db()
+    placeholders = ",".join(["?"] * len(ids))
+    rows = db.execute(
+        f"SELECT txtid, title, dynasty, collection, raw_json"
+        f" FROM metadata WHERE txtid IN ({placeholders})",
+        ids,
+    ).fetchall()
+    out = {}
+    for r in rows:
+        m = _row_to_meta(r)
+        m["ID"] = r["txtid"]
+        out[r["txtid"]] = m
+    return out
 
 
 def get_facets(key, tpe="ID", id_len=3, top_n=10, filters=None, dynasty=None):
@@ -366,7 +391,11 @@ def get_facets(key, tpe="ID", id_len=3, top_n=10, filters=None, dynasty=None):
         f" GROUP BY facet ORDER BY n DESC{limit_clause}",
         [int(id_len)] + params,
     ).fetchall()
-    return [(r["facet"], get_meta(r["facet"]), r["n"], tpe) for r in rows]
+    meta_by_id = get_meta_many([r["facet"] for r in rows])
+    return [(r["facet"],
+             meta_by_id.get(r["facet"]) or {"ID": r["facet"]},
+             r["n"], tpe)
+            for r in rows]
 
 def sortres(rkey, sort, rsort):
     #sort the redis contents of rkey by sort, return list of keys

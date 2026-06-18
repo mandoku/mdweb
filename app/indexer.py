@@ -48,11 +48,13 @@ def _parse_filename(path):
     return txtid, juan
 
 
-def build_index(txtdir, db_path, rebuild=False):
+def build_index(txtdir, db_path, rebuild=False, progress=None):
     """Walk TXTDIR and load all lines into the FTS5 search_idx table.
 
     Returns the number of rows inserted. Idempotent per txtid: existing
     rows for a (txtid) are deleted before its new rows are inserted.
+    `progress`, if given, is called as progress(i, n_files, path, rows_so_far)
+    once per file.
     """
     conn = connect(db_path)
     try:
@@ -65,8 +67,10 @@ def build_index(txtdir, db_path, rebuild=False):
             )
 
         pattern = os.path.join(txtdir, "*", "*", "*_*.txt")
+        paths = sorted(glob.glob(pattern))
+        n_files = len(paths)
         total = 0
-        for path in sorted(glob.glob(pattern)):
+        for i, path in enumerate(paths, 1):
             txtid, juan = _parse_filename(path)
             if not txtid or not juan:
                 continue
@@ -83,42 +87,104 @@ def build_index(txtdir, db_path, rebuild=False):
                 )
                 total += len(rows)
             conn.commit()
+            if progress is not None:
+                progress(i, n_files, path, total)
         return total
     finally:
         conn.close()
 
 
-def load_metadata(mdbase, db_path):
-    """Bulk-load titles + metadata from <MDBASE>/system/*titles.txt.
+def _parse_title_line(line):
+    """Return (txtid, title, dynasty, author) or None.
 
-    Expected line format (tab-separated): TXTID \t ... \t TITLE
-    Optional sibling JSON metadata at <MDBASE>/system/meta.json keyed by
-    txtid8; values become the metadata row.
+    Accepts two formats:
+      "TXTID<TAB>...<TAB>TITLE"
+      "TXTID[ @flag ...] TITLE-DYNASTY-AUTHOR"   (Kanripo search-titles.txt)
+
+    @-prefixed tokens between the TXTID and the trailing
+    TITLE-DYNASTY-AUTHOR field are ignored.
+    """
+    line = line.rstrip("\n").rstrip("\r")
+    if not line:
+        return None
+    if "\t" in line:
+        parts = line.split("\t")
+        if len(parts) < 2:
+            return None
+        return parts[0].strip(), parts[-1].strip(), "", ""
+    tokens = [t for t in line.split() if not t.startswith("@")]
+    if len(tokens) < 2:
+        return None
+    txtid = tokens[0]
+    fields = tokens[-1].split("-")
+    title = fields[0].strip() if len(fields) > 0 else ""
+    dynasty = fields[1].strip() if len(fields) > 1 else ""
+    author = fields[2].strip() if len(fields) > 2 else ""
+    if not title:
+        return None
+    return txtid, title, dynasty, author
+
+
+def _titles_files(mdbase):
+    """Locate *titles.txt under MDBASE, with or without a system/ prefix."""
+    candidates = sorted(set(
+        glob.glob(os.path.join(mdbase, "system", "*titles.txt")) +
+        glob.glob(os.path.join(mdbase, "*titles.txt"))
+    ))
+    return candidates
+
+
+def _meta_json(mdbase):
+    for p in (os.path.join(mdbase, "system", "meta.json"),
+              os.path.join(mdbase, "meta.json")):
+        if os.path.exists(p):
+            return p
+    return None
+
+
+def load_metadata(mdbase, db_path):
+    """Bulk-load titles + metadata from MDBASE.
+
+    Walks `*titles.txt` under <MDBASE> or <MDBASE>/system. Each line is
+    either tab-separated (TXTID ... TITLE) or space-separated Kanripo
+    style (TXTID TITLE-DYNASTY-AUTHOR). Also reads an optional
+    meta.json keyed by txtid8 into the metadata table.
     """
     conn = connect(db_path)
     n = 0
     try:
-        for path in sorted(glob.glob(os.path.join(mdbase, "system", "*titles.txt"))):
+        for path in _titles_files(mdbase):
+            title_rows = []
+            meta_rows = []
             with open(path, encoding="utf-8") as fp:
-                rows = []
                 for line in fp:
-                    parts = line.rstrip("\n").split("\t")
-                    if len(parts) < 2:
+                    parsed = _parse_title_line(line)
+                    if not parsed:
                         continue
-                    txtid = parts[0].strip()
-                    title = parts[-1].strip()
-                    if txtid and title:
-                        rows.append((txtid, title))
-                if rows:
-                    conn.executemany(
-                        "INSERT OR REPLACE INTO titles(txtid, title)"
-                        " VALUES (?, ?)",
-                        rows,
+                    txtid, title, dynasty, author = parsed
+                    title_rows.append((txtid, title))
+                    raw = json.dumps(
+                        {"TITLE": title, "DYNASTY": dynasty,
+                         "AUTHOR": author, "COLLECTION": txtid[:4]},
+                        ensure_ascii=False,
                     )
-                    n += len(rows)
+                    meta_rows.append((txtid, title, dynasty, txtid[:4], raw))
+            if title_rows:
+                conn.executemany(
+                    "INSERT OR REPLACE INTO titles(txtid, title)"
+                    " VALUES (?, ?)",
+                    title_rows,
+                )
+                conn.executemany(
+                    "INSERT OR REPLACE INTO metadata"
+                    "(txtid, title, dynasty, collection, raw_json)"
+                    " VALUES (?, ?, ?, ?, ?)",
+                    meta_rows,
+                )
+                n += len(title_rows)
 
-        meta_path = os.path.join(mdbase, "system", "meta.json")
-        if os.path.exists(meta_path):
+        meta_path = _meta_json(mdbase)
+        if meta_path:
             with open(meta_path, encoding="utf-8") as fp:
                 meta = json.load(fp)
             rows = []
