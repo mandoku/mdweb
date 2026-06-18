@@ -4,22 +4,22 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    MDBASE="/home/Shared/krp"
-    TXTDIR="/home/Shared/krp/gh"
-    IDXDIR="/home/Shared/krp/index"
-    IMGDIR="/home/Shared/images/"
+    MDBASE = os.environ.get('MDWEB_MDBASE', "/home/Shared/krp")
+    TXTDIR = os.environ.get('MDWEB_TXTDIR', "/home/Shared/krp/gh")
+    IDXDIR = os.environ.get('MDWEB_IDXDIR', "/home/Shared/krp/index")
+    INDEX_DB_PATH = os.environ.get('MDWEB_INDEX_DB',
+                                    os.path.join(basedir, 'data/search.sqlite'))
+    IMGDIR = os.environ.get('MDWEB_IMGDIR', "/home/Shared/images/")
     LANGUAGES = {
         'ja': '日本語',
         'en': 'English',
         }
     BABEL_DEFAULT_LOCALE='ja'
     DICURL = "dic:"
-    REDIS_URL = "redis://localhost:6379/5"
 
 
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'X and U and Z string'
     SSL_DISABLE = False
-    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_RECORD_QUERIES = True
     MAIL_SERVER = 'smtp.googlemail.com'
     MAIL_PORT = 587
@@ -94,7 +94,7 @@ class HerokuConfig(ProductionConfig):
         ProductionConfig.init_app(app)
 
         # handle proxy server headers
-        from werkzeug.contrib.fixers import ProxyFix
+        from werkzeug.middleware.proxy_fix import ProxyFix
         app.wsgi_app = ProxyFix(app.wsgi_app)
 
         # log to stderr

@@ -47,17 +47,11 @@
       {% set vstmp = item[1].split('\t')[1] %}
       {% set vs = vstmp %}
       <tr>
-<!-- http://localhost:5000/text/ZB6q0003/003#0221a -->
-<!-- ZB1a0068:007-352:2:6 -->
 <td class="text-left"><a title="Open BunKanKun Catalog" target="bunkankun" href="https://ask.bunkankun.org/{{it_txtid[:3]}}/{{it_txtid[:4]}}/{{it_txtid}}">{{it_txtid}}</a></td>
-{% if item[2].has_key('TITLE') %}
-{% set titx = item[2]['TITLE'] %}
-{% else %}
-{% set titx = 'NO TITLE' %}
-{% endif %}
-<td class="text-left"><a href="{{url_for('main.showtext', id=it_txtid, juan=it_juan, query=key, _anchor=it_juan+'-'+it_page)}}" title="{{it_txtid}} {{titx}}">{{titx.decode('utf-8')|truncate(12, true)}}, {{it_juan.lstrip('0')}}, {{it_page.lstrip('0')}}</a></td>
-<td>{{item[0]|safe}}</td> 
-<td class="text-left">{{item[3]|safe}}</td>
+{% set titx = item[2].get('TITLE', 'NO TITLE') if item[2] is mapping else 'NO TITLE' %}
+<td class="text-left"><a href="{{url_for('main.showtext', id=it_txtid, juan=it_juan, query=key, _anchor=it_juan+'-'+it_page)}}" title="{{it_txtid}} {{titx}}">{{titx|truncate(12, true)}}, {{it_juan.lstrip('0')}}, {{it_page.lstrip('0')}}</a></td>
+<td>{{item[0]|safe}}</td>
+<td class="text-left">{{item[3]|safe if item|length > 3 else ''}}</td>
 <td class="text-left">
 {% if vs == "n" %}
 <span title="{{vs}}">　(夾注)</span>

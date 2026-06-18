@@ -1,13 +1,10 @@
 #    -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from flask import Response, session, render_template, redirect, url_for, abort, flash, Markup, request,\
-    current_app, make_response, send_from_directory, g
-from flask.ext.login import current_user
-from flask.ext.babel import gettext, ngettext
-#from flask.ext.sqlalchemy import get_debug_queries
-## github authentication [2015-10-03T17:08:15+0900]
-from werkzeug.contrib.fixers import ProxyFix
-from flask_dance.contrib.github import make_github_blueprint   
+from flask import Response, session, render_template, redirect, url_for, abort, flash, request, current_app, make_response, send_from_directory, g
+from markupsafe import Markup
+from flask_login import current_user
+from flask_babel import gettext, ngettext
+from flask_sqlalchemy.record_queries import get_recorded_queries
+from flask_dance.contrib.github import make_github_blueprint
 from jinja2 import Environment, PackageLoader
 from github import Github
 import urllib
@@ -16,9 +13,8 @@ from . import main
 # from .forms import EditProfileForm, EditProfileAdminForm, PostForm,\
 #     CommentForm
 from .. import db
-from .. import redis_store
 from .. import lib
-from .. import babel
+from .. import mybabel
 #from ..models import Permission, Role, User, Post, Comment
 #from ..decorators import admin_required, permission_required
 from collections import Counter
@@ -34,16 +30,13 @@ from .. import kr2tls
 import git, requests, sys
 
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
 zbmeta = "kr:meta:"
 kr_user = "kr_user:"
 titpref = "kr:title:"
 link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
-img_re = re.compile(ur'<i[^>]*>')
-mdx_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯]|\n|¶")
-mdx_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯\n\r¶]+|\t[^\n\r]+\r\n|\$[^;]+;")
+img_re = re.compile(r'<i[^>]*>')
+mdx_re = re.compile(r"<[^>]*>|[　-㄀＀-￯]|\n|¶")
+mdx_re = re.compile(r"<[^>]*>|[　-㄀＀-￯\n\r¶]+|\t[^\n\r]+\r\n|\$[^;]+;")
 hd = re.compile(r"^(\*+) (.*)$")
 env = Environment(loader=PackageLoader('__main__', 'templates'))
 
@@ -145,114 +138,28 @@ def searchtext(count=20, page=1):
     page=int(request.values.get('page', page))
     filters = request.values.get('filter', '')
     tpe = request.values.get('type', '')
-    #store the search key, we retrieve this in the profile page
-    if 'user' in session:
-        user=session['user']
-        sa=redis_store.sadd("%s%s:searchkeys" % (kr_user, user), q)
-        ud=redis_store.hgetall("%s%s:settings" % (kr_user,user))
-        if len(ud) < 1:
-            lib.ghuserdata(user)
-            ud=redis_store.hgetall("%s%s:settings" % (kr_user,user))
-    else:
-        ud={}
-    if len(sort) < 1:
-        try:
-            sort = ud['sort']
-        except:
-            try:
-                sort = session['sort']
-            except:
-                sort = ""
-    if "date" in sort:
-        #make sure we have the dates loaded
-        if "textdates" in ud:
-            td = ud["textdates"]
-        else:
-            td = "kanripo"
-        rsort="%s%s:bydate" % (kr_user, td)
-        if not redis_store.keys(rsort):
-            ret=lib.ghtextdates(user, rsort)
-    if len(filters) < 1:
-        try:
-            filter = ud['filter']
-        except:
-            pass
-    if 'pinned' in ud:
-        pinned=ud['pinned']
-    if len(keys) > 0:
-        for key in keys:
-            if not redis_store.exists(key): 
-                lib.doftsearch(key)
-    else:
-        return render_template("error_page.html", code="400", name = "Search Error", description = "No search term. Please submit the search term as parameter 'query'.")
-    start = (page - 1) * count 
-    fs = filters.split(';')
-    fs = [a for a in fs if len(a) > 0]
-    if "filter" in session:
-        fs.append(session["filter"])
-    # do we allow filters for AND search?  not for the moment...
-    if len(keys) > 1:
-        #so it seems that we cant have filter and AND at the same time...
-        d1=defaultdict(list)
-        d2=defaultdict(list)
-        klen = ""
-        sm=0
-        ## find the key with fewest matches
-        for key in keys:
-            kl = redis_store.llen(key)
-            if sm == 0 or sm > kl:
-                sm = kl
-                klen = key
-        #get the results for the key with fewest matches
-        total = redis_store.llen(klen)
-        ox1 = [(a.split('\t')[1].split(':')[0]+'_'+a.split('\t')[1].split(':')[-1],
-                ([a.split()[0].split(',')[1],klen[0], a.split()[0].split(',')[0]], a.split("\t")[1]))
-               for a in redis_store.lrange(klen, 0, total-1) if len(a) > 0]
-        for b,a in ox1:
-            d1[b].extend(a)
-        #now see what the other keys yield
-        #print "d1:", len(d1)
-        for key in keys:
-            if key == klen:
-                continue
-            total = redis_store.llen(key)
-            #print "key: ", key
-            try:
-                ox2 = [(a.split('\t')[1].split(':')[0]+'_'+a.split('\t')[1].split(':')[-1],
-                    ([a.split()[0].split(',')[1],key[0], a.split()[0].split(',')[0]], "\t".join(a.split("\t")[1:])))
-                   #(a.split()[0].split(','),key[0], a.split()[1]))
-                   for a in redis_store.lrange(key, 0, total-1) if len(a) > 0]
-            except:
-                ox2 = []
-            for b,a in ox2:
-                if d1.has_key(b):
-                    if not d2.has_key(b):
-                        d2[b].append(d1[b])
-                    d2[b].append(a)
-        total = len(d2)
-        #print "d2:", total, d2[d2.keys()[0]]
-        #        ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), " /".join(["".join([b[0][0] ]) for b in d2[a][1:][0]])) for a in d2.keys()]
-        ox = [("".join(d2[a][0][0]), d2[a][0][1], redis_store.hgetall(u"%s%s" %( zbmeta, a.split('_')[0][0:8])), "　・　"+"/".join(["".join(b[0]) for b in d2[a][1:2]])) for a in d2.keys()]
-    elif len(fs) < 1:
-        key = keys[0]
-        total = redis_store.llen(key)
-            #first: sort, rsort is the redis key for
-        rkey="key:%s" % (key)
-        rkey = key
-        if len(sort) > 0:
-            ks = lib.sortres(rkey, sort, rsort)
-            ox = [("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split("\t")[1].split(':')[0][0:8]))) for k, j in ks[start:start+count-1]]
-        else:
-            ox = [("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split("\t")[1].split(':')[0][0:8]))) for k in redis_store.lrange(rkey, start, start+count-1)]
-        # except:
-        #     ox = []
-    else:
-        key = keys[0]
-        ox1 = lib.applyfilter(key, fs, tpe)
-        total = len(ox1)
-        ox = [("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), "\t".join(k.split("\t")[1:]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split('\t')[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
+    if not key:
+        return render_template("error_page.html", code="400", name="Search Error",
+                               description="No search term. Please submit the search term as parameter 'query'.")
+    fs = [a for a in filters.split(';') if a]
+    start = (page - 1) * count
+    dynasty = fs[0] if (tpe == 'DYNASTY' and fs) else None
+    id_filters = [] if dynasty else fs
+    rows, total = lib.doftsearch(key, filters=id_filters, dynasty=dynasty,
+                                  offset=start, limit=count)
+    if total == 0:
+        return render_template("error_page.html",
+                               description="Text search for %s: Nothing found!" % (key), key=key)
+    ox = [(content.split(','), location, lib.get_meta(txtid8))
+          for (content, location, txtid8) in rows]
     p = lib.Pagination(key, page, count, total, ox)
-    return render_template('result.html', sr={'list' : p.items, 'total': total }, key=q, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), tpe=tpe, sort=sort)
+    return render_template('result.html',
+                           sr={'list': p.items, 'total': total}, key=key,
+                           pagination=p,
+                           pl={'1': 'a', '2': 'b', '3': 'c', '4': 'd'},
+                           start=start, count=count,
+                           n=min(start + count, total),
+                           filter=";".join(fs), tpe=tpe)
 
 
 
@@ -358,7 +265,7 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
         user = session['user']
         uid = user
         user_settings=redis_store.hgetall("%s%s:settings" % (kr_user, user))
-        if user_settings.has_key(id):
+        if (id in user_settings):
             uidbranch = user_settings[id].split("/")
             branch=uidbranch[-1]
             uid = uidbranch[0]
@@ -374,7 +281,7 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     #     current_app.config['GITHUB_OAUTH_CLIENT_ID'],
     #     current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
     r = requests.get(url, auth=(user, token))
-    print url, r.status_code
+    print(url, r.status_code)
     if r.status_code == 200:
         fn = r.content
         editurl = xediturl
@@ -500,10 +407,10 @@ def getimage():
     filename = request.values.get('filename', '')
     try:
         datei = "%s/%s" % (current_app.config['IMGDIR'], filename)
-        fn = codecs.open(datei)
-    except:
+        fn = open(datei, encoding='utf-8')
+    except Exception:
         return "Not found"
-    return Response ("\n%s" % (fn.read(-1)),  content_type="text/plain;charset=UTF-8")
+    return Response("\n%s" % (fn.read(-1)), content_type="text/plain;charset=UTF-8")
 
 ## dic  these two also in api
 
@@ -528,28 +435,24 @@ def searchdic():
 
 ## catalog
 @main.route('/catalog', methods=['GET',])
-def catalog(page=1, count=20, coll="", label=""):
-    env.globals['session'] = session 
-    page=int(request.values.get('page', page))
-    count=int(request.values.get('count', count))
-    label=request.values.get('label', label)
-    r=redis_store
+def catalog():
     coll = request.values.get('coll', '')
     subcoll = request.values.get('subcoll', '')
-    if len(coll) < 1 and len(subcoll) < 1:
-        cat = [r.hgetall(a) for a in r.keys("kr:meta*") if len(a.split(":")[-1]) < 8 and "KR" in a]
-        cat.sort(key=lambda t : t['ID'])
+    db = lib.get_db()
+    if not coll and not subcoll:
+        rows = db.execute(
+            "SELECT txtid, title, dynasty, collection, raw_json"
+            " FROM metadata ORDER BY txtid"
+        ).fetchall()
     else:
-        cat = [r.hgetall("%s%s" %( zbmeta, k.split(':')[-1])) for k in r.keys(zbmeta+coll+"*")]
-        if coll in ['DZ', 'JY', 'T', 'X', 'SB']:
-            cat.sort(key=lambda t : t['EXTRAID'])
-        else:
-            cat.sort(key=lambda t : t['ID'])
-            cat = [a for a in cat if a['STATUS'] == "READY"]
-    total = len(cat)
-    tits = cat[(page-1)*count:page*count]
-    p = lib.Pagination(coll, page, count, total, tits)
-    return render_template('catalog.html', cat = cat, sr={'total': 0, 'coll': coll}, pagination=p, count=count, label=label, allc=len(cat))
+        rows = db.execute(
+            "SELECT txtid, title, dynasty, collection, raw_json"
+            " FROM metadata WHERE txtid LIKE ? ORDER BY txtid",
+            (coll + '%',),
+        ).fetchall()
+    cat = [lib.get_meta(r['txtid']) for r in rows]
+    return render_template('catalog.html', cat=cat,
+                           sr={'total': len(cat), 'coll': coll})
 
 @main.route('/titlesearch', methods=['GET',])
 def titlesearch(count=20, page=1):
@@ -558,23 +461,24 @@ def titlesearch(count=20, page=1):
     count=int(request.values.get('count', count))
     page=int(request.values.get('page', page))
     filters = request.values.get('filter', '')
-    fs = filters.split(';')
-    fs = [a for a in fs if len(a) > 1]
-    if len(key) > 0:
-        if not redis_store.exists(titpref+key):
-            if not(lib.dotitlesearch(titpref, key)):
-                print "lg: ", lg
-                if lg == 'ja':
-                    return render_template("error_page.html", description = u"タイトル検索 %s: 該当するタイトルはありません。" % (key), key=key)
-                else:
-                    return render_template("error_page.html", description = "Title search for %s: Nothing found" % (key), key=key)
-    else:
-        return render_template("error_page.html", code="400", name = "Search Error", description = "No search term. Please submit the search term as parameter 'query'.")
+    fs = [a for a in filters.split(';') if len(a) > 1]
+    if not key:
+        return render_template("error_page.html", code="400", name="Search Error",
+                               description="No search term. Please submit the search term as parameter 'query'.")
     start = (page - 1) * count
-    total = redis_store.llen(titpref+key)
-    tits = redis_store.lrange(titpref+key, start, start+count)
+    rows, total = lib.dotitlesearch(key, offset=start, limit=count)
+    if total == 0:
+        return render_template("error_page.html",
+                               description="Title search for %s: Nothing found" % (key), key=key)
+    tits = [(txtid, title, lib.get_meta(txtid)) for (txtid, title) in rows]
     p = lib.Pagination(key, page, count, total, tits)
-    return render_template('titles.html', sr={'list' : p.items, 'total': total }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), prefix=titpref)
+    return render_template('titles.html',
+                           sr={'list': p.items, 'total': total}, key=key,
+                           pagination=p,
+                           pl={'1': 'a', '2': 'b', '3': 'c', '4': 'd'},
+                           start=start, count=count,
+                           n=min(start + count, total),
+                           filter=";".join(fs), prefix='')
 
 ## filter
 @main.route('/getfacets', methods=['GET', ])
@@ -582,64 +486,39 @@ def getfacets():
     f = []
     key = request.values.get('query', '')
     tpe = request.values.get('type', 'ID')
-    prefix = request.values.get('prefix', '')
-    # length of the ID
     ln = int(request.values.get('len', '3'))
-    # number of top_most entries, 0 = all
     cnt = int(request.values.get('cnt', '3'))
-    if 'user' in session:
-        user = session['user']
-    else:
-        user = False
-    if cnt == 0:
-        cnt = None
-    if tpe == 'ID':
-        f = [a.split('\t')[1][0:ln] for a in redis_store.lrange(prefix+key, 1, redis_store.llen(prefix+key))]
-    elif tpe == 'FILTER':
-        fs = []
-        if user:
-            tf = redis_store.keys("%s%s$*" % (kr_user, user))
-            for f in tf:
-                fk, ft = f.split("$")
-                fs.append(("$"+ft, {'TITLE': ft}, "", ft))
-    elif tpe == 'DYNASTY':
-        f = [redis_store.hgetall("%s%s" % (zbmeta, a.split('\t')[1].split('_')[0])) for a in redis_store.lrange(prefix+key, 1, redis_store.llen(prefix+key))]
-        f = [a['DYNASTY'] for a in f if a.has_key('DYNASTY')]
-    c = Counter(f)
-    if tpe == 'ID':
-        if ln == 4:
-            fs = [(a[0], {'TITLE' : "%s/%s" % (redis_store.hgetall("%s%s" %(zbmeta, a[0][:-1]))['TITLE'], redis_store.hgetall("%s%s" %(zbmeta, a[0]))['TITLE'])}, a[1], tpe) for a in c.most_common(cnt)]
-        else:
-            fs = [(a[0], redis_store.hgetall("%s%s" %(zbmeta, a[0])), a[1], tpe) for a in c.most_common(cnt)]
-    elif tpe == 'DYNASTY':
-        fs = [(a[0], {'TITLE': a[0]}, a[1], tpe) for a in c.most_common(cnt)]
+    top_n = cnt if cnt > 0 else 0
+    fs = lib.get_facets(key, tpe=tpe, id_len=ln, top_n=top_n)
     return render_template('facets.html', fs=fs, key=key)
-#    return Response("%s" % (c.most_common(cnt)))
 
 @main.route('/addfilter', methods=['GET',])
 def addfilter(count=20, page=1):
     key = request.values.get('query', '')
     add = request.values.get('newfilter', '')
     filters = request.values.get('filter', '')
-    count=int(request.values.get('count', count))
-    page=int(request.values.get('page', page))
-    fs = filters.split(';')
-    fs.append(add)
-    start = (page - 1) * count  + 1
-    ox = lib.applyfilter(key, fs)
-    total = len(ox)
-    ox = ox[start:start+count]
-    oy = [  (k.split("\t")[0].split(','), k.split("\t")[1], redis_store.hgetall("%s%s" %( zbmeta, k.split("\t")[1].split(':')[0][0:8]))) for k in ox]
+    count = int(request.values.get('count', count))
+    page = int(request.values.get('page', page))
+    fs = [a for a in filters.split(';') if a]
+    if add:
+        fs.append(add)
+    start = (page - 1) * count
+    rows, total = lib.doftsearch(key, filters=fs, offset=start, limit=count)
+    oy = [(content.split(','), location, lib.get_meta(txtid8))
+          for (content, location, txtid8) in rows]
     p = lib.Pagination(key, page, count, total, oy)
-    return render_template('result.html', sr={'list' : p.items, 'total': total, 'head' : '', 'link' : '' }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' })
-    
+    return render_template('result.html',
+                           sr={'list': p.items, 'total': total,
+                               'head': '', 'link': ''},
+                           key=key, pagination=p,
+                           pl={'1': 'a', '2': 'b', '3': 'c', '4': 'd'})
+
 
 @main.route('/remfilter', methods=['GET',])
 def remfilter():
-    query = request.values.get('query', '')
-    rem = request.values.get('remove', '')
-    filters = request.values.get('filter', '')
-    print filters
+    # Placeholder kept for URL stability; filter state is encoded in the
+    # client-side query string, so there's nothing to mutate here.
+    return ('', 204)
     
 ## unrelated:
 
@@ -677,7 +556,7 @@ def index():
 
 @main.route('/login/<user>', methods=['GET',])
 def usersettings(user=None):
-    print "user:", user
+    print("user:", user)
     #implement some logic to
     # - see if we have the KR-Workspace on the user account, getting it if not.
     # - displaying some info and offering to change settings.
@@ -813,7 +692,7 @@ def advsearch():
         rt = [[],[],[]]
         for j, k in enumerate(keys):
             rx = []
-            if len(k) > 0 (j == 0 or conn[j] in ["and", "or"]):
+            if len(k) > 0 and (j == 0 or conn[j] in ["and", "or"]):
                 if j == 0 or acc != "line":
                     if not redis_store.exists(k): 
                         lib.doftsearch(k)
@@ -869,7 +748,7 @@ value will be ignored.</li>
         x = 2
         n = 3
         acc = "para"
-        if request.form.has_key("br"):
+        if "br" in request.form:
             br = True
         else:
             br = False
@@ -891,7 +770,7 @@ value will be ignored.</li>
             else:
                 inp = mdx_re.sub("", inp)
                 strs = lib.partition(inp, x)
-            print inp
+            print(inp)
             for s in strs:
                 #we take the first n chars
                 key = s[:n]

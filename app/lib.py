@@ -12,12 +12,13 @@ import subprocess
 from github import Github
 from collections import defaultdict
 from difflib import SequenceMatcher
+from .search_db import get_db  # re-exported for view layer
 
 zbmeta = "kr:meta:"
 kr_user = "kr_user:"
 tpref="taisho:"
 ## dictionary stuff.  really should wrap this in an object?!
-md_re = re.compile(ur"<[^>]*>|[　-㄀＀-￯\n¶]+|\t[^\n]+\n|\$[^;]+;")
+md_re = re.compile(r"<[^>]*>|[　-㄀＀-￯\n¶]+|\t[^\n]+\n|\$[^;]+;")
 gaiji = re.compile(r"&([^;]+);")
 imgbase = "<img height='20' width='20' alt='{gaiji}' title='{gaiji}' src='https://raw.githubusercontent.com/kanripo/KR-Gaiji/master/images/{gaiji}.png'/>"
 
@@ -158,15 +159,6 @@ dictab = {'cik' : u'探典釋辭',
           'guxun' : u'故訓匯纂',
           } 
 
-try:
-    import redis
-except:
-    pass
-
-try:
-    r = redis.StrictRedis(host='localhost', port=6379, db=0, charset="utf-8", decode_responses=True)
-except:
-    r = nil
 
 ## helper routines
 # dic
@@ -224,62 +216,9 @@ def formatle(l, e, dicurl):
             return "%s : %s" % (l, e)
             
 def dicentry(key, dicurl):
-    if r:
-        try:
-            d = r.hgetall(key)
-        except:
-            return "no result"
-        try:
-            d.pop('dummy')
-        except:
-            pass
-        if len(d) > 0:
-            ks = d.keys()
-            ks.sort()
-            s = "** %s (%s)" % (key, len(d))
-            xtr = ""
-            ytr = ""
-            df=[]
-            lc=[]
-            hy=[]
-            seen=[]
-            for a in ks:
-                k = a.split('-')
-                if k[0] == 'loc':
-                    lc.append(formatle(k[1], d[a], dicurl))
-                else:
-                    if k[1] == 'kanwa':
-                        xtr +=  " " + d[a]
-                    if k[1] == 'abc':
-                        ytr += " " + d[a]
-                    if k[1] == 'hydcd1':
-                        hy.append("**** %s: %s\n" % ("".join(k[2:]), d[a]))
-                    elif k[1] in seen:
-                        df.append("%s: %s\n" % ("".join(k[2:]), d[a]))
-                    else:
-                        if len(k) > 1:
-                            df.append("*** %s\n%s: %s\n" % (dictab[k[1]], "".join(k[2:]), d[a]))
-                        else:
-                            df.append("*** %s\n%s\n" % (dictab[k[1]],  d[a]))
-                        seen.append(k[1])
-            if len(hy) > 0:
-                hyr = "*** %s\n%s\n" % (dictab['hydcd1'],  "".join(hy))
-            else:
-                hyr = ""
-            if len(df) > 0:
-                dfr = "%s\n" % ("".join(df))
-            else:
-                dfr = ""
-            if len(s) + len(xtr) + len(ytr) > 100:
-                dx = 100 - len(s) - len(xtr) 
-#                print dx
-                ytr = ytr[0:dx]
-            xtr = ytr = ""
-            return u"%s%s%s\n%s%s*** %s\n%s\n" % (s, xtr, ytr, hyr , dfr, dictab['loc'] , "\n".join(lc))
-        else:
-            return ""
-    else:
-        return "no redis"
+    # Dictionary backend (formerly a separate Redis db) is not wired up in
+    # this build. Returning empty so the /dic endpoint degrades gracefully.
+    return ""
 
 def prevnext(page):
     p = page.split('-')
@@ -297,83 +236,137 @@ def prevnext(page):
 
 ## search
 
-def doftsearch(key, idxdir=None, exp=3600):
-    if not idxdir:
-        idxdir = current_app.config['IDXDIR']
-    try:
-#subprocess.call(['bzgrep -H ^龍二  /Users/Shared/md/index/79/795e*.idx*'], stdout=of, shell=True )
-#ox = subprocess.check_output(['bzgrep -H ^%s  /Users/Shared/md/index/%s/%s*.idx*' % (key[1:], ("%4.4x" % (ord(key[0])))[0:2], "%4.4x" % (ord(key[0])))], shell=True )
-        ox = subprocess.check_output(['bzgrep -H ^%s  %s/%s/%s/%s*.idx* | cut -d : -f 2-' % (key[1:],
-              idxdir,  ("%4.4x" % (ord(key[0])))[0:2], ("%4.4x" % (ord(key[0])))[0:4], "%4.4x" % (ord(key[0])))], shell=True )
-#        ox = subprocess.check_output(['bzgrep -H ^%s  %s/%s/%s*.idx* | cut -d : -f 2-' % (key[1:],
-#              current_app.config['IDXDIR'],  ("%4.4x" % (ord(key[0])))[0:2], "%4.4x" % (ord(key[0])))], shell=True )
-    except subprocess.CalledProcessError:
-        return False
-    ux = ox.decode('utf8')
-    ux = gaiji.sub(lambda x : imgbase.format(gaiji=x.group(1)), ux)
-    s=ux.split('\n')
-    s=[a for a in s if len(a) > 1]
-    #do we want to sort right away here?
-    s.sort()
-    if len(s) > 0:
+
+def _escape_fts(key):
+    """Quote a user query for the FTS5 MATCH operator."""
+    return '"' + key.replace('"', '""') + '"'
+
+
+def _ft_search_clause(key):
+    """Return (where_sql, params_tail) for searching `content` for `key`.
+
+    The FTS5 trigram tokenizer requires queries of >=3 characters. Shorter
+    queries fall back to LIKE on the same column.
+    """
+    if len(key) >= 3:
+        return "search_idx MATCH ?", (_escape_fts(key),)
+    return "content LIKE ?", ("%" + key + "%",)
+
+
+def _filter_clause(filters, dynasty):
+    """Return (extra_sql, params) to append to a search query."""
+    sql_parts = []
+    params = []
+    for f in filters or []:
+        if not f:
+            continue
+        sql_parts.append("substr(txtid,1,?) = ?")
+        params.extend([len(f), f])
+    if dynasty:
+        sql_parts.append(
+            "txtid IN (SELECT txtid FROM metadata WHERE dynasty = ?)"
+        )
+        params.append(dynasty)
+    if not sql_parts:
+        return "", []
+    return " AND " + " AND ".join(sql_parts), params
+
+
+def doftsearch(key, filters=None, dynasty=None, offset=0, limit=20):
+    """Full-text search via FTS5 trigram. Returns (rows, total).
+
+    Each row is (content, location, txtid8). `location` is the
+    "TXTID_JUAN:PAGE:LINE" string consumed by result.html.
+    """
+    if not key:
+        return [], 0
+    where_sql, where_params = _ft_search_clause(key)
+    extra_sql, extra_params = _filter_clause(filters, dynasty)
+    params = list(where_params) + list(extra_params)
+    db = get_db()
+    total = db.execute(
+        f"SELECT COUNT(*) FROM search_idx WHERE {where_sql}{extra_sql}",
+        params,
+    ).fetchone()[0]
+    rows = db.execute(
+        f"SELECT content, location, txtid FROM search_idx"
+        f" WHERE {where_sql}{extra_sql}"
+        f" ORDER BY location LIMIT ? OFFSET ?",
+        params + [limit, offset],
+    ).fetchall()
+    out = [(gaiji.sub("⬤", r["content"]), r["location"], r["txtid"]) for r in rows]
+    return out, total
+
+
+def dotitlesearch(key, offset=0, limit=20):
+    """Substring title search. Returns (rows, total). Each row is (txtid, title)."""
+    if not key:
+        return [], 0
+    db = get_db()
+    total = db.execute(
+        "SELECT COUNT(*) FROM titles WHERE title LIKE ?",
+        ("%" + key + "%",),
+    ).fetchone()[0]
+    rows = db.execute(
+        "SELECT txtid, title FROM titles WHERE title LIKE ?"
+        " ORDER BY title LIMIT ? OFFSET ?",
+        ("%" + key + "%", limit, offset),
+    ).fetchall()
+    return [(r["txtid"], r["title"]) for r in rows], total
+
+
+def get_meta(txtid8):
+    """Return the metadata dict for an 8-char txtid, or {}."""
+    db = get_db()
+    row = db.execute(
+        "SELECT title, dynasty, collection, raw_json FROM metadata WHERE txtid = ?",
+        (txtid8,),
+    ).fetchone()
+    if row is None:
+        return {}
+    if row["raw_json"]:
+        import json
         try:
-            redis_store.rpush(key, *s)
-            if exp:
-                redis_store.expire(key, exp)
-        except:
-            return False
-        return True
+            data = json.loads(row["raw_json"])
+        except Exception:
+            data = {}
     else:
-        return False
+        data = {}
+    data.setdefault("TITLE", row["title"] or "")
+    data.setdefault("DYNASTY", row["dynasty"] or "")
+    data.setdefault("COLLECTION", row["collection"] or "")
+    data["ID"] = txtid8
+    return data
 
-## title search
-def dotitlesearch(titpref, key, exp=3600):
-    try:
-        ox = subprocess.check_output(['bzgrep -H %s  %s/*titles.txt | cut -d : -f 2-' % (key,
-              current_app.config['MDBASE']+'/system')], shell=True )
-    except subprocess.CalledProcessError:
-        return False
-    ux = ox.decode('utf8')
-    s=ux.split('\n')
-    # sort on the title
-    s.sort(key=lambda t : t.split('\t')[-1])
-    s=[a for a in s if len(a) > 1]
-    if len(s) > 0:
-        redis_store.rpush(titpref+key, *s)
-        redis_store.expire(titpref+key, exp)
-        return True
-    else:
-        return False
 
-def applyfilter(key, fs, tpe):
-    """key is the query being searched, fs is a list of filters to apply, tpe is the type of the filter. """
-    ox = []
-    total = redis_store.llen(key)
-    for f in fs:
-        # apply the filters:
-        if len(f) > 0:
-            if f.startswith("$"):
-                #e.g. cwittern:$Favorites == content of KR-Workspace/Texts/Favorites.txt
-                #first, see if we already have this text in redis:
-                u=session['user']
-                if len(redis_store.keys(kr_user + u + f)) > 0:
-                    ls = redis_store.lrange(kr_user + u + f, 0, redis_store.llen(kr_user + u + f))
-                else:
-                    if ghfilterfile2redis(u+f) > 0:
-                        ls = redis_store.lrange(kr_user + u + f, 0, redis_store.llen(kr_user + u + f))
-                    else:
-                        ls = []
-                ox.extend([k for k in redis_store.lrange(key, 1, redis_store.llen(key)) if k.split("\t")[1].split(':')[0].split("_")[0] in ls])
-            elif tpe == 'DYNASTY':
-                fx = [redis_store.hgetall("%s%s" % (zbmeta, a.split('\t')[1].split(':')[0].split("_")[0])) for a in redis_store.lrange(key, 1, redis_store.llen(key))]
-                fx = ([a['ID'] for a in fx if a.has_key('DYNASTY') and a['DYNASTY'] == f])
-                ox.extend([k for k in redis_store.lrange(key, 1, redis_store.llen(key)) if k.split()[1].split(':')[0].split("_")[0] in fx])
-            else:
-                ox.extend([k for k in redis_store.lrange(key, 1, redis_store.llen(key)) if k.split()[1].split(':')[0][0:len(f)] == f])
-    if len(ox) > 0:
-        ox=list(set(ox))
-        ox.sort()
-    return ox
+def get_facets(key, tpe="ID", id_len=3, top_n=10, filters=None, dynasty=None):
+    """Return facet rows for the search-results sidebar.
+
+    Each row is (facet_key, metadata_dict, count, type_label).
+    """
+    if not key:
+        return []
+    where_sql, where_params = _ft_search_clause(key)
+    extra_sql, extra_params = _filter_clause(filters, dynasty)
+    params = list(where_params) + list(extra_params)
+    db = get_db()
+    limit_clause = f" LIMIT {int(top_n)}" if top_n else ""
+    if tpe == "DYNASTY":
+        rows = db.execute(
+            f"SELECT m.dynasty AS facet, COUNT(*) AS n"
+            f" FROM search_idx JOIN metadata m ON m.txtid = search_idx.txtid"
+            f" WHERE {where_sql}{extra_sql} AND m.dynasty IS NOT NULL AND m.dynasty != ''"
+            f" GROUP BY m.dynasty ORDER BY n DESC{limit_clause}",
+            params,
+        ).fetchall()
+        return [(r["facet"], {"TITLE": r["facet"]}, r["n"], tpe) for r in rows]
+    rows = db.execute(
+        f"SELECT substr(txtid,1,?) AS facet, COUNT(*) AS n"
+        f" FROM search_idx WHERE {where_sql}{extra_sql}"
+        f" GROUP BY facet ORDER BY n DESC{limit_clause}",
+        [int(id_len)] + params,
+    ).fetchall()
+    return [(r["facet"], get_meta(r["facet"]), r["n"], tpe) for r in rows]
 
 def sortres(rkey, sort, rsort):
     #sort the redis contents of rkey by sort, return list of keys
@@ -430,7 +423,7 @@ def ghsave(pathname, content, repo=None, commit_message=None, new=False):
 
 def ghlistcontent(repo, dir, branch=None, ext=None):
     #get the content from default branch otherwise branch specified, optionally filtered by extension
-    if not session.has_key('user'):
+    if not ('user' in session):
         return -1
     user=session['user']
     token=session['token']
@@ -600,7 +593,7 @@ class Pagination(object):
             {% endmacro %}
         """
         last = 0
-        for num in xrange(1, self.pages + 1):
+        for num in range(1, self.pages + 1):
             if num <= left_edge or \
                (num > self.page - left_current - 1 and \
                 num < self.page + right_current) or \
@@ -616,7 +609,7 @@ def gettaisho(vol, page):
     page=page.lower()
     page=page.replace("p", "")
     tmp = re.split("([a-z])", page)
-    print page, tmp
+    print(page, tmp)
     if len(tmp)==1:
         tmp.append("a")
     if len(tmp) == 2 or len(tmp[2]) < 2:
@@ -624,7 +617,7 @@ def gettaisho(vol, page):
     try:
         pn=float(tmp[0] + str(ord(tmp[1]) - 96) + tmp[2])
     except:
-        print tmp
+        print(tmp)
         pn=0
     res=redis_store.zrangebyscore(tpref+vol, pn - 20000, pn + 20000, withscores=True)
     if len(res) > 0:

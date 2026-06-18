@@ -1,2 +1,1 @@
 -r common.txt
-wsgiref==0.1.2

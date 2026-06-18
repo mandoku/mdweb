@@ -1,10 +1,6 @@
 #    -*- coding: utf-8 -*-
-from flask import jsonify
-from flask import Response, render_template, redirect, url_for, abort, flash, request,\
-    current_app, make_response, send_file
-from app.exceptions import ValidationError
+from flask import Response, url_for, request, current_app, send_file
 from . import api
-from .. import redis_store
 from .. import lib
 
 
@@ -61,7 +57,7 @@ def accept(func_or_mimetype=None):
 
 @api.route('/index', methods=['GET',])
 def index():
-    print request.values.has_key("query")
+    print("query" in request.values)
     return "INDEX"
 
 
@@ -98,7 +94,7 @@ def searchtitle(count=20, start=0, n=20):
 @searchtitle.accept('application/json')
 def searchtitle_json(count=20, start=0, n=20):
     mime='application/json'
-    print "returning JSON"
+    print("returning JSON")
     return searchtitle_internal(mime, count, start, n)
     
 def searchtitle_internal(mime, count=20, start=0, n=20, force=False):
@@ -133,61 +129,19 @@ def searchtext(count=20, start=None, n=20):
 @searchtext.accept('application/json')
 def searchtext_json(count=20, start=None, n=20):
     mime='application/json'
-    print "returning JSON"
+    print("returning JSON")
     return searchtext_internal(mime, count, start, n)
     
 def searchtext_internal(mime, count=20, start=None, n=20):
     zbmeta = "kr:meta:"
     key = request.values.get('query', '')
-    force = request.values.has_key("force")
-    var = request.values.has_key("all-editions")
-    titles = request.values.has_key('with-titles')
-    ready = request.values.has_key('kwic-ready')
-    link = request.values.has_key('with-link')
-    if request.values.has_key("start"):
-        start=int(request.values.get('start', 0))
-    if request.values.has_key("count"):
-        count=int(request.values.get('count', count))
-        if not start:
-            start = 0
-    else:
-        count = None
-    if len(key) > 0:
-        if (not redis_store.exists(key)) or force:
-            lib.doftsearch(key)
-    else:
-        return Response("""400 please submit searchkey as parameter 'query'.
-Other parameters are:
-  'force‘： This parameter, set to any value, will force a rerun of the search, by passing the cache.
-  'count':  (integer) Number of items to transmit.
-  'start':  (integer) Position of first item to transmit.
-  'with-titles': This parameter, if present, will cause the results to include the titles in a tab-separated text format, this also implies 'kwic-ready'.
-  'kwic-ready' : This parameter, if present, will cause the keyword in context format to be formated to be directly usable.
-""",  content_type="text/plain;charset=UTF-8")
-    total = redis_store.llen(key)
-    ox = redis_store.lrange(key, 1, total)
-    if mime == 'application/json':
-        out = [{"prev" : k.split("\t")[0].split(',')[1], "match" : "%s%s" % (key[0], k.split("\t")[0].split(',')[0]), "meta" : proc_meta(redis_store.hgetall(u"%s%s" %( zbmeta, k.split('\t')[1].split(':')[0][0:8]))), "location" : proc_loc(k.split("\t")[1]), "textid" : k.split('\t')[1].split(':')[0][0:8]} for k in ox]
-        return jsonify({"query" : key, "count" : len(out), "matches" : out})
-    else:
-        if titles:
-            ox = addtitles(ox, key, var, zbmeta)
-        elif ready:
-            ox = ["\t".join(("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), k.split('\t', 1)[1])) for k in ox]
-
-        #TODO: implement all-editions handling
-        if not var and not titles:
-            out = []
-            for k in ox:
-                l = k.split("\t")
-                if len(l) == 2 or l[-1] == "n":
-                    out.append("\t".join(l))
-            ox = out
-        if count:
-            if count > len(ox):
-                count = len(ox)
-            ox = ox[start:count+1]
-        return Response ("\n%s" % ("\n".join(ox).decode('utf-8')),  content_type="text/plain;charset=UTF-8")
+    count = int(request.values.get('count', count))
+    start = int(request.values.get('start', 0))
+    if not key:
+        return "400 please submit searchkey as parameter 'query'."
+    rows, total = lib.doftsearch(key, offset=start, limit=count)
+    body = "\n".join(f"{content}\t{location}" for (content, location, _) in rows)
+    return Response("\n%s" % body, content_type="text/plain;charset=UTF-8")
 
 def proc_loc(location):
     """prepare location for json"""
@@ -201,15 +155,15 @@ def proc_loc(location):
 def proc_meta(meta):
     """Process the metadata returned from redis to the format required for returning"""
     retd = {}
-    if meta.has_key("RESP"):
+    if ("RESP" in meta):
         retd.update({"resp" : meta["RESP"]})
     else:
         retd.update({"resp" : ""})
-    if meta.has_key("TPUR"):
+    if ("TPUR" in meta):
         retd.update({"title" : meta["TPUR"]})
     else:
         retd.update({"title" : ""})
-    if meta.has_key("DYNASTY"):
+    if ("DYNASTY" in meta):
         retd.update({"dynasty" : meta["DYNASTY"]})
     else:
         retd.update({"dynasty" : ""})
@@ -257,7 +211,8 @@ def getfile():
     filename = request.values.get('filename', '')
     try:
         datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-        fn = codecs.open(datei)
+        print(datei)
+        fn = open(datei, encoding='utf-8')
     except:
         try:
             datei="%s/%s/Readme.org" % (current_app.config['TXTDIR'],"/".join(filename.split("/")[:-1]))
@@ -291,7 +246,7 @@ def getimage():
     datei = "%s/%s" % (current_app.config['IMGDIR'], filename)
     mtype = filename[-3:]
     try:
-        return send_file(datei, mimetype='image/%s' % (mtype), attachment_filename=filename)
+        return send_file(datei, mimetype='image/%s' % (mtype), download_name=filename)
     except:
         return "404 Not found"
 #    return Response ("\n%s" % (fn.read(-1)),  content_type="image/%s" % (mtype))
@@ -307,7 +262,7 @@ def getimgdata():
         return Response ("%s" % (fd.read(-1)),  content_type="text/%s" % (mtype))
     else:
         url="%s%s" % (ghlink, filename)
-        print url
+        print(url)
         try:
             r = requests.get(url)
         except:

@@ -1,7 +1,6 @@
 #    -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import re, git, codecs, os
-from jinja2 import Markup
+from markupsafe import Markup
 # re.M is multiline
 
 config_parser_re=re.compile(r"#\+(.*): (.*)", re.M) 
@@ -44,7 +43,7 @@ class mdDocument(object):
                     self._config[m1[0]] = m1[1]
                 else:
                     self._config[m.group(1)] = m.group(2)
-        if not self._config.has_key('ID'):
+        if 'ID' not in self._config:
             self._config['ID'] = self.txtid
         return self._config
 
