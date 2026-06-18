@@ -1,17 +1,7 @@
 #    -*- coding: utf-8 -*-
-from flask import jsonify
-from flask import Response, render_template, redirect, url_for, abort, flash, request,\
-    current_app, make_response, send_file
-from app.exceptions import ValidationError
+from flask import Response, url_for, request, current_app, send_file
 from . import api
-from .. import redis_store
 from .. import lib
-
-
-import codecs, re
-#from . import mandoku_view
-
-import gitlab, requests
 
 
 @api.route('/index', methods=['GET',])
@@ -41,17 +31,13 @@ def procline():
 @api.route('/search', methods=['GET', 'POST',])
 def searchtext(count=20, start=None, n=20):
     key = request.values.get('query', '')
-    force = request.values.get('force', None)
-    count=int(request.values.get('count', count))
-    start=int(request.values.get('start', 0))
-    if len(key) > 0:
-        if (not redis_store.exists(key)) or force:
-            lib.doftsearch(key)
-    else:
+    count = int(request.values.get('count', count))
+    start = int(request.values.get('start', 0))
+    if not key:
         return "400 please submit searchkey as parameter 'query'."
-    total = redis_store.llen(key)
-    ox = redis_store.lrange(key, 1, total)
-    return Response ("\n%s" % ("\n".join(ox).decode('utf-8')),  content_type="text/plain;charset=UTF-8")
+    rows, total = lib.doftsearch(key, offset=start, limit=count)
+    body = "\n".join(f"{content}\t{location}" for (content, location, _) in rows)
+    return Response("\n%s" % body, content_type="text/plain;charset=UTF-8")
 
     
 ## file
@@ -68,8 +54,8 @@ def getfile():
     filename = request.values.get('filename', '')
     try:
         datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-        print datei
-        fn = codecs.open(datei)
+        print(datei)
+        fn = open(datei, encoding='utf-8')
     except:
         return "Not found"
     return Response ("\n%s" % (fn.read(-1)),  content_type="text/plain;charset=UTF-8")
@@ -99,7 +85,7 @@ def getimage():
     datei = "%s/%s" % (current_app.config['IMGDIR'], filename)
     mtype = filename[-3:]
     try:
-        return send_file(datei, mimetype='image/%s' % (mtype), attachment_filename=filename)
+        return send_file(datei, mimetype='image/%s' % (mtype), download_name=filename)
     except:
         return "404 Not found"
 

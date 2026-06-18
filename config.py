@@ -4,23 +4,21 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    MDBASE="/Users/Shared/md-remote"
-    TXTDIR="/Users/Shared/md-remote/text"
-    IDXDIR="/Users/Shared/md-remote/index"
-    IDXDIR="/tmp/index"
-    IMGDIR="/Users/Shared/md-remote/images"
+    MDBASE = os.environ.get('MDWEB_MDBASE', os.path.join(basedir, 'data'))
+    TXTDIR = os.environ.get('MDWEB_TXTDIR', os.path.join(basedir, 'data/text'))
+    INDEX_DB_PATH = os.environ.get('MDWEB_INDEX_DB',
+                                    os.path.join(basedir, 'data/search.sqlite'))
+    IMGDIR = os.environ.get('MDWEB_IMGDIR', os.path.join(basedir, 'data/images'))
     LANGUAGES = {
         'ja': '日本語',
         'en': 'English',
         }
     BABEL_DEFAULT_LOCALE='ja'
     DICURL = "dic:"
-    REDIS_URL = "redis://localhost:6379/5"
 
 
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'X and U and Z string'
     SSL_DISABLE = False
-    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_RECORD_QUERIES = True
     MAIL_SERVER = 'smtp.googlemail.com'
     MAIL_PORT = 587
@@ -93,7 +91,7 @@ class HerokuConfig(ProductionConfig):
         ProductionConfig.init_app(app)
 
         # handle proxy server headers
-        from werkzeug.contrib.fixers import ProxyFix
+        from werkzeug.middleware.proxy_fix import ProxyFix
         app.wsgi_app = ProxyFix(app.wsgi_app)
 
         # log to stderr

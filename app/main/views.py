@@ -1,30 +1,20 @@
 #    -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from flask import Response, render_template, redirect, url_for, abort, flash, Markup, request,\
+from flask import Response, render_template, redirect, url_for, abort, flash, request,\
     current_app, make_response, send_from_directory
-from flask.ext.login import login_required, current_user
-from flask.ext.sqlalchemy import get_debug_queries
+from markupsafe import Markup
+from flask_login import login_required, current_user
+from flask_sqlalchemy.record_queries import get_recorded_queries
 from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm,\
     CommentForm
 from .. import db
-from .. import redis_store
 from .. import lib
 from ..models import Permission, Role, User, Post, Comment
 from ..decorators import admin_required, permission_required
-from collections import Counter
 
-from datetime import datetime
-import subprocess
-
-
-import codecs, re
+import re
 from .. import mandoku_view
 
-import gitlab, requests
-
-zbmeta = "zb:meta:"
-titpref = "zb:title:"
 link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
 hd = re.compile(r"^(\*+) (.*)$")
 
@@ -41,24 +31,28 @@ def searchtext(count=20, page=1):
     page=int(request.values.get('page', page))
     filters = request.values.get('filter', '')
     tpe = request.values.get('type', '')
-    if len(key) > 0:
-        if not redis_store.exists(key):
-            if not lib.doftsearch(key):
-                return render_template("error_page.html", description = "Text search for %s: Nothing found!" % (key), key=key)
-    else:
-        return render_template("error_page.html", code="400", name = "Search Error", description = "No search term. Please submit the search term as parameter 'query'.")
-    fs = filters.split(';')
-    fs = [a for a in fs if len(a) > 0]
-    start = (page - 1) * count 
-    if len(fs) < 1:
-        total = redis_store.llen(key)
-        ox = [  (k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in redis_store.lrange(key, start, start+count-1)]
-    else:
-        ox1 = lib.applyfilter(key, fs, tpe)
-        total = len(ox1)
-        ox = [(k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox1[start:start+count+1]]
+    if not key:
+        return render_template("error_page.html", code="400", name="Search Error",
+                               description="No search term. Please submit the search term as parameter 'query'.")
+    fs = [a for a in filters.split(';') if a]
+    start = (page - 1) * count
+    dynasty = fs[0] if (tpe == 'DYNASTY' and fs) else None
+    id_filters = [] if dynasty else fs
+    rows, total = lib.doftsearch(key, filters=id_filters, dynasty=dynasty,
+                                  offset=start, limit=count)
+    if total == 0:
+        return render_template("error_page.html",
+                               description="Text search for %s: Nothing found!" % (key), key=key)
+    ox = [(content.split(','), location, lib.get_meta(txtid8))
+          for (content, location, txtid8) in rows]
     p = lib.Pagination(key, page, count, total, ox)
-    return render_template('result.html', sr={'list' : p.items, 'total': total }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), tpe=tpe)
+    return render_template('result.html',
+                           sr={'list': p.items, 'total': total}, key=key,
+                           pagination=p,
+                           pl={'1': 'a', '2': 'b', '3': 'c', '4': 'd'},
+                           start=start, count=count,
+                           n=min(start + count, total),
+                           filter=";".join(fs), tpe=tpe)
 
 
 
@@ -73,8 +67,8 @@ def texttop(id=0, coll=None, seq=0):
     datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
     try:
         datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-        fn = codecs.open(datei, 'r', 'utf-8')
-    except:
+        fn = open(datei, encoding='utf-8')
+    except Exception:
         return "File Not found: %s" % (filename)
     for line in fn:
         if line.startswith('#+TITLE:'):
@@ -115,39 +109,17 @@ def showtext(juan, id=0, coll=None, seq=0):
     datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
     try:
         datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-        fn = codecs.open(datei)
-    except:
+        fn = open(datei, encoding='utf-8')
+    except Exception:
         return "File Not found: %s" % (filename)
     md = mandoku_view.mdDocument(fn.read(-1))
-    try:
-        res = redis_store.hgetall("%s%s" % ( zbmeta, id[0:8]))
-    except:
-        res = {}
+    res = lib.get_meta(id[0:8])
     res['ID'] = id
-    try:
-        title = res['TITLE']
-    except:
-        title = ""
+    title = res.get('TITLE', '')
     # else:
     #     md = mandoku_view.mdDocument(r.content.decode('utf-8'))
     return render_template('showtext.html', ct={'mtext': Markup("<br/>".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'] )
 #return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
-
-def showtextredis(juan, id=0, coll=None, seq=0):
-    juan = "%3.3d" % (int(juan))
-    if coll:
-        if coll.startswith('ZB'):
-            id = "%s%4.4d" % (coll, int(seq))
-        else:
-            #TODO need to find the canonical id for this, go to redis, pull it out
-            id="Not Implemented"
-    #the filename is of the form ZB1a/ZB1a0001/ZB1a0001_002.txt
-    filename = "%s/%s/%s_%s.txt" % (id[0:4], id, id, juan)
-    datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-    mr = mandoku_redis.RedisMandoku(redis_store, None, 100000, datei)
-    
-    return render_template('', ct={'mtext': md.md, 'doc' : doc} )
-    
 
 ## image
 
@@ -156,10 +128,10 @@ def getimage():
     filename = request.values.get('filename', '')
     try:
         datei = "%s/%s" % (current_app.config['IMGDIR'], filename)
-        fn = codecs.open(datei)
-    except:
+        fn = open(datei, encoding='utf-8')
+    except Exception:
         return "Not found"
-    return Response ("\n%s" % (fn.read(-1)),  content_type="text/plain;charset=UTF-8")
+    return Response("\n%s" % (fn.read(-1)), content_type="text/plain;charset=UTF-8")
 
 ## dic  these two also in api
 
@@ -185,17 +157,23 @@ def searchdic():
 ## catalog
 @main.route('/catalog', methods=['GET',])
 def catalog():
-    r=redis_store
     coll = request.values.get('coll', '')
     subcoll = request.values.get('subcoll', '')
-    if len(coll) < 1 and len(subcoll) < 1:
-        cat = [r.hgetall(a) for a in r.keys("zb:catalog*")]
-        cat.sort(key=lambda t : t['ID'])
+    db = lib.get_db()
+    if not coll and not subcoll:
+        rows = db.execute(
+            "SELECT txtid, title, dynasty, collection, raw_json"
+            " FROM metadata ORDER BY txtid"
+        ).fetchall()
     else:
-        cat = [redis_store.hgetall("%s%s" %( zbmeta, k.split(':')[-1][0:8])) for k in r.keys(zbmeta+coll+"*")]
-#        cat = [c for c in cat if coll in  c['ID']]
-        cat.sort(key=lambda t : t['ID'])
-    return render_template('catalog.html', cat = cat, sr={'total': 0, 'coll': coll})
+        rows = db.execute(
+            "SELECT txtid, title, dynasty, collection, raw_json"
+            " FROM metadata WHERE txtid LIKE ? ORDER BY txtid",
+            (coll + '%',),
+        ).fetchall()
+    cat = [lib.get_meta(r['txtid']) for r in rows]
+    return render_template('catalog.html', cat=cat,
+                           sr={'total': len(cat), 'coll': coll})
 
 @main.route('/titlesearch', methods=['GET',])
 def titlesearch(count=20, page=1):
@@ -203,76 +181,69 @@ def titlesearch(count=20, page=1):
     count=int(request.values.get('count', count))
     page=int(request.values.get('page', page))
     filters = request.values.get('filter', '')
-    fs = filters.split(';')
-    fs = [a for a in fs if len(a) > 1]
-    if len(key) > 0:
-        if not redis_store.exists(titpref+key):
-            if not(lib.dotitlesearch(titpref, key)):
-                return render_template("error_page.html", description = "Title search for %s: Nothing found" % (key), key=key)
-    else:
-        return render_template("error_page.html", code="400", name = "Search Error", description = "No search term. Please submit the search term as parameter 'query'.")
+    fs = [a for a in filters.split(';') if len(a) > 1]
+    if not key:
+        return render_template("error_page.html", code="400", name="Search Error",
+                               description="No search term. Please submit the search term as parameter 'query'.")
     start = (page - 1) * count
-    total = redis_store.llen(titpref+key)
-    tits = redis_store.lrange(titpref+key, start, start+count)
+    rows, total = lib.dotitlesearch(key, offset=start, limit=count)
+    if total == 0:
+        return render_template("error_page.html",
+                               description="Title search for %s: Nothing found" % (key), key=key)
+    tits = [(txtid, title, lib.get_meta(txtid)) for (txtid, title) in rows]
     p = lib.Pagination(key, page, count, total, tits)
-    return render_template('titles.html', sr={'list' : p.items, 'total': total }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' }, start=start, count=count, n = min(start+count, total), filter=";".join(fs), prefix=titpref)
+    return render_template('titles.html',
+                           sr={'list': p.items, 'total': total}, key=key,
+                           pagination=p,
+                           pl={'1': 'a', '2': 'b', '3': 'c', '4': 'd'},
+                           start=start, count=count,
+                           n=min(start + count, total),
+                           filter=";".join(fs), prefix='')
 
 ## filter
 @main.route('/getfacets', methods=['GET', ])
 def getfacets():
     key = request.values.get('query', '')
     tpe = request.values.get('type', 'ID')
-    prefix = request.values.get('prefix', '')
-    # length of the ID
     ln = int(request.values.get('len', '3'))
-    # number of top_most entries, 0 = all
     cnt = int(request.values.get('cnt', '3'))
-    if cnt == 0:
-        cnt = None
-    if tpe == 'ID':
-        f = [a.split('\t')[1][0:ln] for a in redis_store.lrange(prefix+key, 1, redis_store.llen(prefix+key))]
-    elif tpe == 'DYNASTY':
-        f = [redis_store.hgetall("%s%s" % (zbmeta, a.split('\t')[1].split(':')[0])) for a in redis_store.lrange(prefix+key, 1, redis_store.llen(prefix+key))]
-        f = [a['DYNASTY'] for a in f if a.has_key('DYNASTY')]
-    c = Counter(f)
-    if tpe == 'ID':
-        fs = [(a[0], redis_store.hgetall("%s%s" %(zbmeta, a[0])), a[1], tpe) for a in c.most_common(cnt)]
-    elif tpe == 'DYNASTY':
-        fs = [(a[0], {'TITLE': a[0]}, a[1], tpe) for a in c.most_common(cnt)]
+    top_n = cnt if cnt > 0 else 0
+    fs = lib.get_facets(key, tpe=tpe, id_len=ln, top_n=top_n)
     return render_template('facets.html', fs=fs, key=key)
-#    return Response("%s" % (c.most_common(cnt)))
 
 @main.route('/addfilter', methods=['GET',])
 def addfilter(count=20, page=1):
     key = request.values.get('query', '')
     add = request.values.get('newfilter', '')
     filters = request.values.get('filter', '')
-    count=int(request.values.get('count', count))
-    page=int(request.values.get('page', page))
-    fs = filters.split(';')
-    fs.append(add)
-    start = (page - 1) * count  + 1
-    ox = lib.applyfilter(key, fs)
-    total = len(ox)
-    print total, fs
-    ox = ox[start:start+count]
-    oy = [  (k.split()[0].split(','), k.split()[1], redis_store.hgetall("%s%s" %( zbmeta, k.split()[1].split(':')[0][0:8]))) for k in ox]
+    count = int(request.values.get('count', count))
+    page = int(request.values.get('page', page))
+    fs = [a for a in filters.split(';') if a]
+    if add:
+        fs.append(add)
+    start = (page - 1) * count
+    rows, total = lib.doftsearch(key, filters=fs, offset=start, limit=count)
+    oy = [(content.split(','), location, lib.get_meta(txtid8))
+          for (content, location, txtid8) in rows]
     p = lib.Pagination(key, page, count, total, oy)
-    return render_template('result.html', sr={'list' : p.items, 'total': total, 'head' : '', 'link' : '' }, key=key, pagination=p, pl={'1': 'a', '2': 'b', '3': 'c', '4' :'d' })
-    
+    return render_template('result.html',
+                           sr={'list': p.items, 'total': total,
+                               'head': '', 'link': ''},
+                           key=key, pagination=p,
+                           pl={'1': 'a', '2': 'b', '3': 'c', '4': 'd'})
+
 
 @main.route('/remfilter', methods=['GET',])
 def remfilter():
-    query = request.values.get('query', '')
-    rem = request.values.get('remove', '')
-    filters = request.values.get('filter', '')
-    print filters
+    # Placeholder kept for URL stability; filter state is encoded in the
+    # client-side query string, so there's nothing to mutate here.
+    return ('', 204)
     
 ## unrelated:
 
 @main.after_app_request
 def after_request(response):
-    for query in get_debug_queries():
+    for query in get_recorded_queries():
         if query.duration >= current_app.config['MDWEB_SLOW_DB_QUERY_TIME']:
             current_app.logger.warning(
                 'Slow query: %s\nParameters: %s\nDuration: %fs\nContext: %s\n'
@@ -303,7 +274,7 @@ def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
     pagination = user.posts.order_by(Post.timestamp.desc()).paginate(
-        page, per_page=current_app.config['MDWEB_POSTS_PER_PAGE'],
+        page=page, per_page=current_app.config['MDWEB_POSTS_PER_PAGE'],
         error_out=False)
     posts = pagination.items
     return render_template('user.html', user=user, posts=posts,
@@ -370,7 +341,7 @@ def post(id):
         page = (post.comments.count() - 1) / \
             current_app.config['MDWEB_COMMENTS_PER_PAGE'] + 1
     pagination = post.comments.order_by(Comment.timestamp.asc()).paginate(
-        page, per_page=current_app.config['MDWEB_COMMENTS_PER_PAGE'],
+        page=page, per_page=current_app.config['MDWEB_COMMENTS_PER_PAGE'],
         error_out=False)
     comments = pagination.items
     return render_template('post.html', posts=[post], form=form,
@@ -434,7 +405,7 @@ def followers(username):
         return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
     pagination = user.followers.paginate(
-        page, per_page=current_app.config['MDWEB_FOLLOWERS_PER_PAGE'],
+        page=page, per_page=current_app.config['MDWEB_FOLLOWERS_PER_PAGE'],
         error_out=False)
     follows = [{'user': item.follower, 'timestamp': item.timestamp}
                for item in pagination.items]
@@ -451,7 +422,7 @@ def followed_by(username):
         return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
     pagination = user.followed.paginate(
-        page, per_page=current_app.config['MDWEB_FOLLOWERS_PER_PAGE'],
+        page=page, per_page=current_app.config['MDWEB_FOLLOWERS_PER_PAGE'],
         error_out=False)
     follows = [{'user': item.followed, 'timestamp': item.timestamp}
                for item in pagination.items]
@@ -482,7 +453,7 @@ def show_followed():
 def moderate():
     page = request.args.get('page', 1, type=int)
     pagination = Comment.query.order_by(Comment.timestamp.desc()).paginate(
-        page, per_page=current_app.config['MDWEB_COMMENTS_PER_PAGE'],
+        page=page, per_page=current_app.config['MDWEB_COMMENTS_PER_PAGE'],
         error_out=False)
     comments = pagination.items
     return render_template('moderate.html', comments=comments,

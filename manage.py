@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import os
+import click
+
 COV = None
 if os.environ.get('FLASK_COVERAGE'):
     import coverage
@@ -15,23 +17,21 @@ if os.path.exists('.env'):
 
 from app import create_app, db
 from app.models import User, Follow, Role, Permission, Post, Comment
-from flask.ext.script import Manager, Shell
-from flask.ext.migrate import Migrate, MigrateCommand
+from flask_migrate import Migrate, upgrade
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
-manager = Manager(app)
 migrate = Migrate(app, db)
 
 
+@app.shell_context_processor
 def make_shell_context():
     return dict(app=app, db=db, User=User, Follow=Follow, Role=Role,
                 Permission=Permission, Post=Post, Comment=Comment)
-manager.add_command("shell", Shell(make_context=make_shell_context))
-manager.add_command('db', MigrateCommand)
 
 
-@manager.command
-def test(coverage=False):
+@app.cli.command("test")
+@click.option('--coverage/--no-coverage', default=False)
+def test(coverage):
     """Run the unit tests."""
     if coverage and not os.environ.get('FLASK_COVERAGE'):
         import sys
@@ -52,30 +52,48 @@ def test(coverage=False):
         COV.erase()
 
 
-@manager.command
-def profile(length=25, profile_dir=None):
+@app.cli.command("profile")
+@click.option('--length', default=25)
+@click.option('--profile-dir', default=None)
+def profile(length, profile_dir):
     """Start the application under the code profiler."""
-    from werkzeug.contrib.profiler import ProfilerMiddleware
+    from werkzeug.middleware.profiler import ProfilerMiddleware
     app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[length],
                                       profile_dir=profile_dir)
     app.run()
 
 
-@manager.command
+@app.cli.command("deploy")
 def deploy():
     """Run deployment tasks."""
-    from flask.ext.migrate import upgrade
-    from app.models import Role, User
-
-    # migrate database to latest revision
     upgrade()
-
-    # create user roles
     Role.insert_roles()
-
-    # create self-follows for all users
     User.add_self_follows()
 
 
-if __name__ == '__main__':
-    manager.run()
+@app.cli.group()
+def index():
+    """Search-index commands."""
+    pass
+
+
+@index.command("build")
+@click.option('--rebuild/--incremental', default=False,
+              help="Drop and rebuild the FTS table from scratch.")
+def index_build(rebuild):
+    """Build the SQLite FTS5 search index from TXTDIR."""
+    from app.indexer import build_index
+    db_path = app.config['INDEX_DB_PATH']
+    txtdir = app.config['TXTDIR']
+    n = build_index(txtdir, db_path, rebuild=rebuild)
+    click.echo(f"Indexed {n} lines into {db_path}")
+
+
+@index.command("load-metadata")
+def index_load_metadata():
+    """Load catalog metadata and titles from MDBASE/system into SQLite."""
+    from app.indexer import load_metadata
+    db_path = app.config['INDEX_DB_PATH']
+    mdbase = app.config['MDBASE']
+    n = load_metadata(mdbase, db_path)
+    click.echo(f"Loaded {n} metadata rows into {db_path}")

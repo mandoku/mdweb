@@ -1,11 +1,11 @@
 #    -*- coding: utf-8 -*-
 
-from flask.ext.wtf import Form
+from flask_wtf import FlaskForm as Form
 from wtforms import StringField, TextAreaField, BooleanField, SelectField,\
     SubmitField
-from wtforms.validators import Required, Length, Email, Regexp
+from wtforms.validators import DataRequired as Required, Length, Email, Regexp
 from wtforms import ValidationError
-from flask.ext.pagedown.fields import PageDownField
+from flask_pagedown.fields import PageDownField
 from ..models import Role, User
 
 

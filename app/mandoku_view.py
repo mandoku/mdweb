@@ -1,7 +1,6 @@
 #    -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import re, git
-from jinja2 import Markup
+from markupsafe import Markup
 # re.M is multiline
 
 config_parser_re=re.compile(r"#\+(.*): (.*)", re.M) 
