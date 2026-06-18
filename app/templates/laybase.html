@@ -54,11 +54,13 @@
 <li class="label-important"><a href="{{url_for('main.login')}}">{{_('Login')}}</a></li>
 {% endif %}
       </ul>
-      <form class="navbar-search pull-right" action="{{url_for('main.searchtext')}}" method="GET">
-	<input size="10" name="query" id="query" type="text" class="search-query" placeholder="{{_('Text Search')}}">
+      <form class="navbar-search pull-right form-inline" action="{{url_for('main.searchtext')}}" method="GET">
+	<input name="query" id="query" type="text" class="search-query" placeholder="{{_('Text Search')}}">
+	<button type="submit" class="btn btn-small">{{_('Search')}}</button>
       </form>
-      <form class="navbar-search pull-right" action="{{url_for('main.titlesearch')}}" method="GET">
-	<input  size="5" name="query" id="query" type="text" class="search-query" placeholder="{{_('Title Search')}}">
+      <form class="navbar-search pull-right form-inline" action="{{url_for('main.titlesearch')}}" method="GET">
+	<input name="query" id="query-title" type="text" class="search-query" placeholder="{{_('Title Search')}}">
+	<button type="submit" class="btn btn-small">{{_('Search')}}</button>
       </form>
 
 

@@ -61,7 +61,7 @@
     </table>
   </div>
 </div>
-{% if sr.total > 20 %}
+{% if pagination and sr.total > 20 %}
 <div class="pagination">
     {{ macros.pagination_widget(pagination, '.catalog', coll=coll, filter=filter, count=count) }}
 </div>
