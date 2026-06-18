@@ -39,7 +39,7 @@
     </table>
   </div>
 </div>
-{% if sr.total > 20 %}
+{% if pagination and sr.total > 20 %}
 <div class="pagination">
     {{ macros.pagination_widget(pagination, '.searchtext', query=key, filter=filter, count=count) }}
 </div>

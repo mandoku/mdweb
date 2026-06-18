@@ -63,7 +63,7 @@ def showcoll(coll, edition=None, fac=False):
 @main.route('/text/<id>/', methods=['GET',])
 def texttop(id=0, coll=None, seq=0):
     ct = {'toc' : [], 'id' : id}
-    filename = "%s/%s/%s.org" % (id[0:4], id[0:8], id)
+    filename = "%s/%s/Readme.org" % (id[0:4], id[0:8])
     datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
     try:
         datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
@@ -158,22 +158,23 @@ def searchdic():
 @main.route('/catalog', methods=['GET',])
 def catalog():
     coll = request.values.get('coll', '')
-    subcoll = request.values.get('subcoll', '')
     db = lib.get_db()
-    if not coll and not subcoll:
+    if not coll:
         rows = db.execute(
-            "SELECT txtid, title, dynasty, collection, raw_json"
-            " FROM metadata ORDER BY txtid"
+            "SELECT substr(txtid,1,4) AS prefix, COUNT(*) AS n"
+            " FROM metadata GROUP BY prefix ORDER BY prefix"
         ).fetchall()
+        cat = [{'ID': r['prefix'], 'TITLE': f"{r['prefix']} ({r['n']})",
+                'TYPE': 'collection'} for r in rows]
     else:
         rows = db.execute(
-            "SELECT txtid, title, dynasty, collection, raw_json"
-            " FROM metadata WHERE txtid LIKE ? ORDER BY txtid",
+            "SELECT txtid FROM metadata WHERE txtid LIKE ? ORDER BY txtid",
             (coll + '%',),
         ).fetchall()
-    cat = [lib.get_meta(r['txtid']) for r in rows]
+        cat = [lib.get_meta(r['txtid']) for r in rows]
     return render_template('catalog.html', cat=cat,
-                           sr={'total': len(cat), 'coll': coll})
+                           sr={'total': len(cat), 'coll': coll},
+                           pagination=None)
 
 @main.route('/titlesearch', methods=['GET',])
 def titlesearch(count=20, page=1):
@@ -190,7 +191,7 @@ def titlesearch(count=20, page=1):
     if total == 0:
         return render_template("error_page.html",
                                description="Title search for %s: Nothing found" % (key), key=key)
-    tits = [(txtid, title, lib.get_meta(txtid)) for (txtid, title) in rows]
+    tits = [f"{txtid} {title}" for (txtid, title) in rows]
     p = lib.Pagination(key, page, count, total, tits)
     return render_template('titles.html',
                            sr={'list': p.items, 'total': total}, key=key,
