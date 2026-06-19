@@ -101,3 +101,19 @@ def index_load_metadata():
     mdbase = app.config['MDBASE']
     n = load_metadata(mdbase, db_path)
     click.echo(f"Loaded {n} metadata rows into {db_path}")
+
+
+@index.command("build-taisho")
+@click.option('--source', default=None,
+              help="Path to mandoku-cbeta.el (defaults to TAISHO_SRC).")
+def index_build_taisho(source):
+    """Load the Taisho page→file index into SQLite."""
+    from app.indexer import build_taisho_index
+    src = source or app.config.get('TAISHO_SRC')
+    if not src:
+        raise click.UsageError(
+            "No source provided; pass --source or set MDWEB_TAISHO_SRC."
+        )
+    db_path = app.config['INDEX_DB_PATH']
+    n = build_taisho_index(src, db_path)
+    click.echo(f"Loaded {n} taisho_pages rows into {db_path}")

@@ -98,25 +98,29 @@ def searchtitle_json(count=20, start=0, n=20):
     return searchtitle_internal(mime, count, start, n)
     
 def searchtitle_internal(mime, count=20, start=0, n=20, force=False):
-    titpref = "kr:title:"
-    count=int(request.values.get('count', count))
-    start=int(request.values.get('start', start))
+    from flask import jsonify
+    count = int(request.values.get('count', count))
+    start = int(request.values.get('start', start))
     key = request.values.get('query', '')
-    if len(key) > 0:
-        if (not redis_store.exists(titpref+key)) or force:
-            lib.dotitlesearch(titpref, key)
-    total = redis_store.llen(titpref+key)
-    print (total)
-    tits = redis_store.lrange(titpref+key, start, start+count)
-    if mime == 'application/json':
-        out = [{"textid": k.split()[0],
-                "title" : k.split()[1].split("-")[0],
-                "dynasty" : k.split()[1].split("-")[1],
-                "responsible" : k.split()[1].split("-")[2],
-        } for k in tits]
-        return jsonify({"query" : key, "total": total, "start": start, "count" : len(out), "matches" : out})
+    if not key:
+        rows, total = [], 0
     else:
-        return Response("\n".join(tits))
+        rows, total = lib.dotitlesearch(key, offset=start, limit=count)
+    tits = [f"{txtid} {title}" for (txtid, title) in rows]
+    if mime == 'application/json':
+        out = []
+        for line in tits:
+            parts = line.split()
+            tail = parts[1].split("-") if len(parts) > 1 else []
+            out.append({
+                "textid": parts[0] if parts else "",
+                "title": tail[0] if len(tail) > 0 else "",
+                "dynasty": tail[1] if len(tail) > 1 else "",
+                "responsible": tail[2] if len(tail) > 2 else "",
+            })
+        return jsonify({"query": key, "total": total, "start": start,
+                        "count": len(out), "matches": out})
+    return Response("\n".join(tits))
 
 
 # for the moment, we are just dumping out all matches
@@ -169,34 +173,6 @@ def proc_meta(meta):
         retd.update({"dynasty" : ""})
     return retd
 
-def addtitles(ox, key, var, zbmeta):
-    ox = [("".join([k.split("\t")[0].split(',')[1],key[0], k.split("\t")[0].split(',')[0]]), redis_store.hgetall(u"%s%s" %( zbmeta, k.split('\t')[1].split(':')[0][0:8])), "\t".join(k.split("\t")[1:])) for k in ox]
-    out = []
-    for k in ox:
-        l = list(k)
-        if l[1].has_key('TITLE'):
-            l[1] = l[1]['TITLE']
-        else:
-            l[1] = 'no title'
-        l2 = l[2].split(":")
-        if var:
-            v=[a for a in l2[-1].split("\t")[1:] if (a != 'n')]
-            # arbitrarily we select the edition with the shortest sigle, but not including @
-            try:
-                v=min([a for a in v[0].split() if not '@' in a], key=len)
-            except:
-                v='master'
-            l[2] = "https://raw.githubusercontent.com/kanripo/%s/%s/%s.txt\t%s" % (l2[0][0:8], v, l2[0], ":".join(l2[1:]))
-        else:
-            l[2] = "https://raw.githubusercontent.com/kanripo/%s/master/%s.txt\t%s" % (l2[0][0:8], l2[0], ":".join(l2[1:]))
-        l="\t".join(l)
-        #l=re.sub(r"<img[^>]*>", u"●", l)
-        l=l.split("\t")
-        # we ignore other editions!
-        if len(l) == 4 or l[-1] == "n":
-            out.append("\t".join(l))
-    return out
-    
 ## file
 
 @api.route('/getfile', methods=['GET',])

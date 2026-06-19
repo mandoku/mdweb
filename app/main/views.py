@@ -5,7 +5,6 @@ from flask_login import current_user
 from flask_babel import gettext, ngettext
 from flask_sqlalchemy.record_queries import get_recorded_queries
 from flask_dance.contrib.github import make_github_blueprint
-from jinja2 import Environment, PackageLoader
 from github import Github
 import urllib
 
@@ -30,27 +29,22 @@ from .. import kr2tls
 import git, requests, sys
 
 
-zbmeta = "kr:meta:"
-kr_user = "kr_user:"
-titpref = "kr:title:"
 link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
 img_re = re.compile(r'<i[^>]*>')
 mdx_re = re.compile(r"<[^>]*>|[　-㄀＀-￯]|\n|¶")
 mdx_re = re.compile(r"<[^>]*>|[　-㄀＀-￯\n\r¶]+|\t[^\n\r]+\r\n|\$[^;]+;")
 hd = re.compile(r"^(\*+) (.*)$")
-env = Environment(loader=PackageLoader('__main__', 'templates'))
 
-#get the language, if provided save it, if it is saved, use it.  still needs a way to set it in the IF.    
-@babel.localeselector
 def get_locale():
-    lg=request.values.get("lg", None)
+    lg = request.values.get("lg", None)
     if lg:
         session['lg'] = lg
     if not lg:
         if "lg" in session:
             lg = session['lg']
         else:
-            lg=request.accept_languages.best_match(current_app.config['LANGUAGES'].keys())
+            lg = request.accept_languages.best_match(
+                current_app.config['LANGUAGES'].keys())
         if not lg:
             lg = "ja"
     return lg
@@ -66,76 +60,12 @@ def static_from_root():
 def api_doc():
     return render_template("apidoc.html")
 
-@main.route('/textlist/unload', methods=['GET',])
-def unloadtextlist():
-    tl=request.values.get("ffile")
-    user=session['user']
-    redis_store.delete("%s%s$%s" % (kr_user, user, tl))
-    flash(gettext("File %(value)s removed from internal database.", value=tl))
-    return redirect(request.values.get('next') or '/')
-@main.route('/textlist/load', methods=['GET',])
-def loadtextlist():
-    tl=request.values.get("ffile")
-    user=session['user']
-    lib.ghfilterfile2redis("%s$%s" % (user, tl))
-    try:
-        flash(gettext("Loaded %(value)s into the internal database.", value=tl))
-    except:
-        flash(gettext("Could not load %(value)s." , value=tl))
-    return redirect(request.values.get('next') or '/')
-    
-        
-@main.route('/textlist/save', methods=['POST',])
-def savetextlist():
-    x = request.form.getlist("cb")
-    fn= request.form["filename"]
-    user=session['user']
-    load = request.form.getlist("load")
-    token=session['token']
-    gh=Github(token)
-    ws=gh.get_repo("%s/%s" % (user, "KR-Workspace"))
-    fx = [redis_store.hgetall("%s%s" % (zbmeta, a)) for a in x]
-    lines = ["%s\t%s"% (a['ID'], a['TITLE']) for a in fx]
-    try:
-        lib.ghsave(u"Texts/%s.txt" % (urllib.quote_plus(fn.encode("utf-8"))), "\n".join(lines), ws, new=True)
-        flash(gettext("Saved text list for %(value)s with %(len)d texts", value=fn, len=len(lines)))
-    except:
-        flash(gettext("There was a problem saving the text list."))
-    if len(load) > 0:
-        try:
-            lib.ghfilterfile2redis("%s$%s" % (user, fn))
-            flash(gettext("Loaded the text list for %(value)s with %(len)d texts into the internal database.", value=fn, len=len(lines)))
-        except:
-            flash(gettext("There was a problem loading the text list."))
-    return redirect(request.form.get('next') or '/')
-
-@main.route('/bytext', methods=['GET',])
-def bytext():
-    ld = defaultdict(list)
-    key = request.values.get('query', '')
-    sort = request.values.get('sort', '+count')
-    total = redis_store.llen(key)
-    [ld[(a.split('\t')[1].split(':')[0].split("_")[0])].append(1) for a in redis_store.lrange(key, 0, total-1) if len(a) > 0]
-    ox = [(a, len(ld[a])) for a in ld]
-    if "txtid" in sort:
-        ox = sorted(ox, key=lambda x : x[0], reverse= "-" in sort)
-    elif "count":
-        ox = sorted(ox, key=lambda x : x[1], reverse= "+" in sort)
-    ids = [(redis_store.hgetall("%s%s" % (zbmeta, a[0])), a[1]) for a in ox]
-    if "title" in sort:
-        ids= sorted(ids, key=lambda x : x[0]['TITLE'])
-    return render_template('bytext.html',  key=key, ret=ids, total=total, uniq = len(ids))
-
-    
 @main.route('/<coll>/search', methods=['GET', 'POST',])
 @main.route('/search', methods=['GET', 'POST',])
 def searchtext(count=20, page=1):
-    rsort=""
-    sort = request.values.get('sort', '')
-    q = request.values.get('query', '')
-    keys = q.split()
-    count=int(request.values.get('count', count))
-    page=int(request.values.get('page', page))
+    key = request.values.get('query', '')
+    count = int(request.values.get('count', count))
+    page = int(request.values.get('page', page))
     filters = request.values.get('filter', '')
     tpe = request.values.get('type', '')
     if not key:
@@ -150,7 +80,7 @@ def searchtext(count=20, page=1):
     if total == 0:
         return render_template("error_page.html",
                                description="Text search for %s: Nothing found!" % (key), key=key)
-    ox = [(content.split(','), location, lib.get_meta(txtid8))
+    ox = [(content, location, lib.get_meta(txtid8))
           for (content, location, txtid8) in rows]
     p = lib.Pagination(key, page, count, total, ox)
     return render_template('result.html',
@@ -190,43 +120,6 @@ def showcoll(coll, edition=None, fac=False):
 #             l.extend(re.findall(r'\[\[([^\]]+)\]\[([^\]]+)', line))
 #             ct['toc'].append(l)
 #     return  render_template('texttop.html', ct=ct)
-@main.route('/read/<branch>/<id>/<juan>', methods=['GET',])
-@main.route('/read/<id>/<juan>', methods=['GET',])
-@main.route('/read/<id>/', methods=['GET',])
-def read(juan="Readme.org", id=0, seq=0, branch="master"):
-    session['pinned']=id
-    if "user" in session:
-        user = session['user']
-    else:
-        return render_template("error_page.html", code="400", name = "Authentication Error", description = "User must be logged in for this function.")
-    try:
-        juan = "%3.3d" % (int(juan))
-    except:
-        showtoc = False
-    if juan.startswith("Readme"):
-        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s" % (user, id, branch, juan)
-        xediturl =  "https://github.com/%s/%s/edit/%s/%s" % (user, id, branch, juan,)
-    else:
-        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
-        xediturl =  "https://github.com/%s/%s/edit/%s/%s_%s.txt" % (user, id, branch,  id, juan,)
-    r = requests.get(url)
-    if r.status_code == 200:
-        fn = r.content
-    else:
-        return render_template("error_page.html", code="400", name = "Authentication Error", description = "Please create a fork of this document before using this function.")
-    md = mandoku_view.mdDocument(fn, id, juan)
-    try:
-        res = redis_store.hgetall("%s%s" % ( zbmeta, id[0:8]))
-    except:
-        res = {}
-    res['ID'] = id
-    try:
-        title = res['TITLE'].decode('utf-8')
-    except:
-        title = ""
-    return render_template('read.html', ct={'mtext': Markup("<br/>\n".join(md.md)), 'doc': res}, doc=res, title=title, txtid=res['ID'], juan=juan, editurl=xediturl)
-#return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
-
 #@main.route('/text/<coll>/<int:seq>/<int:juan>', methods=['GET',] )
 @main.route('/text/<id>/', methods=['GET',])
 @main.route('/text/<coll>/<seq>/<juan>', methods=['GET',] )
@@ -238,143 +131,89 @@ def read(juan="Readme.org", id=0, seq=0, branch="master"):
 @main.route('/ed/<id>/<branch>/<juan>', methods=['GET',])
 @main.route('/ed/<id>/<branch>/', methods=['GET',])
 def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo"):
-    editurl=False
+    editurl = False
     showtoc = True
-    doc = {}
-    uid = user
-    token = ""
     fn = ""
     key = request.values.get('query', '')
-    if len(juan) == 4:
-        templ = "%4.4d"
-    else:
-        templ = "%3.3d"
+    templ = "%4.4d" if len(juan) == 4 else "%3.3d"
     try:
         juan = templ % (int(juan))
     except:
         showtoc = False
     if coll:
-        #TODO: allow for different repositories, make this configurable
         if coll.startswith('KR'):
             id = "%s%4.4d" % (coll, int(seq))
         else:
-            #TODO need to find the canonical id for this, go to redis, pull it out
-            id="Not Implemented"
-    #the filename is of the form ZB1a/ZB1a0001/ZB1a0001_002.txt
-    if "user" in session:
-        user = session['user']
-        uid = user
-        user_settings=redis_store.hgetall("%s%s:settings" % (kr_user, user))
-        if (id in user_settings):
-            uidbranch = user_settings[id].split("/")
-            branch=uidbranch[-1]
-            uid = uidbranch[0]
-            token="%s" % (session['token'])
-    #print user
+            id = "Not Implemented"
+    uid = current_app.config['GHKANRIPO']
     if juan.startswith("Readme"):
-        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s" % (uid, id, branch, juan)
-        xediturl =  "https://github.com/%s/%s/edit/%s/%s" % (uid, id, branch, juan,)
+        url = "https://raw.githubusercontent.com/%s/%s/%s/%s" % (uid, id, branch, juan)
     else:
-        url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (uid, id, branch,  id, juan)
-        xediturl =  "https://github.com/%s/%s/edit/%s/%s_%s.txt" % (uid, id, branch,  id, juan,)
-    # url =  "https://raw.githubusercontent.com/kanripo/%s/%s/%s_%s.txt?client_id=%s&client_secret=%s" % (id, branch,  id, juan,
-    #     current_app.config['GITHUB_OAUTH_CLIENT_ID'],
-    #     current_app.config['GITHUB_OAUTH_CLIENT_SECRET'])
-    r = requests.get(url, auth=(user, token))
-    print(url, r.status_code)
+        url = "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (uid, id, branch, id, juan)
+    r = requests.get(url)
     if r.status_code == 200:
         fn = r.content
-        editurl = xediturl
+    # TOC: parsed fresh from the Readme.org each request
+    if juan.startswith("Readme"):
+        ftoc = fn or b""
     else:
-        if juan.startswith("Readme"):
-            url =  "https://raw.githubusercontent.com/%s/%s/%s/%s" % (current_app.config['GHKANRIPO'], id, branch, juan,)
-        else:
-            url =  "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (current_app.config['GHKANRIPO'], id, branch,  id, juan,)
-        r = requests.get(url)
-        if r.status_code == 200:
-            fn = r.content
-        else:
-            pass
-            #print "Not retrieved from Gitlab!", id
-    #print "fn, " , len(fn)
-    tockey="%s%s:toc:%s:%s" % (kr_user, user, branch, id)
-    if redis_store.hgetall(tockey):
-        toc = redis_store.hgetall(tockey)
-    else:
-        if juan.startswith("Readme"):
-            ftoc=fn
-        else:
-            tocurl = re.sub(r"KR[^/]+txt", "Readme.org", url)
-            r = requests.get(tocurl)
-            if r.status_code == 200:
-                ftoc = r.content
-            else:
-                ftoc = ""
-        toc = defaultdict(list)
-        [re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]", lambda x : toc[x.group(2)].append(x.groups()), l) for l in ftoc.split("\n") if "file" in l]
-        if len(toc) < 1:
-            [re.sub(r"\[\[file:([^_]+)_([^\.]+)\.([^]]+)\]\[([^]]+)\]", lambda x : toc[x.group(2)].append(x.groups()), l) for l in ftoc.split("\n") if "file" in l]
-            
-        try:
-            redis_store.hmset(tockey, toc)
-        except:
-            pass
-    tk = toc.keys()
-    tk.sort()
-    #print tockey
-    #print tk
+        tocurl = re.sub(r"KR[^/]+txt", "Readme.org", url)
+        rt = requests.get(tocurl)
+        ftoc = rt.content if rt.status_code == 200 else b""
+    if isinstance(ftoc, bytes):
+        ftoc = ftoc.decode("utf-8", errors="replace")
+    toc = defaultdict(list)
+    for l in ftoc.split("\n"):
+        if "file" not in l:
+            continue
+        re.sub(r"\[\[file:([^_]+)[^:]+::([^-]+)-([^]]+)\]\[([^]]+)\]",
+               lambda x: toc[x.group(2)].append(x.groups()), l)
+    if len(toc) < 1:
+        for l in ftoc.split("\n"):
+            if "file" not in l:
+                continue
+            re.sub(r"\[\[file:([^_]+)_([^\.]+)\.([^]]+)\]\[([^]]+)\]",
+                   lambda x: toc[x.group(2)].append(x.groups()), l)
+    tk = sorted(toc.keys())
     try:
-        t2 = [[(a, b[2], b[3].split()[-1]) for b in eval(toc[a])] for a in tk]
-    except:
-        try:
-            t2 = [[(a, b[2], b[3].split()[-1]) for b in toc[a]] for a in tk]
-        except:
-            t2 = ""
+        t2 = [[(a, b[2], b[3].split()[-1]) for b in toc[a]] for a in tk]
+    except Exception:
+        t2 = ""
     if branch == "master":
-        #url =  "%s/%s/%s/raw/%s/%s_%s.txt?private_token=%s" % (current_app.config['GITLAB_HOST'], id[0:4], id,  id, juan, current_app.config['GITLAB_TOKEN'])
-
         filename = "%s/%s/%s_%s.txt" % (id[0:4], id[0:8], id, juan)
     else:
         filename = "%s/%s/_branches/%s/%s_%s.txt" % (id[0:4], id[0:8], branch, id, juan)
-    datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
     rpath = "%s/%s/%s" % (current_app.config['TXTDIR'], id[0:4], id[0:8])
-    #get branches  -- we could get this from github, but it counts against the limit...
     try:
-        g=Github()
-        if editurl:
-            rp=g.get_repo(user + "/" +id)
-        else:
-            rp=g.get_repo("kanripo/" +id)
-        branches=[(a.name, lib.brtab[a.name.decode('utf-8')]) for a in rp.get_branches() if not a.name in ['_data', 'master']]
-        #print branches
-    except:
+        gh = Github()
+        rp = gh.get_repo("kanripo/" + id)
+        branches = [(a.name, lib.brtab[a.name]) for a in rp.get_branches()
+                    if a.name not in ('_data', 'master')]
+    except Exception:
         try:
-            repo=git.Repo(rpath)
-            branches=[(a.name.decode('utf-8'), lib.brtab[a.name.decode('utf-8')]) for a in repo.branches if not a.name in ['_data', 'master']]
-        except:
-            branches=[]
-    if len(fn) == 0:
+            repo = git.Repo(rpath)
+            branches = [(a.name, lib.brtab[a.name]) for a in repo.branches
+                        if a.name not in ('_data', 'master')]
+        except Exception:
+            branches = []
+    if not fn:
         try:
             datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-            fn = codecs.open(datei).read(-1)
-            fn.close()
-        except:
+            with codecs.open(datei, 'r', 'utf-8') as fh:
+                fn = fh.read()
+        except Exception:
             return "File Not found: %s" % (filename)
+    if isinstance(fn, bytes):
+        fn = fn.decode("utf-8", errors="replace")
     md = mandoku_view.mdDocument(fn, id, juan)
-    try:
-        res = redis_store.hgetall("%s%s" % ( zbmeta, id[0:8]))
-    except:
-        res = {}
+    res = lib.get_meta(id[0:8])
     res['ID'] = id
-    try:
-        title = res['TITLE'].decode('utf-8')
-    except:
-        title = ""
-    # else:
-    #     md = mandoku_view.mdDocument(r.content.decode('utf-8'))
-    #print "url: ", url
-    return render_template('showtext.html', ct={'mtext': Markup("<br/>\n".join(md.md)), 'doc': res}, doc=res, key=key, title=title, txtid=res['ID'], juan=juan, branches=branches, edition=branch, toc=t2, showtoc=showtoc, editurl=editurl, ed=md.ed)
-#return Response ("\n%s" % ( "\n".join(md.md)),  content_type="text/html;charset=UTF-8")
+    title = res.get('TITLE', '')
+    return render_template('showtext.html',
+                           ct={'mtext': Markup("<br/>\n".join(md.md)), 'doc': res},
+                           doc=res, key=key, title=title, txtid=res['ID'],
+                           juan=juan, branches=branches, edition=branch,
+                           toc=t2, showtoc=showtoc, editurl=editurl, ed=md.ed)
 
 
 @main.route('/tlskr/<txtid>', methods=['GET',])
@@ -383,22 +222,6 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
 
 def tlskr_orig(txtid):
     return Response(kr2tls.convert_text(txtid), content_type="text/xml;charset=UTF-8")
-
-def showtextredis(juan, id=0, coll=None, seq=0):
-    juan = "%3.3d" % (int(juan))
-    if coll:
-        if coll.startswith('KR'):
-            id = "%s%4.4d" % (coll, int(seq))
-        else:
-            #TODO need to find the canonical id for this, go to redis, pull it out
-            id="Not Implemented"
-    #the filename is of the form ZB1a/ZB1a0001/ZB1a0001_002.txt
-    filename = "%s/%s/%s_%s.txt" % (id[0:4], id, id, juan)
-    datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-    mr = mandoku_redis.RedisMandoku(redis_store, None, 100000, datei)
-    
-    return render_template('', ct={'mtext': md.md, 'doc' : doc} )
-    
 
 ## image
 
@@ -505,7 +328,7 @@ def addfilter(count=20, page=1):
         fs.append(add)
     start = (page - 1) * count
     rows, total = lib.doftsearch(key, filters=fs, offset=start, limit=count)
-    oy = [(content.split(','), location, lib.get_meta(txtid8))
+    oy = [(content, location, lib.get_meta(txtid8))
           for (content, location, txtid8) in rows]
     p = lib.Pagination(key, page, count, total, oy)
     return render_template('result.html',
@@ -587,72 +410,13 @@ def login():
 @main.route('/profile/signout')
 def signout():
     try:
-        del(session['user'])
-        del(session['token'])
-    except:
+        del session['user']
+        del session['token']
+    except KeyError:
         pass
     flash(gettext("You have been logged out."))
     return redirect(request.values.get('next') or '/')
 
-@main.route('/profile/<uid>/settings/reload')
-def reloadsettings(uid):
-    redis_store.delete("%s%s:settings" % (kr_user, uid))
-    ret=lib.ghuserdata(uid)
-    if ret == 1:
-        flash(gettext("User data have been loaded into internal database."))
-    else:
-        flash(gettext("Could not load user data."))
-    userdata=redis_store.hgetall("%s%s:settings" % (kr_user,uid))
-    return redirect(request.values.get('next') or '/')
-
-@main.route('/profile/<uid>/settings/save', methods=['POST',])
-def saveuserdata(uid):
-    sort = request.form.getlist("sort")[0]
-    url = "{url}{user}/KR-Workspace/{user}/Settings/kanripo.cfg".format(url=current_app.config['GHRAWURL'], user=uid)
-    r = requests.get(url)
-    ol=[]
-    if r.status_code == 200:
-        for line in r.content.split("\n"):
-            if line.startswith("sort"):
-                line="sort=%s" % (sort)
-            ol.append(line)
-    token=session['token']
-    gh=Github(token)
-    ws=gh.get_repo("%s/%s" % (uid, "KR-Workspace"))
-    try:
-        lib.ghsave(u"Settings/kanripo.cfg", "\n".join(ol), ws)
-        flash(gettext("The settings have been saved."))
-    except:
-        flash(gettext("There was a problem saving the settings."))
-    return redirect(request.form.get('next') or '/')
-
-
-@main.route('/profile/<uid>')
-def profile(uid):
-    #for the moment, load settings every time, later maybe expire after some minutes and then reload if necessary
-    redis_store.delete("%s%s:settings" % (kr_user, uid))
-    ret=lib.ghuserdata(uid)
-    # if not redis_store.key("%s%s:settings" % (kr_user,uid)):
-    # else:
-    #     ret = 0
-    r=[]
-    for d in ["Texts", "Notes"]:
-        r.append([d, lib.ghlistcontent("KR-Workspace", d, ext="txt")])
-    try:
-        loaded=[a.split("$")[-1] for a in redis_store.keys("%s%s$*" % (kr_user,uid))]
-    except:
-        loaded=[]
-    try:
-        searchkeys=[a for a in redis_store.smembers("%s%s:searchkeys" % (kr_user, uid))]
-    except:
-        searchkeys=[]
-    if ret == 1:
-        flash(gettext("User data have been loaded into internal database."))
-    elif ret == -1:
-        flash(gettext("Could not load user data."))
-    userdata=redis_store.hgetall("%s%s:settings" % (kr_user,uid))
-    return render_template('profile.html', user=uid, ret=r, loaded=loaded, searches=searchkeys, userdata=userdata)
-    
 
 @main.route('/about/<id>')
 def about(id):
@@ -681,48 +445,8 @@ def taisho(vol, page):
 
 @main.route('/advsearch', methods=['GET','POST'])
 def advsearch():
-    ima=datetime.now()
-    help="Under construction."
-    if request.method == 'GET':
-        return render_template('advsearch.html', res=[], help=help)
-    else:
-        return render_template('advsearch.html', res=[], help=help)
-        keys = [request.form["key0"],request.form["key1"],request.form["key2"]]
-        conn = ['or', request.form["conn1"], request.form["conn2"]]
-        acc = request.form["acc"]
-        rt = [[],[],[]]
-        for j, k in enumerate(keys):
-            rx = []
-            if len(k) > 0 and (j == 0 or conn[j] in ["and", "or"]):
-                if j == 0 or acc != "line":
-                    if not redis_store.exists(k): 
-                        lib.doftsearch(k)
-                rx = [k[0:1]+a for a in redis_store.lrange(k, 0, -1)]
-            rt[j] = rx
-        out = []
-        for j, k in enumerate(rt):
-            for g in k:
-                if conn[j] == 'or':
-                    # now construct the key
-                    out.append
-                
-        if acc == "line":
-            for r in rx:
-                pass
-        for j in [1, 2]:
-            pass
-        ld = defaultdict(list)
-        for o in out:
-            kx = o[2].split(":")
-            if acc == "para":
-                akey = kx[0]+":"+kx[-1]
-            else:
-                akey = kx[0]
-            ld[akey].append((o))
-        if acc != "line":
-            out = lib.consorted(ld)
-            
-        return render_template('advsearch.html', res=[], help=help)
+    help = "Under construction."
+    return render_template('advsearch.html', res=[], help=help)
 
 @main.route('/citfind', methods=['GET','POST'])
 def citfind():
@@ -771,38 +495,32 @@ value will be ignored.</li>
             else:
                 inp = mdx_re.sub("", inp)
                 strs = lib.partition(inp, x)
-            print(inp)
             for s in strs:
-                #we take the first n chars
                 key = s[:n]
                 if len(key) > 0:
                     pos = inp.index(s)
-                    #print key, s
-                    if not redis_store.exists(key): 
-                        lib.doftsearch(key, exp=False)
-                    res = [key[0:1]+a for a in redis_store.lrange(key, 0, -1)]
-                    res = [img_re.sub(u"〓",a) for a in res]
-                    res = [a.split("\t") for a in res]
+                    rows, _ = lib.doftsearch(key, limit=10000)
+                    res = [(img_re.sub(u"〓", content), location, txtid8)
+                           for (content, location, txtid8) in rows]
                     tbl.append((key, s, len(res)))
-                    for r in res:
-                        if br or (r[-1].startswith("KR") or r[-1].startswith("n")):
-                            t = r[0].split(",")[0]
+                    for content, location, txtid8 in res:
+                        if br or (txtid8.startswith("KR") or txtid8.startswith("n")):
+                            t = content.split(",")[0]
                             c = lib.cscore(t, inp[pos:pos+len(t)])
                             if c > cutoff:
-                                out.append((c, t, r[1], key))
+                                out.append((c, t, location, key))
         out = sorted(out, key = lambda k : lib.kformat(k[2]))
         out = lib.kcondense(out, kf=lambda x : x[2])
         out = sorted(out, key = lambda k : len(k), reverse = True)
         o2 = []
         for o in out:
-            c = sum([a[0] for a in o])
             c = 0
             s = lib.kcombine([lib.krestore(a[1]) for a in o])
             for k in [a[3] for a in o]:
                 if k in s:
                     c += 1
             o2.append((c, s, o[0][2], ",".join([a[3] for a in o])))
-        out = [(a, redis_store.hgetall(u"%s%s" %( zbmeta, a[2].split(":")[0][0:8]))) for a in o2]
+        out = [(a, lib.get_meta(a[2].split(":")[0][0:8])) for a in o2]
         out = sorted(out, key = lambda k: k[0], reverse = True)
         elapsed = "%s" % (datetime.now() - ima).total_seconds()
         if x == 0:

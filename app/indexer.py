@@ -208,3 +208,46 @@ def load_metadata(mdbase, db_path):
         return n
     finally:
         conn.close()
+
+
+def build_taisho_index(source_path, db_path):
+    """Load the Taisho page→file index from a mandoku-cbeta.el source.
+
+    Only entries under `(subcoll "T")` are kept. The pagekey integer is
+    the raw 7-digit page number found in the source (vol page-section
+    line-offset) -- the same key the lookup in lib.gettaisho computes.
+    Returns the number of rows written.
+    """
+    conn = connect(db_path)
+    try:
+        rflag = False
+        vol = ""
+        rows = []
+        with open(source_path, encoding="utf-8") as fp:
+            for line in fp:
+                if 'subcoll "T"' in line:
+                    rflag = True
+                elif 'subcoll' in line:
+                    rflag = False
+                if not rflag:
+                    continue
+                if "vol" in line:
+                    vol = "T" + line.split()[-1].replace(")", "")
+                elif "page" in line:
+                    tmp = line.replace(")", "").split()
+                    try:
+                        pagekey = int(tmp[-2])
+                    except (ValueError, IndexError):
+                        continue
+                    filename = tmp[-1].replace('"', '')[:-4]
+                    rows.append((vol, pagekey, filename))
+        if rows:
+            conn.executemany(
+                "INSERT OR REPLACE INTO taisho_pages(vol, pagekey, filename)"
+                " VALUES (?, ?, ?)",
+                rows,
+            )
+        conn.commit()
+        return len(rows)
+    finally:
+        conn.close()

@@ -27,6 +27,15 @@ CREATE TABLE IF NOT EXISTS titles (
     title TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_titles_title ON titles(title);
+
+CREATE TABLE IF NOT EXISTS taisho_pages (
+    vol      TEXT NOT NULL,
+    pagekey  INTEGER NOT NULL,
+    filename TEXT NOT NULL,
+    PRIMARY KEY(vol, pagekey)
+);
+CREATE INDEX IF NOT EXISTS idx_taisho_vol_pagekey
+    ON taisho_pages(vol, pagekey);
 """
 
 

@@ -10,6 +10,7 @@ class Config:
     INDEX_DB_PATH = os.environ.get('MDWEB_INDEX_DB',
                                     os.path.join(basedir, 'data/search.sqlite'))
     IMGDIR = os.environ.get('MDWEB_IMGDIR', "/home/Shared/images/")
+    TAISHO_SRC = os.environ.get('MDWEB_TAISHO_SRC', '')
     LANGUAGES = {
         'ja': '日本語',
         'en': 'English',

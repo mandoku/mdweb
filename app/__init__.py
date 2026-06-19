@@ -6,7 +6,6 @@ from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 #from flask_login import LoginManager
 from flask_pagedown import PageDown
-from flask_redis import FlaskRedis
 from flask_babel import Babel
 from config import config
 from flask_dance.contrib.github import make_github_blueprint
@@ -15,7 +14,6 @@ mail = Mail()
 moment = Moment()
 db = SQLAlchemy()
 pagedown = PageDown()
-redis_store = FlaskRedis()
 mybabel = Babel()
 #login_manager = LoginManager()
 #login_manager.session_protection = 'strong'
@@ -35,8 +33,8 @@ def create_app(config_name):
     #login_manager.init_app(app)
     pagedown.init_app(app)
 
-    redis_store.init_app(app)
-    mybabel.init_app(app)
+    from .main.views import get_locale
+    mybabel.init_app(app, locale_selector=get_locale)
 
     from . import search_db
     search_db.init_app(app)

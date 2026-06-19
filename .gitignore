@@ -44,6 +44,3 @@ venv
 .DS_Store
 .env
 .*
-# redis
-
-redis
