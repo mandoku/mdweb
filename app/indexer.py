@@ -239,22 +239,20 @@ def merge_indexes(krpx_dir, corpus_path, rebuild=False, progress=None):
                     "DELETE FROM search_idx WHERE txtid = ?",
                     (txtid8,),
                 )
-            src = sqlite3.connect(path)
-            try:
-                rows = src.execute(
-                    "SELECT content, location, txtid, line_len"
-                    "  FROM search_idx"
-                ).fetchall()
-            finally:
-                src.close()
-            conn.executemany(
+            conn.commit()
+            conn.execute("ATTACH DATABASE ? AS krpx", (path,))
+            cur = conn.execute("SELECT COUNT(*) FROM krpx.search_idx")
+            added = cur.fetchone()[0]
+            cur.close()
+            # executescript finalizes each statement, so DETACH won't see the INSERT still holding `krpx`.
+            conn.executescript(
                 "INSERT INTO main.search_idx"
                 "(content, location, txtid, line_len)"
-                " VALUES (?, ?, ?, ?)",
-                rows,
+                "  SELECT content, location, txtid, line_len"
+                "    FROM krpx.search_idx;"
+                "DETACH DATABASE krpx;"
             )
-            total += len(rows)
-            conn.commit()
+            total += added
             if progress is not None:
                 progress(i, n_files, path, total)
         return total
