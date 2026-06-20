@@ -262,7 +262,7 @@ def _filter_clause(filters, dynasty):
     return " AND " + " AND ".join(sql_parts), params
 
 
-def _snippet(content, key, left=15, total=33):
+def _snippet(content, key, left=12, total=26):
     """Center the first occurrence of `key` in a fixed-width window.
 
     Window: `left` chars before `key`, then `total - left - len(key)` after.
