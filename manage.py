@@ -130,11 +130,26 @@ def index_merge(rebuild, quiet):
 @index.command("build")
 @click.option('--rebuild/--incremental', default=False,
               help="Drop and rebuild both per-text .krpx files and the corpus.")
+@click.option('--direct', is_flag=True, default=False,
+              help="Skip per-text .krpx files; write straight into the corpus.")
 @click.option('--quiet', is_flag=True, default=False,
               help="Suppress progress output.")
 @click.pass_context
-def index_build(ctx, rebuild, quiet):
+def index_build(ctx, rebuild, direct, quiet):
     """Build every per-text .krpx and merge into the corpus (one-shot)."""
+    if direct:
+        from app.indexer import build_corpus_direct
+        txtdir = app.config['TXTDIR']
+        db_path = app.config['INDEX_DB_PATH']
+
+        def report(i, n_texts, txtid, total):
+            if i == 1 or i == n_texts or i % 50 == 0:
+                click.echo(f"[{i}/{n_texts}] {txtid}  ({total} rows)")
+
+        n = build_corpus_direct(txtdir, db_path, rebuild=rebuild,
+                                progress=None if quiet else report)
+        click.echo(f"Wrote {n} rows into {db_path}")
+        return
     ctx.invoke(index_build_text, txtids=(), rebuild=rebuild, quiet=quiet)
     ctx.invoke(index_merge, rebuild=rebuild, quiet=quiet)
 

@@ -198,6 +198,63 @@ def build_all_text_indexes(txtdir, krpx_dir, rebuild=False, progress=None):
     return total
 
 
+def build_corpus_direct(txtdir, corpus_path, rebuild=False, progress=None):
+    """Build the corpus FTS index directly from text files.
+
+    Skips the per-text .krpx intermediate step: each juan's rows are
+    inserted straight into `corpus_path`. With `rebuild=True` the
+    corpus `search_idx` is dropped first; otherwise rows for each
+    (txtid, juan) being re-indexed are deleted by location prefix so
+    repeated runs stay idempotent.
+
+    `progress`, if given, is called as progress(i, n_texts, txtid,
+    rows_so_far) once per text.
+    """
+    conn = connect(corpus_path)
+    try:
+        if rebuild:
+            conn.execute("DROP TABLE IF EXISTS search_idx")
+            conn.executescript(_FTS_CREATE)
+        else:
+            cols = {r[1] for r in conn.execute(
+                "PRAGMA table_info(search_idx)"
+            ).fetchall()}
+            if cols and "line_len" not in cols:
+                raise RuntimeError(
+                    f"{corpus_path}: search_idx is missing the 'line_len' "
+                    "column (schema predates commit 088abc4). "
+                    "Re-run with --rebuild to recreate the corpus index."
+                )
+        txtids = _list_txtids(txtdir)
+        n = len(txtids)
+        total = 0
+        for i, txtid in enumerate(txtids, 1):
+            for path in _juan_paths(txtdir, txtid):
+                _, juan = _parse_filename(path)
+                if not juan:
+                    continue
+                if not rebuild:
+                    conn.execute(
+                        "DELETE FROM search_idx WHERE location LIKE ?",
+                        (f"{txtid}_{juan}:%",),
+                    )
+                rows = list(_emit_rows(path, txtid, juan))
+                if rows:
+                    conn.executemany(
+                        "INSERT INTO search_idx"
+                        "(content, location, txtid, line_len)"
+                        " VALUES (?, ?, ?, ?)",
+                        rows,
+                    )
+                    total += len(rows)
+            conn.commit()
+            if progress is not None:
+                progress(i, n, txtid, total)
+        return total
+    finally:
+        conn.close()
+
+
 def merge_indexes(krpx_dir, corpus_path, rebuild=False, progress=None):
     """Merge all per-text .krpx files under KRPX_DIR into the corpus DB.
 
