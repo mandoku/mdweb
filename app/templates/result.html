@@ -74,13 +74,13 @@
 {% endblock %}
 
 {% block sidebar %}
-<div id="sort"><h4>{{('Sort')}}</h4></div>
+<div id="sort"><h4>{{_('Sort')}}</h4></div>
 <ul>
-  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=+txtid">{{_('By text number')}}</a></li>
-  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=-date">{{_('By text date')}}</a></li>
-  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=+term">{{_('By search term')}}</a></li>
-  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=+pre">{{_('By preceding characters')}}</a></li>
-</ul>  
+  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=post">{{_('By following characters')}}</a></li>
+  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=txtid">{{_('By text number')}}</a></li>
+  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=date">{{_('By text date')}}</a></li>
+  <li><a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}&amp;sort=pre">{{_('By preceding characters')}}</a></li>
+</ul>
 {% if session['user'] %}
 <div id="filter"><h4>特別 (Filter)</h4></div>
 <hr/>

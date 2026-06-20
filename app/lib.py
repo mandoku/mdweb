@@ -262,14 +262,48 @@ def _filter_clause(filters, dynasty):
     return " AND " + " AND ".join(sql_parts), params
 
 
-def doftsearch(key, filters=None, dynasty=None, offset=0, limit=20):
+def _snippet(content, key, left=15, total=33):
+    """Center the first occurrence of `key` in a fixed-width window.
+
+    Window: `left` chars before `key`, then `total - left - len(key)` after.
+    Missing chars on either side are padded with non-breaking spaces so the
+    matching term stays vertically aligned across rows in the result table.
+    """
+    right = max(total - left - len(key), 0)
+    idx = content.find(key)
+    if idx < 0:
+        idx = 0
+    start = idx - left
+    end = idx + len(key) + right
+    pre_pad = "\u3000" * max(-start, 0)
+    post_pad = "\u3000" * max(end - len(content), 0)
+    body = content[max(start, 0):end]
+    return pre_pad + body + post_pad
+
+
+SORT_POST = "post"
+SORT_PRE = "pre"
+SORT_TXTID = "txtid"
+SORT_DATE = "date"
+_VALID_SORTS = {SORT_POST, SORT_PRE, SORT_TXTID, SORT_DATE}
+
+
+def doftsearch(key, filters=None, dynasty=None, offset=0, limit=20, sort=SORT_POST):
     """Full-text search via FTS5 trigram. Returns (rows, total).
 
     Each row is (content, location, txtid8). `location` is the
     "TXTID_JUAN:PAGE:LINE" string consumed by result.html.
+
+    `sort` selects the result ordering:
+      - "post"  (default): characters following the match
+      - "pre":             characters preceding the match, reversed
+      - "txtid":           ascending by location/txtid
+      - "date":            by dynasty (proxy for text date)
     """
     if not key:
         return [], 0
+    if sort not in _VALID_SORTS:
+        sort = SORT_POST
     where_sql, where_params = _ft_search_clause(key)
     extra_sql, extra_params = _filter_clause(filters, dynasty)
     params = list(where_params) + list(extra_params)
@@ -278,14 +312,69 @@ def doftsearch(key, filters=None, dynasty=None, offset=0, limit=20):
         f"SELECT COUNT(*) FROM search_idx WHERE {where_sql}{extra_sql}",
         params,
     ).fetchone()[0]
-    rows = db.execute(
-        f"SELECT content, location, txtid FROM search_idx"
-        f" WHERE {where_sql}{extra_sql}"
-        f" ORDER BY location LIMIT ? OFFSET ?",
-        params + [limit, offset],
-    ).fetchall()
-    out = [(gaiji.sub("⬤", r["content"]), r["location"], r["txtid"]) for r in rows]
+    if sort == SORT_TXTID:
+        rows = db.execute(
+            f"SELECT content, location, txtid FROM search_idx"
+            f" WHERE {where_sql}{extra_sql}"
+            f" ORDER BY location LIMIT ? OFFSET ?",
+            params + [limit, offset],
+        ).fetchall()
+    elif sort == SORT_DATE:
+        rows = db.execute(
+            f"SELECT search_idx.content AS content,"
+            f"       search_idx.location AS location,"
+            f"       search_idx.txtid AS txtid"
+            f" FROM search_idx LEFT JOIN metadata m"
+            f"   ON m.txtid = search_idx.txtid"
+            f" WHERE {where_sql}{extra_sql}"
+            f" ORDER BY COALESCE(m.dynasty, ''), search_idx.location"
+            f" LIMIT ? OFFSET ?",
+            params + [limit, offset],
+        ).fetchall()
+    else:
+        all_rows = db.execute(
+            f"SELECT content, location, txtid FROM search_idx"
+            f" WHERE {where_sql}{extra_sql}",
+            params,
+        ).fetchall()
+        klen = len(key)
+        def _sortkey(r):
+            c = r["content"]
+            i = c.find(key)
+            if i < 0:
+                return (c, r["location"])
+            tail = c[i + klen:]
+            head = c[:i][::-1]
+            return (tail, r["location"]) if sort == SORT_POST else (head, r["location"])
+        all_rows.sort(key=_sortkey)
+        rows = all_rows[offset:offset + limit]
+    out = [(_snippet(gaiji.sub("⬤", r["content"]), key), r["location"], r["txtid"]) for r in rows]
     return out, total
+
+
+def hits_by_text(key, filters=None, dynasty=None):
+    """Aggregate FTS matches per text. Returns list of (txtid8, title, count).
+
+    Ordered by descending hit count, then ascending txtid for stable ties.
+    """
+    if not key:
+        return []
+    where_sql, where_params = _ft_search_clause(key)
+    extra_sql, extra_params = _filter_clause(filters, dynasty)
+    params = list(where_params) + list(extra_params)
+    db = get_db()
+    rows = db.execute(
+        f"SELECT search_idx.txtid AS txtid,"
+        f"       COALESCE(m.title, '') AS title,"
+        f"       COUNT(*) AS n"
+        f" FROM search_idx LEFT JOIN metadata m"
+        f"   ON m.txtid = search_idx.txtid"
+        f" WHERE {where_sql}{extra_sql}"
+        f" GROUP BY search_idx.txtid"
+        f" ORDER BY n DESC, search_idx.txtid ASC",
+        params,
+    ).fetchall()
+    return [(r["txtid"], r["title"], r["n"]) for r in rows]
 
 
 def dotitlesearch(key, offset=0, limit=20):

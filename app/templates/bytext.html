@@ -1,0 +1,42 @@
+{% extends "laybase.html" %}
+
+{% block KR %}
+{{_('Kanseki Repository')}}
+{% endblock KR %}
+
+{% block subhead %}
+<header class="jumbotron subhead" id="overview">
+  <div class="container">
+    <h1>{{_('Hits by text')}}</h1>
+    <p>
+      {{_('Searched for %(value)s.', value=key)}}
+      {% if filter %}{{_('Filtered by: ')}}{{filter}}{% endif %}
+      {{_('%(total)d hits in %(texts)d texts.', total=total, texts=texts)}}
+      <span class="pull-right">　<a href="search?query={{key}}{% if filter %}&amp;filter={{filter}}{% endif %}">{{_('Show line-by-line results')}}</a></span>
+    </p>
+  </div>
+</header>
+{% endblock subhead %}
+
+{% block body %}
+<div>
+  <table class="table table-condensed" style="width:auto;">
+    <thead>
+      <tr>
+        <th style="white-space:nowrap;">{{_('Text ID')}}</th>
+        <th style="white-space:nowrap;">{{_('Title')}}</th>
+        <th class="text-right" style="white-space:nowrap;">{{_('Hits')}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for txtid, title, n in rows %}
+      <tr>
+        <td style="white-space:nowrap;"><a href="search?query={{key}}&amp;filter={{txtid}}" title="{{_('Filter search by this text')}}">{{txtid}}</a></td>
+        <td style="white-space:nowrap;">{{title}}</td>
+        <td class="text-right" style="white-space:nowrap;">{{n}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

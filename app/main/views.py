@@ -68,6 +68,7 @@ def searchtext(count=20, page=1):
     page = int(request.values.get('page', page))
     filters = request.values.get('filter', '')
     tpe = request.values.get('type', '')
+    sort = request.values.get('sort', lib.SORT_POST)
     if not key:
         return render_template("error_page.html", code="400", name="Search Error",
                                description="No search term. Please submit the search term as parameter 'query'.")
@@ -76,7 +77,7 @@ def searchtext(count=20, page=1):
     dynasty = fs[0] if (tpe == 'DYNASTY' and fs) else None
     id_filters = [] if dynasty else fs
     rows, total = lib.doftsearch(key, filters=id_filters, dynasty=dynasty,
-                                  offset=start, limit=count)
+                                  offset=start, limit=count, sort=sort)
     if total == 0:
         return render_template("error_page.html",
                                description="Text search for %s: Nothing found!" % (key), key=key)
@@ -89,8 +90,23 @@ def searchtext(count=20, page=1):
                            pl={'1': 'a', '2': 'b', '3': 'c', '4': 'd'},
                            start=start, count=count,
                            n=min(start + count, total),
-                           filter=";".join(fs), tpe=tpe)
+                           filter=";".join(fs), tpe=tpe, sort=sort)
 
+
+
+@main.route('/<coll>/bytext', methods=['GET', 'POST',])
+@main.route('/bytext', methods=['GET', 'POST',])
+def searchbytext():
+    key = request.values.get('query', '')
+    filters = request.values.get('filter', '')
+    if not key:
+        return render_template("error_page.html", code="400", name="Search Error",
+                               description="No search term. Please submit the search term as parameter 'query'.")
+    fs = [a for a in filters.split(';') if a]
+    rows = lib.hits_by_text(key, filters=fs)
+    total = sum(n for (_id, _t, n) in rows)
+    return render_template('bytext.html', rows=rows, key=key,
+                           filter=";".join(fs), texts=len(rows), total=total)
 
 
 @main.route('/text/<coll>', methods=['GET',] )
