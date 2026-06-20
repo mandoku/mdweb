@@ -35,10 +35,9 @@
     {% else %}
     <p>This website provides access to the texts available in
     the <b><a href="http://github.com/kanripo">GitHub user account @kanripo (Kanseki Repository)</a></b>.
-    At the moment, there is only very simple search functionality, but
-    it is planned to extend this depending on the needs of the
-      users.</p>
+    </p>
     <p>[2026-05-25] Links to the site <a href="https://ask.bunkankun.org" target="bunkankun">Ask BunKanKun</a> have been added to the search results.</p>
+    <p>[2026-06-20] Updated the webserver, modernized the index. Searches for less than 3 characters are slow, but others should be faster now. </p>
     <h3>Catalog</h3>
     {% endif %}
     <h4>　<a href="{{url_for('main.catalog', coll='KR1')}}">KR1 	經部</a></h4>
