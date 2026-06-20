@@ -40,11 +40,15 @@ CREATE INDEX IF NOT EXISTS idx_taisho_vol_pagekey
 """
 
 
-def connect(db_path):
+def connect(db_path, cached_statements=128):
     parent = os.path.dirname(db_path)
     if parent:
         os.makedirs(parent, exist_ok=True)
-    conn = sqlite3.connect(db_path, check_same_thread=False)
+    conn = sqlite3.connect(
+        db_path,
+        check_same_thread=False,
+        cached_statements=cached_statements,
+    )
     conn.row_factory = sqlite3.Row
     conn.executescript(
         "PRAGMA journal_mode=WAL;"

@@ -210,7 +210,7 @@ def merge_indexes(krpx_dir, corpus_path, rebuild=False, progress=None):
         raise ValueError(
             "Corpus path must not live inside KRPX_DIR (would be re-merged)."
         )
-    conn = connect(corpus_path)
+    conn = connect(corpus_path, cached_statements=0)
     try:
         if rebuild:
             conn.execute("DROP TABLE IF EXISTS search_idx")
