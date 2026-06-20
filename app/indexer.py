@@ -210,7 +210,7 @@ def merge_indexes(krpx_dir, corpus_path, rebuild=False, progress=None):
         raise ValueError(
             "Corpus path must not live inside KRPX_DIR (would be re-merged)."
         )
-    conn = connect(corpus_path, cached_statements=0)
+    conn = connect(corpus_path)
     try:
         if rebuild:
             conn.execute("DROP TABLE IF EXISTS search_idx")
@@ -229,21 +229,22 @@ def merge_indexes(krpx_dir, corpus_path, rebuild=False, progress=None):
                     "DELETE FROM search_idx WHERE txtid = ?",
                     (txtid8,),
                 )
-            conn.execute("ATTACH DATABASE ? AS krpx", (path,))
+            src = sqlite3.connect(path)
             try:
-                added = conn.execute(
-                    "SELECT COUNT(*) FROM krpx.search_idx"
-                ).fetchone()[0]
-                conn.execute(
-                    "INSERT INTO main.search_idx"
-                    "(content, location, txtid, line_len)"
-                    " SELECT content, location, txtid, line_len"
-                    "   FROM krpx.search_idx"
-                )
-                total += added
-                conn.commit()
+                rows = src.execute(
+                    "SELECT content, location, txtid, line_len"
+                    "  FROM search_idx"
+                ).fetchall()
             finally:
-                conn.execute("DETACH DATABASE krpx")
+                src.close()
+            conn.executemany(
+                "INSERT INTO main.search_idx"
+                "(content, location, txtid, line_len)"
+                " VALUES (?, ?, ?, ?)",
+                rows,
+            )
+            total += len(rows)
+            conn.commit()
             if progress is not None:
                 progress(i, n_files, path, total)
         return total
