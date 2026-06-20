@@ -215,6 +215,16 @@ def merge_indexes(krpx_dir, corpus_path, rebuild=False, progress=None):
         if rebuild:
             conn.execute("DROP TABLE IF EXISTS search_idx")
             conn.executescript(_FTS_CREATE)
+        else:
+            cols = {r[1] for r in conn.execute(
+                "PRAGMA table_info(search_idx)"
+            ).fetchall()}
+            if cols and "line_len" not in cols:
+                raise RuntimeError(
+                    f"{corpus_path}: search_idx is missing the 'line_len' "
+                    "column (schema predates commit 088abc4). "
+                    "Re-run with --rebuild to recreate the corpus index."
+                )
 
         pattern = os.path.join(krpx_dir, "*", "*", "*" + KRPX_EXT)
         paths = sorted(glob.glob(pattern))
