@@ -73,24 +73,70 @@ def index():
     pass
 
 
-@index.command("build")
+@index.command("build-text")
+@click.argument('txtids', nargs=-1)
 @click.option('--rebuild/--incremental', default=False,
-              help="Drop and rebuild the FTS table from scratch.")
+              help="Remove and rewrite each per-text .krpx from scratch.")
+@click.option('--quiet', is_flag=True, default=False,
+              help="Suppress per-text progress output.")
+def index_build_text(txtids, rebuild, quiet):
+    """Build per-text .krpx files under KRPX_DIR.
+
+    With no TXTIDS given, every text discovered under TXTDIR is built.
+    """
+    from app.indexer import build_text_index, build_all_text_indexes
+    txtdir = app.config['TXTDIR']
+    krpx_dir = app.config['KRPX_DIR']
+
+    if txtids:
+        total = 0
+        for txtid in txtids:
+            n = build_text_index(txtdir, krpx_dir, txtid, rebuild=rebuild)
+            total += n
+            if not quiet:
+                click.echo(f"{txtid}  ({n} rows)")
+        click.echo(f"Wrote {total} rows across {len(txtids)} .krpx file(s)")
+        return
+
+    def report(i, n_texts, txtid, total):
+        if i == 1 or i == n_texts or i % 50 == 0:
+            click.echo(f"[{i}/{n_texts}] {txtid}  ({total} rows)")
+
+    n = build_all_text_indexes(txtdir, krpx_dir, rebuild=rebuild,
+                               progress=None if quiet else report)
+    click.echo(f"Wrote {n} rows into {krpx_dir}")
+
+
+@index.command("merge")
+@click.option('--rebuild/--incremental', default=False,
+              help="Drop and rebuild the corpus FTS table from scratch.")
 @click.option('--quiet', is_flag=True, default=False,
               help="Suppress per-file progress output.")
-def index_build(rebuild, quiet):
-    """Build the SQLite FTS5 search index from TXTDIR."""
-    from app.indexer import build_index
+def index_merge(rebuild, quiet):
+    """Merge all per-text .krpx files into the corpus kanripo.krpx."""
+    from app.indexer import merge_indexes
+    krpx_dir = app.config['KRPX_DIR']
     db_path = app.config['INDEX_DB_PATH']
-    txtdir = app.config['TXTDIR']
 
     def report(i, n_files, path, total):
         if i == 1 or i == n_files or i % 50 == 0:
-            click.echo(f"[{i}/{n_files}] {os.path.basename(path)}  ({total} lines)")
+            click.echo(f"[{i}/{n_files}] {os.path.basename(path)}  ({total} rows)")
 
-    n = build_index(txtdir, db_path, rebuild=rebuild,
-                    progress=None if quiet else report)
-    click.echo(f"Indexed {n} lines into {db_path}")
+    n = merge_indexes(krpx_dir, db_path, rebuild=rebuild,
+                      progress=None if quiet else report)
+    click.echo(f"Merged {n} rows into {db_path}")
+
+
+@index.command("build")
+@click.option('--rebuild/--incremental', default=False,
+              help="Drop and rebuild both per-text .krpx files and the corpus.")
+@click.option('--quiet', is_flag=True, default=False,
+              help="Suppress progress output.")
+@click.pass_context
+def index_build(ctx, rebuild, quiet):
+    """Build every per-text .krpx and merge into the corpus (one-shot)."""
+    ctx.invoke(index_build_text, txtids=(), rebuild=rebuild, quiet=quiet)
+    ctx.invoke(index_merge, rebuild=rebuild, quiet=quiet)
 
 
 @index.command("load-metadata")

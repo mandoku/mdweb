@@ -3,25 +3,61 @@
 
 Source layout: <TXTDIR>/<TXTID[0:4]>/<TXTID[0:8]>/<TXTID>_<JUAN>.txt
 Page breaks in text are marked by:  <pb:VOL_JUAN_PFX-PAGE>
-Each non-empty content line is emitted as one FTS row with location
-"TXTID_JUAN:PAGE:LINE".
+
+Indexing is a two-step process:
+
+  1. Per-text build  →  <KRPX_DIR>/<TXTID[0:4]>/<TXTID[0:8]>/<TXTID>.krpx
+     Each .krpx is a standalone SQLite database carrying only the
+     FTS5 `search_idx` table for one text (all its juan).
+
+  2. Merge           →  <INDEX_DB_PATH>  (typically kanripo.krpx)
+     All per-text .krpx files are merged into the corpus database
+     used by the running app.
+
+To make queries find phrases that straddle a source line break, each
+emitted row's `content` is the original line followed by up to
+LOOKAHEAD_CHARS characters drawn from the following emitted lines.
+The `line_len` column records the length of the original line so that
+queries can anchor matches to the row where the match *starts* (see
+app/lib.py: `_ft_search_clause`).
 """
 import glob
 import json
 import os
 import re
+import sqlite3
 
 from .search_db import connect
 
 PB_RE = re.compile(r"<pb:([^_]+)_([^_]+)_([^-]+)-([^>]+)>")
 GAIJI_RE = re.compile(r"(&[^;]+;)")
 
+# Stripped from indexed content so searches ignore punctuation, ASCII
+# (annotations, IDs, markup) and any whitespace. The gaiji marker U+2B24
+# survives because it isn't in any of these ranges.
+#   \x00-\x7F             all ASCII
+#   \s                    whitespace (incl. U+3000 via the next range)
+#   \u3000-\u303F         CJK symbols and punctuation (、。「」『』 etc.)
+#   \uFF00-\uFFEF         halfwidth and fullwidth forms (ASCII + punct)
+DROP_RE = re.compile(r"[\x00-\x7F\s\u3000-\u303F\uFF00-\uFFEF]")
 
-def _emit_rows(path, txtid, juan):
-    """Yield (content, location, txtid8) for each non-empty content line."""
+LOOKAHEAD_CHARS = 32
+
+KRPX_EXT = ".krpx"
+
+
+def _emit_rows(path, txtid, juan, lookahead=LOOKAHEAD_CHARS):
+    """Yield (content, location, txtid8, line_len) per non-empty content line.
+
+    `content` is the original line concatenated with up to `lookahead`
+    characters drawn from subsequent emitted lines, so that a query
+    phrase straddling a line break is still indexed on the row where
+    the match starts. `line_len` is len(original line).
+    """
+    txtid8 = txtid[:8]
     page = "0000"
     line_no = 0
-    txtid8 = txtid[:8]
+    emitted = []  # (content, location)
     with open(path, encoding="utf-8") as fp:
         for raw in fp:
             line = raw.rstrip("\n")
@@ -36,8 +72,24 @@ def _emit_rows(path, txtid, juan):
                 continue
             line_no += 1
             content = GAIJI_RE.sub("⬤", line)
+            content = DROP_RE.sub("", content)
+            if not content:
+                continue
             location = f"{txtid}_{juan}:{page}:{line_no:04d}"
-            yield (content, location, txtid8)
+            emitted.append((content, location))
+
+    for i, (content, location) in enumerate(emitted):
+        remaining = lookahead
+        extra = []
+        for j in range(i + 1, len(emitted)):
+            if remaining <= 0:
+                break
+            nxt = emitted[j][0]
+            take = nxt[:remaining]
+            extra.append(take)
+            remaining -= len(take)
+        full = content + "".join(extra)
+        yield (full, location, txtid8, len(content))
 
 
 def _parse_filename(path):
@@ -48,31 +100,68 @@ def _parse_filename(path):
     return txtid, juan
 
 
-def build_index(txtdir, db_path, rebuild=False, progress=None):
-    """Walk TXTDIR and load all lines into the FTS5 search_idx table.
+_FTS_CREATE = (
+    "CREATE VIRTUAL TABLE IF NOT EXISTS search_idx USING fts5("
+    " content, location UNINDEXED, txtid UNINDEXED, line_len UNINDEXED,"
+    " tokenize='trigram');"
+)
 
-    Returns the number of rows inserted. Idempotent per txtid: existing
-    rows for a (txtid) are deleted before its new rows are inserted.
-    `progress`, if given, is called as progress(i, n_files, path, rows_so_far)
-    once per file.
+
+def _open_krpx(path):
+    """Open or create a per-text .krpx file (SQLite + FTS5 trigram only)."""
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    conn = sqlite3.connect(path)
+    conn.row_factory = sqlite3.Row
+    conn.executescript(
+        "PRAGMA journal_mode=WAL;"
+        "PRAGMA synchronous=NORMAL;"
+        "PRAGMA temp_store=MEMORY;"
+        + _FTS_CREATE
+    )
+    return conn
+
+
+def _krpx_path(krpx_dir, txtid):
+    return os.path.join(krpx_dir, txtid[:4], txtid[:8], txtid + KRPX_EXT)
+
+
+def _juan_paths(txtdir, txtid):
+    pattern = os.path.join(txtdir, txtid[:4], txtid[:8], f"{txtid}_*.txt")
+    return sorted(glob.glob(pattern))
+
+
+def _list_txtids(txtdir):
+    """Discover all txtids under TXTDIR by scanning juan files."""
+    pattern = os.path.join(txtdir, "*", "*", "*_*.txt")
+    txtids = set()
+    for path in glob.glob(pattern):
+        txtid, juan = _parse_filename(path)
+        if txtid and juan:
+            txtids.add(txtid)
+    return sorted(txtids)
+
+
+def build_text_index(txtdir, krpx_dir, txtid, rebuild=False):
+    """Write a single per-text .krpx for `txtid`. Returns rows inserted.
+
+    With `rebuild=True` the existing .krpx is removed first; otherwise the
+    operation is idempotent per (txtid, juan): rows for each juan being
+    re-indexed are deleted before its new rows are inserted.
     """
-    conn = connect(db_path)
+    paths = _juan_paths(txtdir, txtid)
+    if not paths:
+        return 0
+    krpx_path = _krpx_path(krpx_dir, txtid)
+    if rebuild and os.path.exists(krpx_path):
+        os.remove(krpx_path)
+    conn = _open_krpx(krpx_path)
+    total = 0
     try:
-        if rebuild:
-            conn.execute("DROP TABLE IF EXISTS search_idx")
-            conn.executescript(
-                "CREATE VIRTUAL TABLE search_idx USING fts5("
-                " content, location UNINDEXED, txtid UNINDEXED,"
-                " tokenize='trigram');"
-            )
-
-        pattern = os.path.join(txtdir, "*", "*", "*_*.txt")
-        paths = sorted(glob.glob(pattern))
-        n_files = len(paths)
-        total = 0
-        for i, path in enumerate(paths, 1):
-            txtid, juan = _parse_filename(path)
-            if not txtid or not juan:
+        for path in paths:
+            _, juan = _parse_filename(path)
+            if not juan:
                 continue
             conn.execute(
                 "DELETE FROM search_idx WHERE location LIKE ?",
@@ -81,12 +170,80 @@ def build_index(txtdir, db_path, rebuild=False, progress=None):
             rows = list(_emit_rows(path, txtid, juan))
             if rows:
                 conn.executemany(
-                    "INSERT INTO search_idx(content, location, txtid)"
-                    " VALUES (?, ?, ?)",
+                    "INSERT INTO search_idx(content, location, txtid, line_len)"
+                    " VALUES (?, ?, ?, ?)",
                     rows,
                 )
                 total += len(rows)
-            conn.commit()
+        conn.commit()
+    finally:
+        conn.close()
+    return total
+
+
+def build_all_text_indexes(txtdir, krpx_dir, rebuild=False, progress=None):
+    """Build a .krpx for every txtid found under TXTDIR.
+
+    `progress`, if given, is called as progress(i, n_texts, txtid, rows_so_far)
+    once per text.
+    """
+    txtids = _list_txtids(txtdir)
+    n = len(txtids)
+    total = 0
+    for i, txtid in enumerate(txtids, 1):
+        rows = build_text_index(txtdir, krpx_dir, txtid, rebuild=rebuild)
+        total += rows
+        if progress is not None:
+            progress(i, n, txtid, total)
+    return total
+
+
+def merge_indexes(krpx_dir, corpus_path, rebuild=False, progress=None):
+    """Merge all per-text .krpx files under KRPX_DIR into the corpus DB.
+
+    With `rebuild=True` the corpus `search_idx` is dropped and recreated
+    before the merge. Otherwise, existing rows for each merged text
+    (matched by `txtid` = TXTID[:8]) are deleted first so the merge stays
+    idempotent on repeated runs.
+    """
+    if os.path.abspath(corpus_path).startswith(os.path.abspath(krpx_dir) + os.sep):
+        raise ValueError(
+            "Corpus path must not live inside KRPX_DIR (would be re-merged)."
+        )
+    conn = connect(corpus_path)
+    try:
+        if rebuild:
+            conn.execute("DROP TABLE IF EXISTS search_idx")
+            conn.executescript(_FTS_CREATE)
+
+        pattern = os.path.join(krpx_dir, "*", "*", "*" + KRPX_EXT)
+        paths = sorted(glob.glob(pattern))
+        n_files = len(paths)
+        total = 0
+        for i, path in enumerate(paths, 1):
+            base = os.path.basename(path)
+            txtid, _ = os.path.splitext(base)
+            txtid8 = txtid[:8]
+            if not rebuild:
+                conn.execute(
+                    "DELETE FROM search_idx WHERE txtid = ?",
+                    (txtid8,),
+                )
+            conn.execute("ATTACH DATABASE ? AS krpx", (path,))
+            try:
+                added = conn.execute(
+                    "SELECT COUNT(*) FROM krpx.search_idx"
+                ).fetchone()[0]
+                conn.execute(
+                    "INSERT INTO main.search_idx"
+                    "(content, location, txtid, line_len)"
+                    " SELECT content, location, txtid, line_len"
+                    "   FROM krpx.search_idx"
+                )
+                total += added
+                conn.commit()
+            finally:
+                conn.execute("DETACH DATABASE krpx")
             if progress is not None:
                 progress(i, n_files, path, total)
         return total

@@ -69,10 +69,16 @@ class TestFTS5SearchPipeline(unittest.TestCase):
                                "XY990001_001.txt"), "w", encoding="utf-8") as f:
             f.write(
                 "<pb:XY990001_001_x-001>\n"
-                "道路不通\n"
+                "道路、不通。\n"
+                "ABC 123 ＡＢＣ\n"
+                "山,水/林。\n"
             )
-        cls.db_path = os.path.join(cls.tmpdir, "search.sqlite")
-        cls.indexer.build_index(cls.txtdir, cls.db_path, rebuild=True)
+        cls.krpx_dir = os.path.join(cls.tmpdir, "krpx")
+        cls.db_path = os.path.join(cls.tmpdir, "kanripo.krpx")
+        cls.indexer.build_all_text_indexes(
+            cls.txtdir, cls.krpx_dir, rebuild=True
+        )
+        cls.indexer.merge_indexes(cls.krpx_dir, cls.db_path, rebuild=True)
 
         # Patch get_db to return a real connection for lib.* to use.
         cls.conn = cls.search_db.connect(cls.db_path)
@@ -142,6 +148,63 @@ class TestFTS5SearchPipeline(unittest.TestCase):
         self.assertEqual(meta["TITLE"], "道德經")
         self.assertEqual(meta["DYNASTY"], "周")
         self.assertEqual(meta["AUTHOR"], "老子")
+
+    def test_strips_punctuation_ascii_and_space(self):
+        # "道路、不通。" → cleaned content "道路不通", so "路不" matches
+        # despite the comma between them in the source.
+        _, total = self.lib.doftsearch("路不", limit=10)
+        self.assertEqual(total, 1)
+        # "ABC 123 ＡＢＣ" (pure ASCII/fullwidth) drops to empty and is not
+        # emitted; "山,水/林。" cleans to "山水林".
+        rows, total = self.lib.doftsearch("山水", limit=10)
+        self.assertEqual(total, 1)
+        content, _, _ = rows[0]
+        self.assertNotIn(",", content)
+        self.assertNotIn("/", content)
+        self.assertNotIn("。", content)
+
+    def test_cross_line_phrase_match(self):
+        # "常道名可" = last 2 chars of "道可道非常道" + first 2 of "名可名非常名".
+        # Pre-lookahead indexing missed it; now it matches the row anchored
+        # on the first line and is *not* duplicated on the second line.
+        rows, total = self.lib.doftsearch("常道名可", limit=10)
+        self.assertEqual(total, 1)
+        content, location, txtid8 = rows[0]
+        self.assertIn("常道名可", content)
+        self.assertEqual(txtid8, "AB120001")
+        line = location.rsplit(":", 1)[-1]
+        self.assertEqual(int(line), 1)
+
+    def test_lookahead_does_not_duplicate_in_line_match(self):
+        # "名可名" is fully within line 2; lookahead bleeds it into line 1's
+        # indexed content, but the instr-vs-line_len filter must drop that
+        # spurious row so the hit count stays at 1.
+        _, total = self.lib.doftsearch("名可名", limit=10)
+        self.assertEqual(total, 1)
+
+    def test_per_text_krpx_files_written(self):
+        import sqlite3
+        for txtid in ("AB120001", "XY990001"):
+            path = os.path.join(self.krpx_dir, txtid[:4], txtid[:8],
+                                txtid + ".krpx")
+            self.assertTrue(os.path.exists(path), path)
+            conn = sqlite3.connect(path)
+            try:
+                n = conn.execute("SELECT count(*) FROM search_idx").fetchone()[0]
+            finally:
+                conn.close()
+            self.assertGreater(n, 0)
+
+    def test_merge_is_idempotent_with_rebuild(self):
+        before = self.conn.execute(
+            "SELECT count(*) FROM search_idx"
+        ).fetchone()[0]
+        self.indexer.merge_indexes(self.krpx_dir, self.db_path, rebuild=True)
+        # Re-open via the cached connection's same path.
+        after = self.conn.execute(
+            "SELECT count(*) FROM search_idx"
+        ).fetchone()[0]
+        self.assertEqual(before, after)
 
     def test_facets_by_id(self):
         facets = self.lib.get_facets("道", tpe="ID", id_len=4, top_n=10)

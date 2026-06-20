@@ -7,8 +7,12 @@ class Config:
     MDBASE = os.environ.get('MDWEB_MDBASE', "/home/Shared/krp")
     TXTDIR = os.environ.get('MDWEB_TXTDIR', "/home/Shared/krp/gh")
     IDXDIR = os.environ.get('MDWEB_IDXDIR', "/home/Shared/krp/index")
+    # Per-text .krpx files live under KRPX_DIR; merging produces the
+    # corpus-wide kanripo.krpx at INDEX_DB_PATH (the file the app reads).
+    KRPX_DIR = os.environ.get('MDWEB_KRPX_DIR',
+                              os.path.join(IDXDIR, 'krpx'))
     INDEX_DB_PATH = os.environ.get('MDWEB_INDEX_DB',
-                                    os.path.join(basedir, 'data/search.sqlite'))
+                                   os.path.join(IDXDIR, 'kanripo.krpx'))
     IMGDIR = os.environ.get('MDWEB_IMGDIR', "/home/Shared/images/")
     TAISHO_SRC = os.environ.get('MDWEB_TAISHO_SRC', '')
     LANGUAGES = {

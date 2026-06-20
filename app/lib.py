@@ -236,11 +236,23 @@ def _ft_search_clause(key):
     """Return (where_sql, params_tail) for searching `content` for `key`.
 
     The FTS5 trigram tokenizer requires queries of >=3 characters. Shorter
-    queries fall back to LIKE on the same column.
+    queries fall back to LIKE on the same column. In both cases an
+    instr() check anchors the match to the originating line: each row's
+    `content` carries a lookahead suffix copied from the following
+    lines (so cross-line phrases get indexed), and `line_len` records
+    the length of the original line. A hit is kept only when the match
+    begins within those first `line_len` characters; matches that fall
+    entirely in the suffix belong to the next row.
     """
     if len(key) >= 3:
-        return "search_idx MATCH ?", (_escape_fts(key),)
-    return "content LIKE ?", ("%" + key + "%",)
+        return (
+            "search_idx MATCH ? AND instr(content, ?) BETWEEN 1 AND line_len",
+            (_escape_fts(key), key),
+        )
+    return (
+        "content LIKE ? AND instr(content, ?) BETWEEN 1 AND line_len",
+        ("%" + key + "%", key),
+    )
 
 
 def _filter_clause(filters, dynasty):

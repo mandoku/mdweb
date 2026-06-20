@@ -10,6 +10,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS search_idx USING fts5(
     content,
     location UNINDEXED,
     txtid    UNINDEXED,
+    line_len UNINDEXED,
     tokenize='trigram'
 );
 
