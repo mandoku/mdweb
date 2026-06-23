@@ -162,20 +162,49 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
         else:
             id = "Not Implemented"
     uid = current_app.config['GHKANRIPO']
-    if juan.startswith("Readme"):
-        url = "https://raw.githubusercontent.com/%s/%s/%s/%s" % (uid, id, branch, juan)
+    use_github = current_app.config.get('USE_GITHUB', False)
+    txtdir = current_app.config['TXTDIR']
+    if branch == "master":
+        local_path = "%s/%s/%s/%s/%s" % (txtdir, id[0:4], id[0:8], id, juan) \
+            if juan.startswith("Readme") else \
+            "%s/%s/%s/%s_%s.txt" % (txtdir, id[0:4], id[0:8], id, juan)
+        local_toc = "%s/%s/%s/Readme.org" % (txtdir, id[0:4], id[0:8])
     else:
-        url = "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (uid, id, branch, id, juan)
-    r = requests.get(url)
-    if r.status_code == 200:
-        fn = r.content
-    # TOC: parsed fresh from the Readme.org each request
-    if juan.startswith("Readme"):
-        ftoc = fn or b""
+        local_path = "%s/%s/%s/_branches/%s/%s" % (txtdir, id[0:4], id[0:8], branch, juan) \
+            if juan.startswith("Readme") else \
+            "%s/%s/%s/_branches/%s/%s_%s.txt" % (txtdir, id[0:4], id[0:8], branch, id, juan)
+        local_toc = "%s/%s/%s/_branches/%s/Readme.org" % (txtdir, id[0:4], id[0:8], branch)
+
+    def read_local(path):
+        try:
+            with open(path, "rb") as fh:
+                return fh.read()
+        except Exception:
+            return b""
+
+    if use_github:
+        if juan.startswith("Readme"):
+            url = "https://raw.githubusercontent.com/%s/%s/%s/%s" % (uid, id, branch, juan)
+        else:
+            url = "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (uid, id, branch, id, juan)
+        try:
+            r = requests.get(url)
+            if r.status_code == 200:
+                fn = r.content
+        except Exception:
+            pass
+        if juan.startswith("Readme"):
+            ftoc = fn or read_local(local_toc)
+        else:
+            tocurl = re.sub(r"KR[^/]+txt", "Readme.org", url)
+            try:
+                rt = requests.get(tocurl)
+                ftoc = rt.content if rt.status_code == 200 else read_local(local_toc)
+            except Exception:
+                ftoc = read_local(local_toc)
     else:
-        tocurl = re.sub(r"KR[^/]+txt", "Readme.org", url)
-        rt = requests.get(tocurl)
-        ftoc = rt.content if rt.status_code == 200 else b""
+        fn = read_local(local_path)
+        ftoc = fn if juan.startswith("Readme") else read_local(local_toc)
     if isinstance(ftoc, bytes):
         ftoc = ftoc.decode("utf-8", errors="replace")
     toc = defaultdict(list)
@@ -200,12 +229,16 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     else:
         filename = "%s/%s/_branches/%s/%s_%s.txt" % (id[0:4], id[0:8], branch, id, juan)
     rpath = "%s/%s/%s" % (current_app.config['TXTDIR'], id[0:4], id[0:8])
-    try:
-        gh = Github()
-        rp = gh.get_repo("kanripo/" + id)
-        branches = [(a.name, lib.brtab[a.name]) for a in rp.get_branches()
-                    if a.name not in ('_data', 'master')]
-    except Exception:
+    branches = []
+    if use_github:
+        try:
+            gh = Github()
+            rp = gh.get_repo("kanripo/" + id)
+            branches = [(a.name, lib.brtab[a.name]) for a in rp.get_branches()
+                        if a.name not in ('_data', 'master')]
+        except Exception:
+            branches = []
+    if not branches:
         try:
             repo = git.Repo(rpath)
             branches = [(a.name, lib.brtab[a.name]) for a in repo.branches

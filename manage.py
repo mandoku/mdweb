@@ -27,6 +27,19 @@ def make_shell_context():
     return dict(app=app, db=db)
 
 
+@app.cli.command("runserver")
+@click.option('--host', default='127.0.0.1', help="Interface to bind to.")
+@click.option('--port', default=5000, type=int, help="Port to listen on.")
+@click.option('--github', is_flag=True, default=False,
+              help="Serve text files from GitHub (raw.githubusercontent.com) "
+                   "instead of the local TXTDIR.")
+def runserver(host, port, github):
+    """Run the development server."""
+    app.config['USE_GITHUB'] = github
+    click.echo(f"Serving texts from {'GitHub' if github else 'local TXTDIR'}")
+    app.run(host=host, port=port)
+
+
 @app.cli.command("test")
 @click.option('--coverage/--no-coverage', default=False)
 def test(coverage):

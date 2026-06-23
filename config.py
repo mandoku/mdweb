@@ -43,6 +43,11 @@ class Config:
     GITHUB_OAUTH_CLIENT_ID=os.environ.get('GITHUB_OAUTH_CLIENT_ID')
     GHRAWURL="https://raw.githubusercontent.com/"
     GHKANRIPO="kanripo"
+    # When True, text files are fetched from GitHub (raw.githubusercontent.com)
+    # with a local-filesystem fallback. When False (the default), files are
+    # read directly from TXTDIR and GitHub is not contacted. Toggled by the
+    # `--github` flag of `manage.py runserver`.
+    USE_GITHUB = False
 
     
     @staticmethod
