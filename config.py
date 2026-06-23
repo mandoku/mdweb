@@ -49,6 +49,11 @@ class Config:
     # `--github` flag of `manage.py runserver`.
     USE_GITHUB = False
 
+    RATELIMIT_DEFAULT = os.environ.get('MDWEB_RATELIMIT', '60 per minute')
+    RATELIMIT_STORAGE_URI = os.environ.get('MDWEB_RATELIMIT_STORAGE',
+                                           'memory://')
+    RATELIMIT_HEADERS_ENABLED = True
+
     
     @staticmethod
     def init_app(app):
@@ -76,6 +81,11 @@ class ProductionConfig(Config):
     def init_app(cls, app):
         Config.init_app(app)
 
+        # honor X-Forwarded-* from the upstream proxy so things like
+        # request.remote_addr (used by Flask-Limiter) see the real client IP
+        from werkzeug.middleware.proxy_fix import ProxyFix
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+
         # email errors to the administrators
         import logging
         from logging.handlers import SMTPHandler
@@ -102,10 +112,6 @@ class HerokuConfig(ProductionConfig):
     @classmethod
     def init_app(cls, app):
         ProductionConfig.init_app(app)
-
-        # handle proxy server headers
-        from werkzeug.middleware.proxy_fix import ProxyFix
-        app.wsgi_app = ProxyFix(app.wsgi_app)
 
         # log to stderr
         import logging

@@ -7,6 +7,8 @@ from flask_sqlalchemy import SQLAlchemy
 #from flask_login import LoginManager
 from flask_pagedown import PageDown
 from flask_babel import Babel
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from config import config
 from flask_dance.contrib.github import make_github_blueprint
 bootstrap = Bootstrap()
@@ -15,6 +17,7 @@ moment = Moment()
 db = SQLAlchemy()
 pagedown = PageDown()
 mybabel = Babel()
+limiter = Limiter(key_func=get_remote_address)
 #login_manager = LoginManager()
 #login_manager.session_protection = 'strong'
 #login_manager.login_view = 'auth.login'
@@ -32,6 +35,7 @@ def create_app(config_name):
     db.init_app(app)
     #login_manager.init_app(app)
     pagedown.init_app(app)
+    limiter.init_app(app)
 
     from .main.views import get_locale
     mybabel.init_app(app, locale_selector=get_locale)
