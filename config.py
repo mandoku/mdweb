@@ -57,7 +57,14 @@ class Config:
     
     @staticmethod
     def init_app(app):
-        pass
+        # honor X-Forwarded-* from upstream proxies (Cloudflare -> Caddy)
+        # so request.remote_addr reflects the real client, not 127.0.0.1.
+        # x_for hop count is configurable; override with MDWEB_PROXY_HOPS
+        # if the proxy chain changes.
+        from werkzeug.middleware.proxy_fix import ProxyFix
+        hops = int(os.environ.get('MDWEB_PROXY_HOPS', '2'))
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=hops,
+                                x_proto=hops, x_host=hops)
 
 
 class DevelopmentConfig(Config):
@@ -80,11 +87,6 @@ class ProductionConfig(Config):
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)
-
-        # honor X-Forwarded-* from the upstream proxy so things like
-        # request.remote_addr (used by Flask-Limiter) see the real client IP
-        from werkzeug.middleware.proxy_fix import ProxyFix
-        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
         # email errors to the administrators
         import logging
