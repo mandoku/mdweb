@@ -28,6 +28,8 @@ from .. import mandoku_view
 from .. import kr2tls
 import git, requests, sys
 
+from app import limiter
+
 
 link_re = re.compile(r'\[\[([^\]]+)\]\[([^\]]+)')
 img_re = re.compile(r'<i[^>]*>')
@@ -62,6 +64,7 @@ def api_doc():
 
 @main.route('/<coll>/search', methods=['GET', 'POST',])
 @main.route('/search', methods=['GET', 'POST',])
+@limiter.limit("10 per minute")
 def searchtext(count=20, page=1):
     key = request.values.get('query', '')
     count = int(request.values.get('count', count))
@@ -110,6 +113,7 @@ def searchbytext():
 
 
 @main.route('/text/<coll>', methods=['GET',] )
+@limiter.limit("10 per minute")
 def showcoll(coll, edition=None, fac=False):
     return coll
 
@@ -146,6 +150,7 @@ def showcoll(coll, edition=None, fac=False):
 #added new URL scheme for textref.org [2017-12-08T11:30:11+0900]
 @main.route('/ed/<id>/<branch>/<juan>', methods=['GET',])
 @main.route('/ed/<id>/<branch>/', methods=['GET',])
+@limiter.limit("10 per minute")
 def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo"):
     editurl = False
     showtoc = True
