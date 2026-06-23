@@ -164,21 +164,21 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     uid = current_app.config['GHKANRIPO']
     use_github = current_app.config.get('USE_GITHUB', False)
     txtdir = current_app.config['TXTDIR']
-    if branch == "master":
-        local_path = "%s/%s/%s/%s/%s" % (txtdir, id[0:4], id[0:8], id, juan) \
-            if juan.startswith("Readme") else \
-            "%s/%s/%s/%s_%s.txt" % (txtdir, id[0:4], id[0:8], id, juan)
-        local_toc = "%s/%s/%s/Readme.org" % (txtdir, id[0:4], id[0:8])
-    else:
-        local_path = "%s/%s/%s/_branches/%s/%s" % (txtdir, id[0:4], id[0:8], branch, juan) \
-            if juan.startswith("Readme") else \
-            "%s/%s/%s/_branches/%s/%s_%s.txt" % (txtdir, id[0:4], id[0:8], branch, id, juan)
-        local_toc = "%s/%s/%s/_branches/%s/Readme.org" % (txtdir, id[0:4], id[0:8], branch)
+    repo_dir = "%s/%s/%s" % (txtdir, id[0:4], id[0:8])
+    text_rel = juan if juan.startswith("Readme") else "%s_%s.txt" % (id, juan)
+    toc_rel = "Readme.org"
 
-    def read_local(path):
+    def read_local(rel):
+        """Read `rel` from the local git repo at `repo_dir` for `branch`."""
+        if branch == "master":
+            try:
+                with open("%s/%s" % (repo_dir, rel), "rb") as fh:
+                    return fh.read()
+            except Exception:
+                return b""
         try:
-            with open(path, "rb") as fh:
-                return fh.read()
+            repo = git.Repo(repo_dir)
+            return repo.tree(branch)[rel].data_stream.read()
         except Exception:
             return b""
 
@@ -194,17 +194,17 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
         except Exception:
             pass
         if juan.startswith("Readme"):
-            ftoc = fn or read_local(local_toc)
+            ftoc = fn or read_local(toc_rel)
         else:
             tocurl = re.sub(r"KR[^/]+txt", "Readme.org", url)
             try:
                 rt = requests.get(tocurl)
-                ftoc = rt.content if rt.status_code == 200 else read_local(local_toc)
+                ftoc = rt.content if rt.status_code == 200 else read_local(toc_rel)
             except Exception:
-                ftoc = read_local(local_toc)
+                ftoc = read_local(toc_rel)
     else:
-        fn = read_local(local_path)
-        ftoc = fn if juan.startswith("Readme") else read_local(local_toc)
+        fn = read_local(text_rel)
+        ftoc = fn if juan.startswith("Readme") else read_local(toc_rel)
     if isinstance(ftoc, bytes):
         ftoc = ftoc.decode("utf-8", errors="replace")
     toc = defaultdict(list)
@@ -224,11 +224,6 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
         t2 = [[(a, b[2], b[3].split()[-1]) for b in toc[a]] for a in tk]
     except Exception:
         t2 = ""
-    if branch == "master":
-        filename = "%s/%s/%s_%s.txt" % (id[0:4], id[0:8], id, juan)
-    else:
-        filename = "%s/%s/_branches/%s/%s_%s.txt" % (id[0:4], id[0:8], branch, id, juan)
-    rpath = "%s/%s/%s" % (current_app.config['TXTDIR'], id[0:4], id[0:8])
     branches = []
     if use_github:
         try:
@@ -240,18 +235,13 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
             branches = []
     if not branches:
         try:
-            repo = git.Repo(rpath)
+            repo = git.Repo(repo_dir)
             branches = [(a.name, lib.brtab[a.name]) for a in repo.branches
                         if a.name not in ('_data', 'master')]
         except Exception:
             branches = []
     if not fn:
-        try:
-            datei = "%s/%s" % (current_app.config['TXTDIR'], filename)
-            with codecs.open(datei, 'r', 'utf-8') as fh:
-                fn = fh.read()
-        except Exception:
-            return "File Not found: %s" % (filename)
+        return "File Not found: %s/%s" % (branch, text_rel)
     if isinstance(fn, bytes):
         fn = fn.decode("utf-8", errors="replace")
     md = mandoku_view.mdDocument(fn, id, juan)
