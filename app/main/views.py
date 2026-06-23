@@ -152,6 +152,9 @@ def showcoll(coll, edition=None, fac=False):
 @main.route('/ed/<id>/<branch>/', methods=['GET',])
 @limiter.limit("10 per minute")
 def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo"):
+    master_only = current_app.config.get('MASTER_ONLY', False)
+    if master_only and branch != "master":
+        abort(503, description="Alternate editions are temporarily unavailable.")
     editurl = False
     showtoc = True
     fn = ""
@@ -230,21 +233,22 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     except Exception:
         t2 = ""
     branches = []
-    if use_github:
-        try:
-            gh = Github()
-            rp = gh.get_repo("kanripo/" + id)
-            branches = [(a.name, lib.brtab[a.name]) for a in rp.get_branches()
-                        if a.name not in ('_data', 'master')]
-        except Exception:
-            branches = []
-    if not branches:
-        try:
-            repo = git.Repo(repo_dir)
-            branches = [(a.name, lib.brtab[a.name]) for a in repo.branches
-                        if a.name not in ('_data', 'master')]
-        except Exception:
-            branches = []
+    if not master_only:
+        if use_github:
+            try:
+                gh = Github()
+                rp = gh.get_repo("kanripo/" + id)
+                branches = [(a.name, lib.brtab[a.name]) for a in rp.get_branches()
+                            if a.name not in ('_data', 'master')]
+            except Exception:
+                branches = []
+        if not branches:
+            try:
+                repo = git.Repo(repo_dir)
+                branches = [(a.name, lib.brtab[a.name]) for a in repo.branches
+                            if a.name not in ('_data', 'master')]
+            except Exception:
+                branches = []
     if not fn:
         return "File Not found: %s/%s" % (branch, text_rel)
     if isinstance(fn, bytes):

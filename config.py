@@ -49,6 +49,12 @@ class Config:
     # `--github` flag of `manage.py runserver`.
     USE_GITHUB = False
 
+    # When True, only the "master" edition is served. Requests for any
+    # other edition/branch return 503, and the branch-listing logic is
+    # skipped so the master view doesn't spawn GitHub/git calls either.
+    MASTER_ONLY = os.environ.get('MDWEB_MASTER_ONLY', '').lower() in (
+        '1', 'true', 'yes', 'on')
+
     RATELIMIT_DEFAULT = os.environ.get('MDWEB_RATELIMIT', '60 per minute')
     RATELIMIT_STORAGE_URI = os.environ.get('MDWEB_RATELIMIT_STORAGE',
                                            'memory://')
