@@ -214,7 +214,7 @@ function displayPageImage(txtid, edition, juan, page){
 			if (r[1]) {
 				  // console.log("F1:" + r[0])
 			  
-				  f2 = urlist[r[0]] + "/" + f[2]
+				  f2 = (urlist[r[0]] + "/" + f[2]).replace(/^http:\/\//, "https://")
 				  if (f2.slice(-3) == "TIF"){
 				  f2 = f2.replace("\.TIF", ".png")
 				  }
@@ -232,14 +232,14 @@ function displayPageImage(txtid, edition, juan, page){
 	    },
 	    error: function(xhr, textStatus, errorThrown) {
 	    	   noimg = 1
-		//alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
+		   console.warn('imglist per-juan fetch failed:', xhr.status, errorThrown);
 	    }
 	});
-		
+
 	    },
 	    error: function(xhr, textStatus, errorThrown) {
 	    	   noimg = 1
-	    	//alert('An error occurred! ' + ( errorThrown ? errorThrown : xhr.status ));
+	    	   console.warn('imginfo.cfg fetch failed:', xhr.status, errorThrown);
 	    }
 	});
 // ajax 2	
