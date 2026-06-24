@@ -64,7 +64,8 @@ def api_doc():
 
 @main.route('/<coll>/search', methods=['GET', 'POST',])
 @main.route('/search', methods=['GET', 'POST',])
-@limiter.limit("100 per minute", exempt_when=lambda: 'user' in session)
+@limiter.limit(lambda: current_app.config['RATELIMIT_DEFAULT'],
+               exempt_when=lambda: 'user' in session)
 def searchtext(count=20, page=1):
     key = request.values.get('query', '')
     count = int(request.values.get('count', count))
@@ -113,7 +114,8 @@ def searchbytext():
 
 
 @main.route('/text/<coll>', methods=['GET',] )
-@limiter.limit("100 per minute", exempt_when=lambda: 'user' in session)
+@limiter.limit(lambda: current_app.config['RATELIMIT_DEFAULT'],
+               exempt_when=lambda: 'user' in session)
 def showcoll(coll, edition=None, fac=False):
     return coll
 
@@ -150,7 +152,8 @@ def showcoll(coll, edition=None, fac=False):
 #added new URL scheme for textref.org [2017-12-08T11:30:11+0900]
 @main.route('/ed/<id>/<branch>/<juan>', methods=['GET',])
 @main.route('/ed/<id>/<branch>/', methods=['GET',])
-@limiter.limit("100 per minute", exempt_when=lambda: 'user' in session)
+@limiter.limit(lambda: current_app.config['RATELIMIT_DEFAULT'],
+               exempt_when=lambda: 'user' in session)
 def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo"):
     master_only = current_app.config.get('MASTER_ONLY', False)
     if master_only and branch != "master" and 'user' not in session:
