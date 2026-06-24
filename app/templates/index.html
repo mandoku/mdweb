@@ -38,6 +38,7 @@
     </p>
     <p>[2026-05-25] Links to the site <a href="https://ask.bunkankun.org" target="bunkankun">Ask BunKanKun</a> have been added to the search results.</p>
     <p>[2026-06-20] Updated the webserver, modernized the index. Searches for less than 3 characters are slow, but others should be faster now. </p>
+    <p>[2026-06-24] The server is hit hard by bots.  I implemented rate limit and will show only the master version of a text by default.  For unlimited access and all editions, please use the 'login' button -- this will authenticate with GitHub and thus requires an account there. </p>
     <h3>Catalog</h3>
     {% endif %}
     <h4>　<a href="{{url_for('main.catalog', coll='KR1')}}">KR1 	經部</a></h4>
