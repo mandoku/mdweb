@@ -314,10 +314,16 @@ def catalog():
     db = lib.get_db()
     if not coll:
         rows = db.execute(
-            "SELECT substr(txtid,1,4) AS prefix, COUNT(*) AS n"
-            " FROM metadata GROUP BY prefix ORDER BY prefix"
+            "SELECT substr(m.txtid,1,4) AS prefix,"
+            "       COUNT(*) AS n,"
+            "       lab.title AS label"
+            " FROM metadata m"
+            " LEFT JOIN metadata lab ON lab.txtid = substr(m.txtid,1,4)"
+            " WHERE length(m.txtid) = 8"
+            " GROUP BY prefix ORDER BY prefix"
         ).fetchall()
-        cat = [{'ID': r['prefix'], 'TITLE': f"{r['prefix']} ({r['n']})",
+        cat = [{'ID': r['prefix'],
+                'TITLE': f"{r['label']} ({r['n']})" if r['label'] else f"({r['n']})",
                 'TYPE': 'collection'} for r in rows]
     else:
         rows = db.execute(
