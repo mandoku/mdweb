@@ -173,11 +173,14 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
         else:
             id = "Not Implemented"
     uid = current_app.config['GHKANRIPO']
-    use_github = current_app.config.get('USE_GITHUB', False)
+    logged_in = 'user' in session
+    gh_token = session.get('token') if logged_in else None
+    use_github = current_app.config.get('USE_GITHUB', False) or logged_in
     txtdir = current_app.config['TXTDIR']
     repo_dir = "%s/%s/%s" % (txtdir, id[0:4], id[0:8])
     text_rel = juan if juan.startswith("Readme") else "%s_%s.txt" % (id, juan)
     toc_rel = "Readme.org"
+    gh_owners = ([session['user']] if logged_in else []) + [uid]
 
     def read_local(rel):
         """Read `rel` from the local git repo at `repo_dir` for `branch`."""
@@ -193,26 +196,22 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
         except Exception:
             return b""
 
-    if use_github:
-        if juan.startswith("Readme"):
-            url = "https://raw.githubusercontent.com/%s/%s/%s/%s" % (uid, id, branch, juan)
-        else:
-            url = "https://raw.githubusercontent.com/%s/%s/%s/%s_%s.txt" % (uid, id, branch, id, juan)
-        try:
-            r = requests.get(url)
-            if r.status_code == 200:
-                fn = r.content
-        except Exception:
-            pass
-        if juan.startswith("Readme"):
-            ftoc = fn or read_local(toc_rel)
-        else:
-            tocurl = re.sub(r"KR[^/]+txt", "Readme.org", url)
+    def fetch_gh(rel):
+        """Try each candidate owner's fork on raw.githubusercontent.com."""
+        headers = {'Authorization': 'token ' + gh_token} if gh_token else {}
+        for owner in gh_owners:
+            url = "https://raw.githubusercontent.com/%s/%s/%s/%s" % (owner, id, branch, rel)
             try:
-                rt = requests.get(tocurl)
-                ftoc = rt.content if rt.status_code == 200 else read_local(toc_rel)
+                r = requests.get(url, headers=headers, timeout=10)
+                if r.status_code == 200:
+                    return r.content
             except Exception:
-                ftoc = read_local(toc_rel)
+                continue
+        return b""
+
+    if use_github:
+        fn = fetch_gh(text_rel)
+        ftoc = fn if juan.startswith("Readme") else (fetch_gh(toc_rel) or read_local(toc_rel))
     else:
         fn = read_local(text_rel)
         ftoc = fn if juan.startswith("Readme") else read_local(toc_rel)
@@ -236,11 +235,11 @@ def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="k
     except Exception:
         t2 = ""
     branches = []
-    if not master_only:
+    if not master_only or logged_in:
         if use_github:
             try:
-                gh = Github()
-                rp = gh.get_repo("kanripo/" + id)
+                gh = Github(gh_token) if gh_token else Github()
+                rp = gh.get_repo("%s/%s" % (uid, id))
                 branches = [(a.name, lib.brtab[a.name]) for a in rp.get_branches()
                             if a.name not in ('_data', 'master')]
             except Exception:
