@@ -310,6 +310,7 @@ def searchdic():
 @main.route('/catalog', methods=['GET',])
 def catalog():
     coll = request.values.get('coll', '')
+    label = request.values.get('label', '')
     db = lib.get_db()
     if not coll:
         rows = db.execute(
@@ -326,7 +327,7 @@ def catalog():
         cat = [lib.get_meta(r['txtid']) for r in rows]
     return render_template('catalog.html', cat=cat,
                            sr={'total': len(cat), 'coll': coll},
-                           pagination=None)
+                           pagination=None, label=label, allc=len(cat))
 
 @main.route('/titlesearch', methods=['GET',])
 def titlesearch(count=20, page=1):
