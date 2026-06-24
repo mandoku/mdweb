@@ -4,7 +4,7 @@ from markupsafe import Markup
 from flask_login import current_user
 from flask_babel import gettext, ngettext
 from flask_sqlalchemy.record_queries import get_recorded_queries
-from flask_dance.contrib.github import make_github_blueprint
+from flask_dance.contrib.github import make_github_blueprint, github
 from github import Github
 import urllib
 
@@ -64,7 +64,7 @@ def api_doc():
 
 @main.route('/<coll>/search', methods=['GET', 'POST',])
 @main.route('/search', methods=['GET', 'POST',])
-@limiter.limit("100 per minute")
+@limiter.limit("100 per minute", exempt_when=lambda: 'user' in session)
 def searchtext(count=20, page=1):
     key = request.values.get('query', '')
     count = int(request.values.get('count', count))
@@ -113,7 +113,7 @@ def searchbytext():
 
 
 @main.route('/text/<coll>', methods=['GET',] )
-@limiter.limit("100 per minute")
+@limiter.limit("100 per minute", exempt_when=lambda: 'user' in session)
 def showcoll(coll, edition=None, fac=False):
     return coll
 
@@ -150,10 +150,10 @@ def showcoll(coll, edition=None, fac=False):
 #added new URL scheme for textref.org [2017-12-08T11:30:11+0900]
 @main.route('/ed/<id>/<branch>/<juan>', methods=['GET',])
 @main.route('/ed/<id>/<branch>/', methods=['GET',])
-@limiter.limit("100 per minute")
+@limiter.limit("100 per minute", exempt_when=lambda: 'user' in session)
 def showtext(juan="Readme.org", id=0, coll=None, seq=0, branch="master", user="kanripo"):
     master_only = current_app.config.get('MASTER_ONLY', False)
-    if master_only and branch != "master":
+    if master_only and branch != "master" and 'user' not in session:
         abort(503, description="Alternate editions are temporarily unavailable.")
     editurl = False
     showtoc = True
@@ -436,8 +436,6 @@ def usersettings(user=None):
 
 @main.route('/login',methods=['GET',])
 def login():
-    flash("Login is not available at this moment.")
-    return redirect(request.values.get('next') or '/')
     if not github.authorized:
         #print url_for("github.login")
         #return redirect("/")
@@ -446,12 +444,7 @@ def login():
     assert resp.ok
     session['user'] = resp.json()["login"]
     session['token'] = github.token["access_token"]
-    #this is mainly to make sure we have a fork of the workspace
-    ret = lib.ghclone(session['user'], session['token'])
-    if len(ret) > 0:
-        flash(ret)
-    else:
-        flash(gettext("Welcome to the Kanseki Repository, user %(value)s! ", value= (session['user'])))
+    flash(gettext("Welcome to the Kanseki Repository, user %(value)s! ", value= (session['user'])))
     return redirect(request.values.get('next') or '/')
 
 
